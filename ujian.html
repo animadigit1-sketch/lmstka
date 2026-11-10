@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CBT Tryout TKA Nasional | LKP SES</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Library MathJax -->
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<style>
+/* =========================================================
+   KLONING TAMPILAN ANBK (DENGAN BRANDING SES)
+   ========================================================= */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f1f3f4;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 1. HEADER BIRU SES BRANDING */
+.anbk-header {
+    background-color: #0058c6; /* Warna biru sesuai panel admin SES */
+    border-bottom: 5px solid #f59e0b; /* Garis list bawah kuning keemasan */
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    color: white;
+    height: 120px; 
+    position: relative;
+    z-index: 10;
+}
+
+.anbk-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+/* Shape Putih Rounded untuk Logo */
+.logo-wrapper {
+    background-color: #ffffff;
+    padding: 8px 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.anbk-logo-img {
+    height: 38px;
+    width: auto;
+}
+
+.anbk-header-text h1 {
+    font-size: 0.95rem; /* Diperkecil dari sebelumnya 1.15rem */
+    margin: 0 0 3px 0;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.anbk-header-text p {
+    font-size: 0.5rem; /* Diperkecil hampir setengah dari sebelumnya (0.8rem) */
+    margin: 0;
+    opacity: 0.9;
+    font-weight: 600;
+    letter-spacing: 1px; /* Ditambahkan sedikit spasi huruf agar tetap terbaca jelas walau ukurannya sangat kecil */
+}
+
+.anbk-peserta-top {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    margin-top: 10px;
+}
+.anbk-peserta-top i {
+    font-size: 1.5rem;
+    opacity: 0.9;
+}
+
+/* 2. KARTU LEMBAR SOAL UTAMA (DIPERLEBAR) */
+.anbk-main-container {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    padding: 0 20px 30px 20px;
+    margin-top: -50px; 
+    z-index: 20;
+    position: relative;
+}
+
+.anbk-soal-card {
+    background: #ffffff;
+    width: 100%;
+    max-width: 1100px; /* Kembali ke ukuran standar ANBK */
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+/* Header Putih Dalam Kartu Soal */
+.anbk-card-header {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #f1f3f4;
+}
+.anbk-soal-info h2 {
+    font-size: 1.3rem;
+    color: #333;
+    margin: 0 0 5px 0;
+    font-weight: 700;
+}
+.anbk-font-sizer {
+    font-size: 0.85rem;
+    color: #555;
+}
+.anbk-font-sizer span { cursor: pointer; font-weight: bold; margin-left: 8px; color: #000; transition: 0.2s; }
+.anbk-font-sizer span:hover { color: #0058c6; }
+.anbk-font-sizer span:nth-child(2) { font-size: 0.9rem; }
+.anbk-font-sizer span:nth-child(3) { font-size: 1.1rem; }
+.anbk-font-sizer span:nth-child(4) { font-size: 1.3rem; }
+
+.anbk-tools-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+.anbk-tools-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.btn-info-soal { background: #0058c6; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+.btn-info-soal:hover { background: #0045a0; }
+.anbk-timer { font-size: 0.9rem; color: #333; border: 2px solid #cbd5e1; padding: 6px 15px; border-radius: 20px; font-weight: bold;}
+.btn-daftar-soal { background: #0058c6; color: white; border: none; padding: 8px 15px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s;}
+.btn-daftar-soal:hover { background: #0045a0; }
+.anbk-mapel-text { font-size: 0.9rem; color: #555; font-weight: bold; margin-top: 5px; }
+
+/* Layout 2 Kolom Soal */
+.anbk-split-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    padding: 30px;
+    position: relative;
+    flex: 1;
+}
+.anbk-split-content::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 30px;
+    bottom: 30px;
+    width: 2px;
+    border-left: 2px dotted #cbd5e1;
+    transform: translateX(-50%);
+}
+.anbk-kiri { padding-right: 15px; font-size: 1.05rem; line-height: 1.6; color: #333; }
+.anbk-kanan { padding-left: 15px; }
+
+/* Opsi Jawaban ANBK */
+.anbk-opsi-list { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+.anbk-opsi-item { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+.anbk-opsi-text { font-size: 1rem; color: #333; line-height: 1.5; }
+
+/* Tombol Navigasi Bawah */
+.anbk-nav-bottom {
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid #f1f3f4;
+}
+.btn-anbk-prev { background: #dc2626; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+.btn-anbk-prev:hover { background: #b91c1c; }
+.btn-anbk-ragu { background: #f59e0b; color: white; border: none; padding: 12px 35px; border-radius: 30px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+.btn-anbk-ragu:hover { background: #d97706; }
+.btn-anbk-next { background: #0058c6; color: white; border: none; padding: 12px 30px; border-radius: 30px; font-weight: bold; font-size: 0.9rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: 0.2s;}
+.btn-anbk-next:hover { background: #0045a0; }
+
+/* Modal Daftar Soal (Pop-up Grid ANBK) */
+.anbk-modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; }
+.anbk-modal-overlay.show { display: flex; }
+.anbk-modal-box { background: white; width: 100%; max-width: 700px; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.25); overflow: hidden; }
+.anbk-modal-header { background-color: #f1f3f4; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: 500; font-size: 1.15rem; color: #333; }
+.anbk-modal-body { padding: 30px; }
+.anbk-grid-nomor { display: grid; grid-template-columns: repeat(10, 1fr); gap: 8px; }
+.anbk-no-box { border: 1px solid #94a3b8; background: white; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 0.95rem; cursor: pointer; border-radius: 4px; color: #333; transition: 0.2s; }
+.anbk-no-box:hover { border-color: #0058c6; }
+.anbk-no-box.answered { background: #0058c6; color: white; border-color: #0058c6; }
+.anbk-no-box.flagged { background: #f59e0b; color: white; border-color: #f59e0b; }
+
+/* Modal Konfirmasi Umum */
+.modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; }
+.modal-backdrop.show { display: flex; }
+.modal-content { background: white; padding: 30px; border-radius: 12px; text-align: center; max-width: 420px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+.modal-content h3 { margin: 0 0 15px 0; color: #0058c6; font-size: 1.4rem;}
+.modal-buttons { display: flex; gap: 10px; justify-content: center; margin-top: 25px; }
+.modal-buttons button { flex: 1; padding: 12px 20px; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.2s; }
+
+/* Halaman Hasil Ujian */
+.result-screen { display: none; background: white; margin: 40px auto; max-width: 600px; padding: 50px; border-radius: 16px; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-top: 8px solid #0058c6;}
+.result-screen.show { display: block; }
+
+@media(max-width: 1024px) {
+    .anbk-header-text h1 { font-size: 1rem; }
+    .anbk-split-content { grid-template-columns: 1fr; }
+    .anbk-split-content::after { display: none; }
+    .anbk-nav-bottom { flex-direction: column; gap: 15px; }
+    .anbk-nav-bottom button { width: 100%; justify-content: center; }
+}
+/* =========================================
+           STYLING POP-UP MODAL ELEGAN (SES-UI)
+           ========================================= */
+        .ses-modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 99999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            padding: 20px;
+        }
+        .ses-modal-backdrop.show {
+            opacity: 1;
+        }
+        .ses-modal-box {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            border-radius: 16px;
+            padding: 35px 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            border-top: 6px solid var(--ses-blue);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        .ses-modal-backdrop.show .ses-modal-box {
+            transform: translateY(0);
+        }
+        .ses-modal-box h3 {
+            margin: 0 0 12px 0;
+            color: #0f172a;
+            font-size: 1.3rem;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+        }
+        .ses-modal-box p {
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        /* =========================================================
+   STYLING TABEL SOAL KATEGORI (BERGARIS & WARNA SOFT)
+   ========================================================= */
+.tf-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background: #ffffff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.tf-table th, .tf-table td {
+    border: 1px solid #cbd5e1; /* Garis tepi tabel yang rapi */
+    padding: 12px 15px;
+    vertical-align: middle;
+}
+
+/* Warna soft pada header tabel (Biru muda lembut khas SES) */
+.tf-table th {
+    background: #f0f7ff; 
+    color: var(--ses-blue-dark);
+    font-weight: 800;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Efek selang-seling warna soft pada baris tabel agar mudah dibaca */
+.tf-table tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.tf-table tbody tr:hover {
+    background-color: #f1f5f9;
+}
+
+.tf-table td.choice {
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tf-table td.choice:hover {
+    background-color: #e0effe;
+}
+/* =========================================================
+           FIX: ANTI HURUF TERPOTONG & IKON ELASTIS (DINAMIS EM)
+           ========================================================= */
+        
+        /* 1. Mencegah huruf terpotong aneh (seperti Digita-l) */
+        .anbk-soal-card, .anbk-kiri, .anbk-kanan, #questionText, #answerArea {
+            word-break: normal !important;
+            overflow-wrap: break-word !important;
+            white-space: normal !important;
+        }
+
+        /* 2. Ikon Bulat & Centang Otomatis Mengikuti Ukuran Font (A A A) */
+        .anbk-opsi-item input[type="radio"],
+        .anbk-opsi-item input[type="checkbox"],
+        .tf-table input[type="radio"] {
+            /* Satuan 'em' membuat ikon otomatis membesar proporsional dengan teks sebelahnya */
+            width: 1.3em !important;
+            height: 1.3em !important;
+            margin-top: 0.15em !important; /* Presisi sejajar teks */
+            flex-shrink: 0 !important; /* Mencegah ikon berubah gepeng lonjong */
+            cursor: pointer;
+            accent-color: var(--ses-blue);
+            transform: none !important;
+        }
+
+        /* Khusus di dalam tabel agar ikon berada di tengah */
+        .tf-table input[type="radio"] {
+            margin: auto !important;
+            display: block;
+        }
+</style>
+</head>
+<body>
+
+<!-- 1. HEADER BIRU SES BRANDING -->
+<header class="anbk-header">
+    <div class="anbk-logo-area">
+        <!-- Background Putih Rounded untuk Logo -->
+        <div class="logo-wrapper">
+            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo SES" class="anbk-logo-img">
+        </div>
+        <div class="anbk-header-text">
+            <h1>LKP DAN BIMBEL SMART EDUCATION SOLUTION</h1>
+            <p>APLIKASI TRY OUT TKA</p>
+        </div>
+    </div>
+    
+    <div class="anbk-peserta-top">
+        <span id="displayBarcodeTop">TKA-0000</span> - <span id="displayNamaTop">Memuat Nama...</span>
+        <i class="fas fa-user-circle"></i>
+    </div>
+</header>
+
+<!-- 2. KONTEN UTAMA (KARTU SOAL) -->
+<main class="anbk-main-container" id="mainContainer">
+    
+    <div class="anbk-soal-card" id="examLayout">
+        
+        <!-- Header Dalam Kartu Soal -->
+        <div class="anbk-card-header">
+            <div class="anbk-soal-info">
+                <h2 id="qNumber">Soal nomor 1</h2>
+                <div class="anbk-font-sizer">
+                    Ukuran font soal: 
+                    <span onclick="ubahUkuranFont('kecil')">A</span> 
+                    <span onclick="ubahUkuranFont('normal')">A</span> 
+                    <span onclick="ubahUkuranFont('besar')">A</span>
+                </div>
+            </div>
+            
+            <div class="anbk-tools-right">
+                <div class="anbk-tools-buttons">
+                    <button class="btn-info-soal" onclick="tampilkanInfoSoal()"><i class="fas fa-info-circle"></i> INFORMASI SOAL</button>
+                    <div class="anbk-timer"><i class="fas fa-clock" style="color: #f59e0b; margin-right: 5px;"></i> Sisa Waktu : <span id="countdownTimer">90:00</span></div>
+                    <button class="btn-daftar-soal" onclick="bukaDaftarSoal()"><i class="fas fa-th-large"></i> Daftar Soal</button>
+                </div>
+                <div class="anbk-mapel-text" id="infoMapelPaket">Memuat Mata Pelajaran...</div>
+            </div>
+        </div>
+
+        <!-- Area Wacana & Pertanyaan -->
+        <div class="anbk-split-content">
+            <!-- Kiri: Wacana / Teks Soal -->
+            <div class="anbk-kiri">
+                <p class="question-text" id="questionText">Memuat wacana soal...</p>
+                <img id="questionImage" src="" alt="Gambar Soal" style="max-width: 100%; border-radius: 8px; margin-top: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); display: none;">
+            </div>
+            
+            <!-- Kanan: Opsi Jawaban (Render Dinamis lewat JS) -->
+            <div class="anbk-kanan">
+                <div id="answerArea">
+                    <!-- Opsi jawaban akan di-inject ke sini oleh ujian.js -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Tombol Navigasi Bawah -->
+        <div class="anbk-nav-bottom">
+            <button class="btn-anbk-prev" id="prevBtn"><i class="fas fa-arrow-left"></i> Soal sebelumnya</button>
+            <button class="btn-anbk-ragu" id="flagBtn"><input type="checkbox" id="chkRagu" style="margin-right:8px; pointer-events:none; accent-color: white;"> Ragu-ragu</button>
+            <button class="btn-anbk-next" id="nextBtn">Soal berikutnya <i class="fas fa-arrow-right"></i></button>
+            <button class="btn-anbk-next" id="finishBtn" style="display:none; background:#10b981;"><i class="fas fa-check-double"></i> Selesai Ujian</button>
+        </div>
+
+    </div>
+
+    <!-- Halaman Hasil Ujian (Disembunyikan saat ujian) -->
+    <section class="result-screen" id="result">
+        <h2 style="color:#0058c6; margin-top:0; font-weight: 800;">UJIAN SELESAI</h2>
+        <h1 style="font-size: 5.5rem; color: #333; margin: 15px 0; font-weight: 900;" id="scoreValue">0</h1>
+        <div id="statusValue" style="display:inline-block; padding:10px 25px; font-weight:bold; border-radius:30px; margin-bottom: 20px;">LULUS</div>
+        
+        <!-- 👇 TAMBAHAN TEKS PESAN DINAMIS BERDASARKAN SKOR 👇 -->
+        <p id="pesanHasilUjian" style="color: #555; font-size: 1.05rem; line-height: 1.6; margin-bottom: 30px; font-weight: 600; padding: 0 20px;">Memuat pesan hasil ujian...</p>
+        
+        <div style="display: flex; gap: 15px; flex-direction: column;">
+            <!-- 👇 TAMBAHAN TOMBOL ANALISIS & PEMBAHASAN 👇 -->
+            <button onclick="bukaPembahasanLengkap()" style="background: #f59e0b; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: bold; transition: 0.2s;"><i class="fas fa-search-plus"></i> Lihat Analisis & Pembahasan</button>
+            
+            <button onclick="window.location.href='siswa.html'" style="background: #0058c6; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: bold; transition: 0.2s;"><i class="fas fa-home"></i> Kembali ke Dashboard</button>
+        </div>
+    </section>
+
+</main>
+
+<!-- MODAL DAFTAR SOAL (POP-UP GRID) -->
+<div class="anbk-modal-overlay" id="modalDaftarSoal">
+    <div class="anbk-modal-box">
+        <div class="anbk-modal-header">
+            <span><i class="fas fa-th-large"></i> Daftar Soal</span>
+            <i class="fas fa-times" style="cursor: pointer; color: #94a3b8; font-size: 1.3rem;" onclick="tutupDaftarSoal()"></i>
+        </div>
+        <div class="anbk-modal-body">
+            <div class="anbk-grid-nomor" id="questionGrid">
+                <!-- Tombol grid angka akan di-inject lewat ujian.js -->
+            </div>
+            
+            <!-- 👇 TAMBAHKAN BARIS INI 👇 -->
+            <div id="answeredInfo" style="text-align: center; margin-top: 15px; font-size: 0.85rem; color: #555; font-weight: bold;">0 dari 0 terjawab.</div>
+            <!-- 👆 SELESAI TAMBAHAN 👆 -->
+            
+        </div>
+    </div>
+</div>
+
+<!-- MODAL KONFIRMASI UMUM -->
+<div class="modal-backdrop" id="confirmModal">
+    <div class="modal-content">
+        <i class="fas fa-question-circle" style="font-size: 3.5rem; color: #f59e0b; margin-bottom: 15px;"></i>
+        <h3>Kumpulkan Ujian?</h3>
+        <p id="confirmText" style="color: #555; line-height: 1.5;">Pastikan semua jawaban sudah terisi. Anda tidak dapat kembali ke soal ujian setelah mengumpulkan.</p>
+        <div class="modal-buttons">
+            <button style="background: #f1f5f9; color: #333; border: 1px solid #cbd5e1;" id="cancelFinish">Batal</button>
+            <button style="background: #10b981; color: white;" id="confirmFinish">Ya, Kumpulkan</button>
+        </div>
+    </div>
+</div>
+
+<!-- INFO SOAL MODAL -->
+<div class="modal-backdrop" id="infoModal">
+    <div class="modal-content">
+        <i class="fas fa-info-circle" style="font-size: 3.5rem; color: #0058c6; margin-bottom: 15px;"></i>
+        <h3 id="infoModalTitle">Informasi Sistem Ujian</h3>
+        <p id="infoModalText" style="font-size: 0.95rem; line-height: 1.6; color: #555;">Platform CBT Simulasi ini dirancang menggunakan standar Asesmen Nasional...</p>
+        <button style="background: #0058c6; color: white; width: 100%; margin-top: 20px; border-radius: 8px; cursor: pointer; border: none; padding: 10px; font-weight: bold;" onclick="document.getElementById('infoModal').classList.remove('show')">Mengerti</button>
+    </div>
+</div>
+
+<!-- 👇 MODAL ANALISIS & PEMBAHASAN LENGKAP (Posisi Benar di Luar Script) 👇 -->
+<div class="anbk-modal-overlay" id="modalPembahasan" style="background: rgba(15, 23, 42, 0.8);">
+    <div class="anbk-modal-box" style="max-width: 900px; height: 85vh; display: flex; flex-direction: column; background: white; border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.3);">
+        <div class="anbk-modal-header" style="background: #0058c6; color: white; border-top-left-radius: 16px; border-top-right-radius: 16px; padding: 20px 25px; border-bottom: none; display: flex; justify-content: space-between; align-items: center;">
+            <span style="color: white; font-weight: 800; font-size: 1.2rem;"><i class="fas fa-file-contract"></i> Analisis Ujian & Pembahasan Lengkap</span>
+            <i class="fas fa-times" style="cursor: pointer; color: white; font-size: 1.5rem;" onclick="document.getElementById('modalPembahasan').classList.remove('show')"></i>
+        </div>
+        <div class="anbk-modal-body" id="isiPembahasanLengkap" style="overflow-y: auto; padding: 30px; flex: 1; background: #f8fafc; text-align: left;">
+            <!-- Konten Pembahasan Akan Di-inject Otomatis oleh JavaScript -->
+        </div>
+    </div>
+</div>
+<!-- 👆 SELESAI TAMBAHAN MODAL PEMBAHASAN 👆 -->
+
+<!-- Script System (Firebase & JS) -->
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+<script src="firebase-config.js"></script>
+<script src="ses-ui.js"></script>
+<script src="ujian.js?v=2" defer></script>
+<script>
+    // Fungsi Pengatur Ukuran Font Soal ANBK (Disempurnakan & Diperbesar Ekstra)
+    function ubahUkuranFont(ukuran) {
+        // Skala Utama (Default) - Sudah diperbesar dari sebelumnya
+        let ukuranKiri = '1.15rem', ukuranKanan = '1.05rem';
+        
+        if (ukuran === 'kecil') { 
+            ukuranKiri = '1rem'; ukuranKanan = '0.95rem'; 
+        } else if (ukuran === 'besar') { 
+            // Skala Besar (Maksimal)
+            ukuranKiri = '1.45rem'; ukuranKanan = '1.35rem'; 
+        }
+        
+        let styleTag = document.getElementById('pengaturanFontDinamis');
+        if (!styleTag) {
+            styleTag = document.createElement('style');
+            styleTag.id = 'pengaturanFontDinamis';
+            document.head.appendChild(styleTag);
+        }
+        
+        // Memaksa seluruh teks ikut membesar, dan menebalkan teks wacana
+        styleTag.innerHTML = `
+            #questionText, #questionText * { 
+                font-size: ${ukuranKiri} !important; 
+                line-height: 1.7 !important;
+                word-break: normal !important; 
+                overflow-wrap: break-word !important;
+                font-weight: 500 !important; /* Membuat teks wacana sedikit lebih tebal/hitam */
+            }
+            #answerArea, .anbk-opsi-text, .anbk-opsi-item span, .tf-table td { 
+                font-size: ${ukuranKanan} !important; 
+                line-height: 1.6 !important;
+            }
+        `;
+    }
+
+    // Modal Controllers
+    function bukaDaftarSoal() { document.getElementById('modalDaftarSoal').classList.add('show'); }
+    function tutupDaftarSoal() { document.getElementById('modalDaftarSoal').classList.remove('show'); }
+    function tampilkanInfoSoal() { document.getElementById('infoModal').classList.add('show'); }
+</script>
+</body>
+</html>

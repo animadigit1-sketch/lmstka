@@ -1,0 +1,171 @@
+/* =========================================================
+   FILE: global.css
+   FUNGSI: Palet Warna Logo SES & Desain Komponen Umum
+   ========================================================= */
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --ses-blue: #0058c6;          
+    --ses-blue-dark: #003780;     
+    --ses-blue-light: #3b82f6;    
+    --ses-gold: #ffaa00;          
+    --ses-gold-dark: #d98a00;     
+    --ses-gold-light: #fcd34d;    
+    
+    --bg-page: #f8fafc;
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    --white: #ffffff;
+    --line: #cbd5e1;
+}
+
+* { 
+    box-sizing: border-box; 
+    font-family: 'Quicksand', sans-serif; 
+    margin: 0; 
+    padding: 0; 
+}
+
+body { 
+    background: var(--bg-page); 
+    color: var(--text-main); 
+    overflow-x: hidden; 
+    -webkit-tap-highlight-color: transparent; 
+    line-height: 1.6;
+}
+
+/* =========================================================
+   NAVBAR (HEADER GLOBAL) - DIPERBARUI FULL EMAS
+   ========================================================= */
+.navbar { 
+    background: rgba(255, 255, 255, 0.96); 
+    backdrop-filter: blur(10px);
+    padding: 14px 6%; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    box-shadow: 0 8px 25px rgba(0, 55, 128, 0.08); 
+    position: sticky; 
+    top: 0; 
+    z-index: 1000; 
+    
+    /* 👇 GARIS TEPI EMAS ATAS & BAWAH MENDATAR PENUH 👇 */
+    border-top: 5px solid var(--ses-gold);
+    border-bottom: 5px solid var(--ses-gold);
+}
+
+.logo-area { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-area img { height: 46px; width: auto; object-fit: contain; transition: transform 0.3s ease; }
+.logo-area:hover img { transform: scale(1.03); }
+.nav-buttons { display: flex; gap: 12px; align-items: center; }
+
+/* =========================================================
+   CUSTOM MODAL & ALERT GLOBAL (SES UI)
+   ========================================================= */
+.ses-modal-backdrop {
+    position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); 
+    backdrop-filter: blur(4px); z-index: 10000; display: flex; 
+    align-items: center; justify-content: center; padding: 20px;
+    opacity: 0; visibility: hidden; transition: 0.3s ease;
+}
+.ses-modal-backdrop.show { opacity: 1; visibility: visible; }
+
+.ses-modal-box {
+    background: var(--white); border-radius: 20px; max-width: 400px; width: 100%; 
+    padding: 35px 25px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+    transform: translateY(20px) scale(0.95); transition: 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    border-top: 6px solid var(--ses-blue);
+}
+.ses-modal-backdrop.show .ses-modal-box { transform: translateY(0) scale(1); }
+
+.ses-modal-box h3 { color: var(--ses-blue-dark); margin: 0 0 10px; font-size: 1.4rem; font-weight: 800;}
+.ses-modal-box p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px; line-height: 1.6; font-weight: 600;}
+
+/* =========================================================
+   TOMBOL STANDAR (BUTTONS)
+   ========================================================= */
+.btn { 
+    padding: 11px 24px; 
+    border-radius: 50px; 
+    font-weight: 800; 
+    text-decoration: none; 
+    font-size: 0.92rem; 
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center;
+    gap: 8px; 
+    border: 2px solid transparent; 
+    cursor: pointer;
+    white-space: nowrap;
+}
+.btn-outline { color: var(--ses-blue); border-color: rgba(0, 88, 198, 0.3); background: #f0f7ff; }
+.btn-outline:hover { border-color: var(--ses-blue); background: #e0effe; transform: translateY(-2px); }
+.btn-primary { background: linear-gradient(135deg, var(--ses-blue) 0%, var(--ses-blue-dark) 100%); color: var(--white); box-shadow: 0 6px 18px rgba(0, 88, 198, 0.28); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0, 88, 198, 0.4); }
+.btn-gold { background: linear-gradient(135deg, #ffba08 0%, var(--ses-gold) 100%); color: #0f172a; box-shadow: 0 8px 22px rgba(255, 170, 0, 0.38); }
+.btn-gold:hover { background: linear-gradient(135deg, var(--ses-gold) 0%, var(--ses-gold-dark) 100%); color: var(--white); transform: translateY(-3px); box-shadow: 0 12px 28px rgba(255, 170, 0, 0.5); }
+
+/* =========================================================
+   TOAST NOTIFIKASI
+   ========================================================= */
+#toast { 
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px); 
+    background: #10b981; color: white; padding: 12px 30px; border-radius: 50px; 
+    font-weight: 800; box-shadow: 0 10px 25px rgba(0,0,0,0.2); opacity: 0; 
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 1000; 
+}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+#toast.error { background: #ef4444; }
+
+/* =========================================================
+   FOOTER STANDAR
+   ========================================================= */
+.footer { 
+    background: var(--white); padding: 35px 20px; text-align: center; 
+    color: var(--text-muted); font-weight: 700; font-size: 0.9rem; 
+    border-top: 4px solid var(--ses-blue); position: relative;
+}
+.footer span { color: var(--ses-blue); font-weight: 800; }
+
+/* =========================================================
+   RESPONSIVE DESIGN GLOBAL
+   ========================================================= */
+@media (max-width: 768px) {
+    .navbar { padding: 12px 18px; }
+    .logo-area img { height: 34px; } 
+    .nav-buttons { gap: 8px; }
+    .nav-buttons .btn-outline { padding: 8px 14px; font-size: 0.8rem; }
+    .nav-buttons .btn-primary { padding: 8px 16px; font-size: 0.82rem; }
+}
+@media (max-width: 420px) {
+    .nav-buttons .btn-outline { display: none; }
+}
+/* =========================================================
+   FOOTER STANDAR (DIUBAH MENJADI PATEN/FIXED WARNA BIRU)
+   ========================================================= */
+.footer { 
+    background: var(--ses-blue); /* Warna dasar biru SES */
+    padding: 12px 20px; 
+    text-align: center; 
+    color: var(--white); /* Teks menjadi putih agar kontras */
+    font-weight: 600; 
+    font-size: 0.85rem; 
+    border-top: 4px solid var(--ses-gold); /* Garis batas atas kuning emas */
+    position: fixed; /* Membuatnya paten/menempel */
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    box-shadow: 0 -5px 15px rgba(0, 55, 128, 0.15);
+    line-height: 1.6;
+}
+
+.footer span { color: var(--ses-gold-light); font-weight: 800; }
+
+/* Tambahkan bantalan di bawah body agar konten paling bawah 
+   tidak bersembunyi di balik footer yang paten */
+body {
+    padding-bottom: 75px; 
+}

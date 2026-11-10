@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Tryout TKA LMS SES</title>
+    <!-- Icon FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Library Chart.js untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- PANGGILAN MATHJAX UNTUK RUMUS MATEMATIKA -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- PANGGILAN KE CSS GLOBAL -->
+    <link rel="stylesheet" href="global.css">
+    
+    <style>
+        /* =========================================================
+           EFEK BERKEDIP UNTUK INDIKATOR LIVE SCORE
+           ========================================================= */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* =========================================================
+           CSS KHUSUS DASHBOARD ADMIN
+           ========================================================= */
+        body { 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden; 
+            background: #f0f4f8; 
+            padding-bottom: 0 !important; /* Menetralkan efek dari global.css */
+            margin: 0;
+        }
+        
+        /* ---------------------------------------------------------
+           1. LAYAR LOGIN ADMIN
+           --------------------------------------------------------- */
+        .login-screen { position: fixed; inset: 0; background: #f0f4f8; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .login-box { background: #fff; width: 100%; max-width: 420px; border-radius: 16px; padding: 40px 30px; box-shadow: 0 15px 35px rgba(0, 55, 128, 0.08); text-align: center; border-top: 6px solid var(--ses-blue); border-bottom: 6px solid var(--ses-gold); }
+        .login-box img { height: 55px; margin-bottom: 20px; object-fit: contain; }
+        .login-box h2 { color: var(--ses-blue-dark); margin: 0 0 5px 0; font-weight: 800; font-size: 1.4rem;}
+        .login-box p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 25px; font-weight: 600; }
+        .form-control-login { width: 100%; padding: 14px 15px; border: 2px solid #cbd5e1; border-radius: 10px; margin-bottom: 15px; font-size: 1rem; outline: none; font-weight: 600; text-align: center; background: #f8fafc; transition: 0.3s; }
+        .form-control-login:focus { border-color: var(--ses-blue); background: #fff; }
+        .btn-login { width: 100%; padding: 15px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--ses-blue) 0%, var(--ses-blue-dark) 100%); color: white; font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+        .btn-login:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 88, 198, 0.3); }
+
+        /* ---------------------------------------------------------
+           2. SIDEBAR ADMIN
+           --------------------------------------------------------- */
+        .sidebar { width: 270px; background: var(--ses-blue); display: flex; flex-direction: column; z-index: 10; box-shadow: 4px 0 15px rgba(0,0,0,0.05); border-right: 5px solid var(--ses-gold); }
+        .logo-area { background: var(--white); margin: 20px 15px; padding: 15px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); display: flex; justify-content: center; align-items: center; }
+        .logo-area img { height: 40px; width: auto; object-fit: contain; display: block; }
+        
+        .nav-menu { list-style: none; padding: 10px 0; margin: 0; flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+        .nav-menu li { margin: 4px 15px; padding: 12px 15px; cursor: pointer; font-weight: 700; color: rgba(255, 255, 255, 0.85); border-radius: 8px; transition: 0.3s; display: flex; align-items: center; gap: 12px; font-size: 0.95rem; letter-spacing: 0.3px; }
+        .nav-menu li i { font-size: 1.1rem; width: 25px; text-align: center; transition: 0.3s;}
+        .nav-menu li:hover { background: rgba(255, 255, 255, 0.1); color: var(--white); }
+        .nav-menu li.active { background: rgba(255, 255, 255, 0.15); color: var(--ses-gold); }
+        .nav-menu li.active i { color: var(--ses-gold); }
+        /* ---------------------------------------------------------
+           TOMBOL LOGOUT MERAH (TERKUNCI DI POJOK BAWAH SIDEBAR)
+           --------------------------------------------------------- */
+        .nav-menu li.menu-logout { 
+            margin-top: auto !important; /* Memaksa tombol terdorong penuh ke bawah */
+            margin-bottom: 20px !important; 
+            background: #ef4444; 
+            color: white !important; 
+            justify-content: center; 
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+            border: 2px solid #ef4444;
+        }
+        .nav-menu li.menu-logout:hover { 
+            background: #dc2626 !important; 
+            border-color: #dc2626;
+            transform: translateY(-2px);
+        }
+        .nav-menu li.menu-logout i { color: white !important; }
+
+        /* ---------------------------------------------------------
+           FOOTER KHUSUS HALAMAN ADMIN
+           --------------------------------------------------------- */
+        .admin-footer {
+            background: var(--white);
+            padding: 15px 30px;
+            text-align: center;
+            border-top: 1px dashed #cbd5e1;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            font-weight: 600;
+            z-index: 5;
+            line-height: 1.6;
+        }
+        .admin-footer strong { color: var(--ses-blue-dark); font-size: 0.9rem; }
+
+        /* ---------------------------------------------------------
+           3. MAIN CONTENT & KOMPONEN
+           --------------------------------------------------------- */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .topbar { background: var(--white); padding: 18px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.03); display: flex; justify-content: space-between; align-items: center; z-index: 5; }
+        .topbar h3 { margin: 0; font-size: 1.3rem; color: var(--ses-blue-dark); font-weight: 800; }
+        .admin-profile { display: flex; align-items: center; gap: 10px; font-weight: 700; color: var(--text-muted); }
+        .admin-profile i { font-size: 1.8rem; color: var(--ses-blue); }
+
+        .content-area { flex: 1; padding: 30px; overflow-y: auto; }
+        .view-section { display: none; animation: fadeIn 0.3s ease; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .panel { background: var(--white); padding: 25px; border-radius: 16px; box-shadow: 0 5px 20px rgba(0, 55, 128, 0.04); margin-bottom: 25px; border: 1px solid #e2e8f0; }
+        .panel-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #e2e8f0; }
+        .panel-header h2 { margin: 0; color: var(--ses-blue-dark); font-size: 1.4rem; font-weight: 800; }
+        .panel-header i { font-size: 1.8rem; color: var(--ses-gold); }
+
+        .table-data { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .table-data th, .table-data td { padding: 15px; border-bottom: 1px solid #e2e8f0; text-align: left; vertical-align: middle; }
+        .table-data th { background: #f8fafc; font-weight: 800; color: var(--ses-blue-dark); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+        .table-data tr:hover td { background: #f8fafc; }
+        
+        .avatar-img { width: 45px; height: 45px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ses-blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .td-user { display: flex; align-items: center; gap: 12px; }
+
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+        .badge-warning { background: #fffbeb; color: #b45309; border: 1px solid #fde68a; }
+        .badge-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+        
+        .btn { padding: 10px 18px; border: none; border-radius: 8px; cursor: pointer; font-weight: 700; font-size: 0.85rem; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-primary { background: var(--ses-blue); color: white; } .btn-primary:hover { background: var(--ses-blue-dark); }
+        .btn-success { background: #10b981; color: white; } .btn-success:hover { background: #059669; }
+        .btn-danger { background: #ef4444; color: white; } .btn-danger:hover { background: #dc2626; }
+        .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: var(--ses-blue-dark); } .btn-outline:hover { background: #f8fafc; border-color: var(--ses-blue); color: var(--ses-blue); }
+        
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 800; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-main); }
+        .form-control { width: 100%; padding: 12px 15px; border: 2px solid #cbd5e1; border-radius: 8px; font-family: inherit; font-size: 0.95rem; font-weight: 600; outline: none; transition: 0.3s; background: #f8fafc;}
+        .form-control:focus { border-color: var(--ses-blue); background: #fff; box-shadow: 0 0 0 3px rgba(0,88,198,0.1); }
+        .hidden { display: none !important; }
+        /* Efek Menyala untuk Tombol Toolbar Format Teks */
+        .btn-outline.active-format {
+            background-color: var(--ses-blue) !important;
+            color: white !important;
+            border-color: var(--ses-blue) !important;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.2) !important;
+            transform: scale(0.95);
+        }
+
+        /* =========================================================
+           DASHBOARD CARD STYLES (FULL COLOUR & ANIMASI HOVER)
+           ========================================================= */
+        .dash-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        
+        .dash-card { 
+            padding: 25px; 
+            border-radius: 16px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08); 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; 
+            transition: transform 0.3s ease, box-shadow 0.3s ease; 
+            position: relative; 
+            overflow: hidden; 
+            color: white; 
+            z-index: 1;
+            border: none;
+        }
+
+        .card-red { background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); }
+        .card-blue { background: linear-gradient(135deg, var(--ses-blue-light) 0%, var(--ses-blue-dark) 100%); }
+        .card-green { background: linear-gradient(135deg, #10b981 0%, #047857 100%); }
+        .card-gold { background: linear-gradient(135deg, var(--ses-gold) 0%, #b45309 100%); }
+        .card-purple { background: linear-gradient(135deg, #8b5cf6 0%, #5b21b6 100%); }
+        .card-teal { background: linear-gradient(135deg, #14b8a6 0%, #0f766e 100%); }
+        .card-pink { background: linear-gradient(135deg, #f43f5e 0%, #be123c 100%); }
+
+        .dash-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.15); 
+            border-radius: 50%;
+            z-index: -1; 
+            transition: transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+        
+        .dash-card:hover { transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0,0,0,0.15); }
+        .dash-card:hover::before { transform: scale(10); } 
+
+        .dc-icon { 
+            width: 60px; height: 60px; border-radius: 14px; 
+            display: flex; justify-content: center; align-items: center; 
+            font-size: 1.8rem; flex-shrink: 0; 
+            background: rgba(255, 255, 255, 0.25); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .dc-text h3 { margin: 0; font-size: 2.2rem; color: white; font-weight: 800; line-height: 1; }
+        .dc-text p { margin: 5px 0 0; font-size: 0.85rem; color: rgba(255,255,255,0.9); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;}
+        /* =========================================================
+           LAYOUT DUA KOLOM UNTUK STUDIO BANK SOAL
+           ========================================================= */
+        .studio-layout { 
+            display: grid; 
+            grid-template-columns: 1.3fr 1fr; /* Kolom kiri (form) sedikit lebih lebar dari kolom kanan (tabel) */
+            gap: 25px; 
+            align-items: start; 
+        }
+        @media(max-width: 1100px) { 
+            .studio-layout { grid-template-columns: 1fr; } /* Menjadi 1 kolom bertumpuk di layar sempit/tablet */
+        }
+
+        /* =========================================================
+           TAMBAHAN: GRID DASHBOARD, FEED, & MINI LEADERBOARD
+           ========================================================= */
+        .dash-grid { display: grid; grid-template-columns: 2fr 1fr; gap: 25px; margin-bottom: 30px; }
+        @media(max-width: 900px) { .dash-grid { grid-template-columns: 1fr; } }
+        
+        .feed-list { list-style: none; padding: 0; margin: 0; }
+        .feed-item { display: flex; gap: 15px; padding: 15px 0; border-bottom: 1px dashed #e2e8f0; align-items: center;}
+        .feed-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .feed-icon { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; flex-shrink: 0; font-size: 1.1rem; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .feed-text h4 { margin: 0; font-size: 0.95rem; color: var(--text-main); font-weight: 800; }
+        .feed-text p { margin: 3px 0 0; font-size: 0.82rem; color: var(--text-muted); font-weight: 600; }
+        .feed-time { margin-left: auto; font-size: 0.75rem; color: #94a3b8; font-weight: 700; background: #f1f5f9; padding: 4px 8px; border-radius: 12px; }
+
+        .mini-lb { width: 100%; border-collapse: collapse; }
+        .mini-lb td { padding: 12px 10px; border-bottom: 1px solid #f8fafc; vertical-align: middle; }
+        .lb-rank { font-weight: 900; font-size: 1.3rem; color: #cbd5e1; text-align: center; width: 40px; }
+        .lb-rank.gold { color: #fbbf24; text-shadow: 0 2px 5px rgba(251,191,36,0.4); font-size: 1.6rem; }
+        .lb-rank.silver { color: #94a3b8; text-shadow: 0 2px 5px rgba(148,163,184,0.4); font-size: 1.4rem; }
+        .lb-rank.bronze { color: #b45309; text-shadow: 0 2px 5px rgba(180,83,9,0.4); font-size: 1.3rem; }
+        .lb-name { font-weight: 800; color: var(--ses-blue-dark); font-size: 0.95rem; display: block; }
+        .lb-school { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; }
+        .lb-score-box { background: #dcfce7; color: #166534; padding: 5px 10px; border-radius: 8px; font-weight: 900; font-size: 0.9rem; text-align: center; border: 1px solid #bbf7d0; }
+        /* =========================================================
+           CSS KHUSUS CETAK (PRINT PDF) REKAP & KEUANGAN
+           ========================================================= */
+        @media print {
+            body { background: white !important; }
+            .sidebar, .topbar, .admin-footer, .btn, .panel-header, .hide-on-print { display: none !important; }
+            .main-content { margin: 0 !important; padding: 0 !important; }
+            .content-area { padding: 0 !important; overflow: visible !important; }
+            
+            /* Sembunyikan panel yang tidak aktif */
+            .view-section { display: none !important; }
+            #view-rekap.active, #view-keuangan.active { display: block !important; }
+            
+            #areaCetakRekap, #areaCetakKeuangan { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; }
+            
+            .table-data th { background-color: #f1f5f9 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .table-data td, .table-data th { border: 1px solid #cbd5e1 !important; padding: 10px !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LAYAR LOGIN ADMIN -->
+    <div class="login-screen" id="adminLoginScreen">
+        <div class="login-box">
+            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo SES">
+            <h2>DASHBOARD ADMIN</h2>
+            <p>Masukkan kredensial keamanan Anda.</p>
+            <form onsubmit="prosesLoginAdmin(event)">
+                <input type="text" id="adminUser" class="form-control-login" placeholder="Username Admin" required autocomplete="off">
+                <div style="position: relative;">
+                    <input type="password" id="adminPass" class="form-control-login" placeholder="Kata Sandi" required>
+                    <i class="fas fa-eye" id="iconMataAdmin" onclick="togglePasswordAdmin()" style="position: absolute; right: 15px; top: 38%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); font-size: 1.2rem;"></i>
+                </div>
+                <button type="submit" class="btn-login"><i class="fas fa-shield-alt"></i> Masuk Panel</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STRUKTUR UTAMA DASHBOARD -->
+    <aside class="sidebar">
+        <div class="logo-area">
+            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo SES">
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="active" onclick="gantiMenu('dashboard', this)"><i class="fas fa-home"></i> Dashboard Utama</li>
+            
+            <li onclick="gantiMenu('validasi', this)">
+                <i class="fas fa-clipboard-check"></i> Validasi Pendaftar
+                <span id="badgeAntrean" style="background: #ef4444; color: white; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; margin-left: auto; display: none; font-weight: 800; box-shadow: 0 2px 5px rgba(239,68,68,0.3);">0</span>
+            </li>
+            <li onclick="gantiMenu('peserta', this)"><i class="fas fa-users"></i> Data Peserta Aktif</li>
+            <li onclick="gantiMenu('paket', this)"><i class="fas fa-box-open"></i> Manajemen Paket</li>
+            <li onclick="gantiMenu('studio', this)"><i class="fas fa-laptop-code"></i> Studio Bank Soal</li>
+            <li onclick="gantiMenu('rekap', this)"><i class="fas fa-clipboard-list"></i> Rekap Nilai Siswa</li>
+            <li onclick="gantiMenu('analisisSoal', this)"><i class="fas fa-chart-bar"></i> Analisis Butir Soal</li>
+            <li onclick="gantiMenu('keuangan', this)"><i class="fas fa-wallet"></i> Arus Kas Keuangan</li>
+            <li onclick="gantiMenu('gambar', this)"><i class="fas fa-images"></i> Manajemen Gambar</li>
+            
+            <li class="menu-logout" onclick="window.location.reload()"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <h3><i class="fas fa-bars" style="margin-right: 10px; color: var(--text-muted);"></i> Control Panel Utama</h3>
+            <div class="admin-profile">
+                <!-- Ikon Lonceng Notifikasi -->
+                <div style="position: relative; margin-right: 20px; cursor: pointer;" onclick="document.querySelector('.nav-menu li:nth-child(2)').click()">
+                    <i class="fas fa-bell" style="font-size: 1.4rem; color: var(--text-muted); transition: 0.3s;" onmouseover="this.style.color='var(--ses-blue)'" onmouseout="this.style.color='var(--text-muted)'"></i>
+                    <span id="loncengBadge" style="position: absolute; top: -6px; right: -8px; background: #ef4444; color: white; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 50%; border: 2px solid white; display: none; box-shadow: 0 2px 4px rgba(239,68,68,0.4);">0</span>
+                </div>
+
+                <span>Halo, <strong>Admin SES</strong></span>
+                <i class="fas fa-user-circle"></i>
+            </div>
+        </header>
+
+        <div class="content-area">
+            
+            <!-- 👇 VIEW: DASHBOARD UTAMA 👇 -->
+            <div id="view-dashboard" class="view-section active">
+                <div style="margin-bottom: 25px;">
+                    <h2 style="color: var(--ses-blue-dark); font-weight: 800; margin-bottom: 5px; font-size: 1.8rem;">Selamat Datang, Admin! 👋</h2>
+                    <p style="color: var(--text-muted); font-weight: 600; font-size: 1rem;">Berikut adalah ringkasan aktivitas platform Tryout Nasional Anda hari ini.</p>
+                </div>
+                <!-- 👇 PANEL KONTROL DARURAT UJIAN (MASTER SWITCH) 👇 -->
+                        <div class="panel" style="padding: 20px; border-top: 5px solid #ef4444; background: #fff5f5;">
+                            <div class="panel-header" style="margin-bottom: 15px; padding-bottom: 10px; border-bottom-color: #fecaca;">
+                                <i class="fas fa-satellite-dish" style="color: #ef4444;"></i>
+                                <h2 style="font-size: 1.2rem; color: #991b1b;">Kontrol Darurat Ujian (Master Switch)</h2>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #7f1d1d; margin-bottom: 15px; font-weight: 600;">Gunakan tombol darurat ini untuk membuka atau menutup paksa seluruh sesi ujian *offline* di HP peserta secara instan (mengabaikan jadwal jam otomatis).</p>
+                            
+                            <div style="display: flex; gap: 10px;">
+                                <button type="button" onclick="ubahStatusDarurat('BUKA_PAKSA')" class="btn" style="flex: 1; background: #10b981; color: white; justify-content: center; padding: 12px; font-size: 0.95rem; font-weight: 800;">
+                                    <i class="fas fa-lock-open"></i> BUKA PAKSA SEMUA
+                                </button>
+                                <button type="button" onclick="ubahStatusDarurat('NORMAL')" class="btn" style="flex: 1; background: #64748b; color: white; justify-content: center; padding: 12px; font-size: 0.95rem; font-weight: 800;">
+                                    <i class="fas fa-undo"></i> Reset ke Jadwal
+                                </button>
+                                <button type="button" onclick="ubahStatusDarurat('TUTUP_PAKSA')" class="btn" style="flex: 1; background: #ef4444; color: white; justify-content: center; padding: 12px; font-size: 0.95rem; font-weight: 800;">
+                                    <i class="fas fa-lock"></i> KUNCI / TUTUP
+                                </button>
+                            </div>
+                        </div>
+                        <!-- 👆 SELESAI PANEL KONTROL DARURAT 👆 -->
+
+                <!-- BARIS 1: STATISTIK AKADEMIK & USER -->
+                <h3 style="font-size: 1.15rem; color: var(--ses-blue-dark); margin-bottom: 15px;"><i class="fas fa-user-graduate"></i> Statistik Akademik</h3>
+                <div class="dash-summary" style="margin-bottom: 25px;">
+                    <div class="dash-card card-red">
+                        <div class="dc-icon"><i class="fas fa-user-clock"></i></div>
+                        <div class="dc-text"><h3 id="dashCountAntrean">0</h3><p>Antrean Baru</p></div>
+                    </div>
+                    <div class="dash-card card-blue">
+                        <div class="dc-icon"><i class="fas fa-users"></i></div>
+                        <div class="dc-text"><h3 id="dashCountPeserta">0</h3><p>Peserta Aktif</p></div>
+                    </div>
+                    <div class="dash-card card-purple">
+                        <div class="dc-icon"><i class="fas fa-laptop-code"></i></div>
+                        <div class="dc-text"><h3 id="dashCountBelumUjian">0</h3><p>Belum Ujian</p></div>
+                    </div>
+                    <div class="dash-card card-gold">
+                        <div class="dc-icon"><i class="fas fa-database"></i></div>
+                        <div class="dc-text"><h3 id="dashCountSoal">0</h3><p>Bank Soal</p></div>
+                    </div>
+                </div>
+
+                <!-- BARIS 2: STATISTIK KEUANGAN -->
+                <h3 style="font-size: 1.15rem; color: var(--ses-blue-dark); margin-bottom: 15px;"><i class="fas fa-wallet"></i> Arus Kas Keuangan</h3>
+                <div class="dash-summary">
+                    <div class="dash-card card-teal">
+                        <div class="dc-icon"><i class="fas fa-arrow-down"></i></div>
+                        <div class="dc-text"><h3 id="dashCountPemasukan" style="font-size: 1.4rem;">Rp 0</h3><p>Pemasukan</p></div>
+                    </div>
+                    <div class="dash-card card-pink">
+                        <div class="dc-icon"><i class="fas fa-arrow-up"></i></div>
+                        <div class="dc-text"><h3 id="dashCountPengeluaran" style="font-size: 1.4rem;">Rp 0</h3><p>Pengeluaran</p></div>
+                    </div>
+                    <div class="dash-card card-green">
+                        <div class="dc-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="dc-text"><h3 id="dashCountSaldo" style="font-size: 1.4rem;">Rp 0</h3><p>Saldo Akhir</p></div>
+                    </div>
+                </div>
+
+                <!-- GRID LAYOUT DASHBOARD -->
+                <div class="dash-grid">
+                    <!-- KOLOM KIRI: GRAFIK & AKTIVITAS -->
+                    <div class="dash-col-left">
+                        
+                        <!-- Panel Grafik -->
+                        <div class="panel" style="padding: 20px;">
+                            <div class="panel-header" style="margin-bottom: 10px; padding-bottom: 10px;">
+                                <i class="fas fa-chart-area" style="color: var(--ses-blue);"></i>
+                                <h2 style="font-size: 1.2rem;">Statistik Pendaftar (7 Hari Terakhir)</h2>
+                            </div>
+                            <div style="position: relative; height: 250px; width: 100%;">
+                                <canvas id="trendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Panel Aktivitas Terkini -->
+                        <div class="panel" style="padding: 20px;">
+                            <div class="panel-header" style="margin-bottom: 15px; padding-bottom: 10px;">
+                                <i class="fas fa-history" style="color: var(--ses-gold);"></i>
+                                <h2 style="font-size: 1.2rem;">Log Aktivitas Sistem</h2>
+                            </div>
+                            <ul class="feed-list" id="activityFeed">
+                                <li style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat aktivitas...</li>
+                            </ul>
+                        </div>
+
+                        <!-- 👇 PANEL SIARAN PENGUMUMAN LKP (DITEMPEL DI SINI) 👇 -->
+                        <div class="panel" style="padding: 20px; border-top: 5px solid var(--ses-blue);">
+                            <div class="panel-header" style="margin-bottom: 15px; padding-bottom: 10px;">
+                                <i class="fas fa-broadcast-tower" style="color: var(--ses-blue);"></i>
+                                <h2 style="font-size: 1.2rem;">Siarkan Pengumuman ke Siswa</h2>
+                            </div>
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; font-weight: 600;">Teks yang Anda ketik di bawah ini akan otomatis mengganti papan pengumuman di dashboard seluruh siswa secara real-time.</p>
+                            
+                            <textarea id="inputPengumumanAdmin" rows="3" class="form-control" placeholder="Ketik info tryout atau pengumuman bimbel di sini..." style="resize: vertical; margin-bottom: 15px;"></textarea>
+                            
+                            <button type="button" onclick="siarkanPengumuman()" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 1rem;">
+                                <i class="fas fa-paper-plane"></i> Kirim & Siarkan Pengumuman
+                            </button>
+                        </div>
+                        <!-- 👆 SELESAI PANEL PENGUMUMAN 👆 -->
+
+                    </div> <!-- PENUTUP KOLOM KIRI -->
+
+                    <!-- KOLOM KANAN: LEADERBOARD & SHORTCUT -->
+                    <div class="dash-col-right">
+                        
+                        <!-- Panel Mini Leaderboard (Dengan Filter) -->
+                        <div class="panel" style="padding: 20px; background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);">
+                            <div class="panel-header" style="margin-bottom: 10px; padding-bottom: 10px; border-bottom-color: #cbd5e1; flex-direction: column; align-items: flex-start; gap: 10px;">
+                                <div style="display: flex; gap: 10px; align-items: center; width: 100%;">
+                                    <i class="fas fa-trophy" style="color: #fbbf24;"></i>
+                                    <h2 style="font-size: 1.2rem; margin: 0;">Top 3 Peserta</h2>
+                                </div>
+                                
+                                <!-- 👇 FILTER LENGKAP: Paket, Tipe Akun, & Mapel 👇 -->
+                                <div style="display: flex; gap: 5px; width: 100%; flex-wrap: wrap;">
+                                    <select id="filterDashLBPaket" class="form-control" style="flex: 1; min-width: 110px; font-size: 0.75rem; padding: 6px; border-color: var(--ses-blue);" onchange="muatMiniLeaderboard()">
+                                        <option value="">Semua Paket</option>
+                                    </select>
+                                    <select id="filterDashLBTipe" class="form-control" style="flex: 1; min-width: 100px; font-size: 0.75rem; padding: 6px; border-color: var(--ses-gold);" onchange="muatMiniLeaderboard()">
+                                        <option value="">Semua Akun</option>
+                                        <option value="Ultimate">👑 Ultimate</option>
+                                        <option value="Pro">🥈 Pro</option>
+                                        <option value="Basic">🥉 Basic</option>
+                                    </select>
+                                    <select id="filterDashLBMapel" class="form-control" style="flex: 1; min-width: 130px; font-size: 0.75rem; padding: 6px; border-color: #10b981;" onchange="muatMiniLeaderboard()">
+                                        <option value="">Semua Mapel (Gabungan)</option>
+                                        <option value="Matematika">Matematika</option>
+                                        <option value="Bahasa Indonesia">B. Indonesia</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <table class="mini-lb" id="miniLeaderboard">
+                                <tr><td style="text-align: center; color: var(--text-muted); padding: 20px;">Memuat peringkat...</td></tr>
+                            </table>
+                            
+                            <button class="btn btn-outline" style="width: 100%; margin-top: 15px; border-style: dashed;" onclick="document.querySelector('.nav-menu li[onclick*=\'rekap\']').click()">
+                                Lihat Semua Peringkat
+                            </button>
+                        </div>
+
+                        <!-- Panel Shortcut Keuangan -->
+                        <div class="panel" style="padding: 20px; text-align: center;">
+                            <div class="dc-icon" style="background: var(--ses-blue); color: white; margin: 0 auto 15px; font-size: 1.5rem; width: 50px; height: 50px;"><i class="fas fa-wallet"></i></div>
+                            <h3 style="color: var(--ses-blue-dark); font-weight: 800; font-size: 1.1rem; margin: 0 0 10px;">Kelola Keuangan</h3>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;">Catat pemasukan kas atau pengeluaran operasional baru.</p>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-success" style="flex: 1; padding: 10px; font-size: 0.8rem;" onclick="bukaModalKas('masuk')"><i class="fas fa-plus"></i> Pemasukan</button>
+                                <button class="btn btn-danger" style="flex: 1; padding: 10px; font-size: 0.8rem;" onclick="bukaModalKas('keluar')"><i class="fas fa-minus"></i> Pengeluaran</button>
+                            </div>
+                        </div>
+                        
+                    </div> <!-- PENUTUP KOLOM KANAN -->
+                </div>
+                <!-- AKHIR DARI GRID LAYOUT DASHBOARD -->
+                 </div> <!-- 👇 INI DIA YANG HILANG: PENUTUP VIEW-DASHBOARD 👇 -->
+
+            <!-- 👇 MENU-MENU LAINNYA DIKEMBALIKAN DI SINI 👇 -->
+
+            <!-- VIEW: VALIDASI PENDAFTAR -->
+            <div id="view-validasi" class="view-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <i class="fas fa-user-clock"></i>
+                        <h2>Antrean Pendaftar Baru</h2>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table-data">
+                            <thead>
+                                <tr><th>Peserta</th><th>Kontak WA</th><th>Pilihan Tryout</th><th>Status Bayar & Bukti</th><th style="text-align: center;">Aksi</th></tr>
+                            </thead>
+                            <tbody id="tabelAntrean">
+                                <tr><td colspan="5" style="text-align: center; padding: 30px;">Memuat data pendaftar...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: PESERTA AKTIF -->
+            <div id="view-peserta" class="view-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <i class="fas fa-users" style="color: var(--ses-blue);"></i>
+                        <h2>Data Peserta Tryout Aktif</h2>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table class="table-data">
+                            <thead>
+                                <tr><th>ID Login (Username)</th><th>Password</th><th>Nama Peserta</th><th>Asal Sekolah</th><th>No. WA</th></tr>
+                            </thead>
+                            <tbody id="tabelPesertaAktif">
+                                <tr><td colspan="5" style="text-align: center; padding: 30px;">Memuat data...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MANAJEMEN PAKET -->
+            <div id="view-paket" class="view-section">
+                <!-- 👇 Gunakan layout grid dua kolom (sama seperti studio soal) 👇 -->
+                <div class="studio-layout" style="grid-template-columns: 1fr 1.3fr;">
+                    
+                    <!-- ==========================================
+                         KOLOM KIRI: FORM TAMBAH PAKET 
+                         ========================================== -->
+                    <div class="panel" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <i class="fas fa-box-open" style="color: #10b981;"></i>
+                            <h2>Manajemen Paket</h2>
+                        </div>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Tambahkan nama paket dan harga di sini.</p>
+                        
+                        <form id="formPaket" onsubmit="tambahPaket(event)" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                            
+                            <!-- Baris 1: Nama Paket -->
+                            <div class="form-group">
+                                <label>Nama Event / Paket Tryout</label>
+                                <input type="text" id="inputNamaPaket" class="form-control" placeholder="Contoh: Tryout TKA Kelas 6 SD..." required>
+                            </div>
+                            <!-- 👇 TAMBAHKAN BARIS INI: Input Harga Paket 👇 -->
+                            <div class="form-group">
+                                <label><i class="fas fa-money-bill-wave" style="color: #10b981;"></i> Harga Paket (Rp)</label>
+                                <input type="number" id="inputHargaPaket" class="form-control" placeholder="Ketik angka saja, contoh: 50000 (Isi 0 jika gratis)" required>
+                            </div>
+                            
+                            <!-- Baris 2: Kategori / Label Paket -->
+                            <div class="form-group">
+                                <label><i class="fas fa-tags" style="color: var(--ses-blue);"></i> Label / Kategori Paket Soal</label>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0 0 8px; font-weight: 600;">Label ini menentukan siapa saja yang bisa mengakses paket ini berdasarkan level akunnya.</p>
+                                <!-- 👇 TAMBAHKAN onchange DI SINI 👇 -->
+                                <select id="jenisPaketBaru" class="form-control" required style="border-color: var(--ses-blue); border-width: 2px;" onchange="toggleJadwalPaket()">
+                                    <option value="" disabled selected>-- Pilih Label Paket --</option>
+                                    <option value="Basic">🥉 Paket BASIC (Bisa dibuka oleh semua akun)</option>
+                                    <option value="Pro">🥈 Paket PRO (Bisa dibuka oleh akun Pro & Ultimate)</option>
+                                    <option value="Ultimate">👑 Paket ULTIMATE (Hanya bisa dibuka oleh akun Ultimate)</option>
+                                </select>
+                            </div>
+
+                            <!-- Baris 3: Link Thumbnail -->
+                            <div class="form-group" style="margin-top: 18px; margin-bottom: 0;">
+                                <label><i class="fas fa-image" style="color: var(--ses-blue);"></i> Link Gambar Sampul</label>
+                                <input type="url" id="inputThumbnailPaket" class="form-control" placeholder="Tempel link gambar Cloudinary...">
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 5px; margin-bottom: 0;">*Kosongkan jika ingin gambar default.</p>
+                            </div>
+
+                            <!-- 👇 BARIS 4: PENGATURAN WAKTU PER MAPEL (REVISI) 👇 -->
+                            <div id="areaJadwalPaket" class="form-group" style="margin-top: 18px; padding: 15px; background: #fffbeb; border: 1px dashed #f59e0b; border-radius: 8px; display: none; animation: fadeIn 0.3s ease;">
+                                <label style="color: #b45309; font-weight: 900;"><i class="fas fa-clock"></i> Jadwal Ujian Serentak per Mapel</label>
+                                <p style="font-size: 0.8rem; color: #d97706; margin-top: 0; margin-bottom: 12px; font-weight: 600;">Atur jadwal spesifik kapan gembok mapel ini akan terbuka dan tertutup otomatis di HP siswa.</p>
+                                
+                                <!-- Jadwal Matematika -->
+                                <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 6px; margin-bottom: 10px; border-left: 4px solid #3b82f6;">
+                                    <strong style="font-size: 0.85rem; color: #1e3a8a;">📘 MATEMATIKA</strong>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;">
+                                        <div style="flex: 1; min-width: 130px;">
+                                            <label style="font-size: 0.75rem; color: #475569;">Buka Ujian</label>
+                                            <input type="datetime-local" id="inputWaktuMulaiMat" class="form-control" style="font-size: 0.8rem; padding: 8px;">
+                                        </div>
+                                        <div style="flex: 1; min-width: 130px;">
+                                            <label style="font-size: 0.75rem; color: #475569;">Tutup Ujian</label>
+                                            <input type="datetime-local" id="inputWaktuTutupMat" class="form-control" style="font-size: 0.8rem; padding: 8px;">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Jadwal Bahasa Indonesia -->
+                                <div style="background: rgba(255,255,255,0.7); padding: 10px; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                                    <strong style="font-size: 0.85rem; color: #92400e;">📙 BAHASA INDONESIA</strong>
+                                    <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 5px;">
+                                        <div style="flex: 1; min-width: 130px;">
+                                            <label style="font-size: 0.75rem; color: #475569;">Buka Ujian</label>
+                                            <input type="datetime-local" id="inputWaktuMulaiIndo" class="form-control" style="font-size: 0.8rem; padding: 8px;">
+                                        </div>
+                                        <div style="flex: 1; min-width: 130px;">
+                                            <label style="font-size: 0.75rem; color: #475569;">Tutup Ujian</label>
+                                            <input type="datetime-local" id="inputWaktuTutupIndo" class="form-control" style="font-size: 0.8rem; padding: 8px;">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 👆 SELESAI PENGATURAN WAKTU 👆 -->
+                            
+                            <!-- Tombol Simpan & Edit -->
+                            <input type="hidden" id="editIdPaket" value="">
+                            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                                <button type="submit" id="btnSimpanPaket" class="btn btn-primary" style="flex: 1; padding: 13px;">
+                                    <i class="fas fa-plus"></i> Simpan Paket
+                                </button>
+                                <button type="button" id="btnBatalEditPaket" class="btn btn-outline" style="flex: 1; padding: 13px; display: none;" onclick="batalEditPaket()">
+                                    <i class="fas fa-times"></i> Batal Edit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- ==========================================
+                         KOLOM KANAN: TABEL DAFTAR PAKET
+                         ========================================== -->
+                    <div class="panel" style="margin-bottom: 0; position: sticky; top: 20px; border: 1px solid #cbd5e1;">
+                        <div class="panel-header" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom-color: #e2e8f0;">
+                            <i class="fas fa-list" style="color: var(--ses-blue-dark);"></i>
+                            <h2>Daftar Paket Tersedia</h2>
+                        </div>
+                        
+                        <!-- Tabel Diberi Scroll Otomatis (Max Height) agar rapi jika paket banyak -->
+                        <div style="overflow-x: auto; max-height: 500px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <table class="table-data" style="font-size: 0.85rem;">
+                                <thead style="position: sticky; top: 0; z-index: 5;">
+                                    <tr>
+                                        <th>Nama Paket</th>
+                                        <th>Harga Rp</th>
+                                        <th style="text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelPaket">
+                                    <tr><td colspan="3" style="text-align: center; padding: 25px;">Memuat data...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+            <!-- VIEW: STUDIO BANK SOAL -->
+            <div id="view-studio" class="view-section">
+                <div class="studio-layout">
+                    
+                    <!-- ==========================================
+                         KOLOM KIRI: FORM PABRIK SOAL 
+                         ========================================== -->
+                    <div class="panel" style="margin-bottom: 0;">
+                        <div class="panel-header">
+                            <i class="fas fa-cogs" style="color: var(--ses-blue);"></i>
+                            <h2>Pabrik Soal TKA (Standar AKM)</h2>
+                        </div>
+                        
+                        <!-- Pilihan Paket & Mapel dipindah ke atas form agar lebih logis urutannya -->
+                        <div style="display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px dashed #cbd5e1;">
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label><i class="fas fa-box-open" style="color: var(--ses-blue);"></i> Simpan ke Paket</label>
+                                <select id="pilihPaketSoal" class="form-control" required style="border-color: var(--ses-blue);">
+                                    <option value="" disabled selected>Memuat paket...</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                                <label><i class="fas fa-book" style="color: var(--ses-gold-dark);"></i> Mata Pelajaran</label>
+                                <select id="pilihMapelSoal" class="form-control" required style="border-color: var(--ses-gold);">
+                                    <option value="" disabled selected>-- Pilih Mapel --</option>
+                                    <option value="Matematika">Matematika</option>
+                                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <form id="formBankSoal" onsubmit="simpanSoalLMS(event)">
+                            <div style="display: flex; gap: 15px;">
+                                <div class="form-group" style="flex: 1;">
+                                    <label>Tipe Soal TKA</label>
+                                    <select id="tipeSoal" class="form-control" onchange="aturFormSoal()" required style="background: #eff6ff; color: var(--ses-blue-dark);">
+                                        <option value="pg">Pilihan Ganda (PG)</option>
+                                        <option value="multi">PGK MCMA (PG Kompleks - Multi Jawaban)</option>
+                                        <option value="tf">PGK Kategori (Tabel Benar/Salah)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="max-width: 150px;">
+                                    <label><i class="fas fa-list-ol" style="color: var(--ses-blue);"></i> Nomor Soal</label>
+                                    <input type="number" id="inputNomorSoal" class="form-control" min="1" placeholder="Contoh: 1" required style="font-weight: 800; color: var(--ses-blue-dark);">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group hidden" id="wadahTfType">
+                                <label>Gaya Judul Kolom Tabel</label>
+                                <select id="tfTypeSelect" class="form-control" style="background: #fffbeb; border-color: var(--ses-gold);">
+                                    <option value="benar-salah">Kolom "Benar" & "Salah"</option>
+                                    <option value="tepat-tidak">Kolom "Tepat" & "Tidak Tepat"</option>
+                                    <option value="sesuai-tidak">Kolom "Sesuai" & "Tidak Sesuai"</option>
+                                </select>
+                            </div>
+
+                            <!-- Kolom Teks Soal dengan Toolbar Mini -->
+                            <div class="form-group">
+                                <label>Teks Pertanyaan / Cerita Induk</label>
+                                
+                                <!-- Toolbar Mini Teks Soal Super Lengkap -->
+                                <div style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatTeksAdmin('teksSoal', 'b')" title="Cetak Tebal"><i class="fas fa-bold"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatTeksAdmin('teksSoal', 'i')" title="Cetak Miring"><i class="fas fa-italic"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatTeksAdmin('teksSoal', 'u')" title="Garis Bawah"><i class="fas fa-underline"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; margin-left: 5px;" onclick="formatAlignAdmin('teksSoal', 'left')" title="Rata Kiri"><i class="fas fa-align-left"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksSoal', 'center')" title="Rata Tengah"><i class="fas fa-align-center"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksSoal', 'right')" title="Rata Kanan"><i class="fas fa-align-right"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksSoal', 'justify')" title="Rata Kiri Kanan (Justify)"><i class="fas fa-align-justify"></i></button>
+                                    
+                                    <!-- 👇 DUA TOMBOL NUMBERING BARU 👇 -->
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; margin-left: 5px;" onclick="formatListAdmin('teksSoal', 'ol')" title="Daftar Angka (Numbering)"><i class="fas fa-list-ol"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatListAdmin('teksSoal', 'ul')" title="Daftar Titik (Bullet)"><i class="fas fa-list-ul"></i></button>
+                                    
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; margin-left: 5px; background: #e2e8f0;" onclick="formatWacanaAdmin('teksSoal')" title="Buat Blok Bacaan Abu-abu"><i class="fas fa-quote-left"></i> Wacana</button>
+                                    
+                                    <div style="width: 2px; background: #cbd5e1; margin: 0 5px; border-radius: 2px;"></div> <!-- Garis Pembatas -->
+                                    
+                                    <!-- Tombol Kotak Warna-Warni & Ekstra -->
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #bbf7d0; color: #16a34a; background: #f0fdf4;" onclick="formatKotakWarna('teksSoal', 'sukses')" title="Kotak Benar (Hijau)"><i class="fas fa-check-circle"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #fde68a; color: #d97706; background: #fffbeb;" onclick="formatKotakWarna('teksSoal', 'penting')" title="Kotak Penting (Kuning)"><i class="fas fa-lightbulb"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #bfdbfe; color: #1d4ed8; background: #eff6ff;" onclick="formatKotakWarna('teksSoal', 'info')" title="Kotak Info (Biru)"><i class="fas fa-info-circle"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #fecaca; color: #b91c1c; background: #fef2f2;" onclick="formatKotakWarna('teksSoal', 'bahaya')" title="Kotak Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i></button>
+                                    
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; background: #fef08a; color: #854d0e; border: none;" onclick="formatHighlight('teksSoal')" title="Sorot Teks (Stabilo)"><i class="fas fa-highlighter"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; background: #1e293b; color: white; border: none; margin-left: 5px;" onclick="formatMath('teksSoal')" title="Bungkus dengan Rumus Matematika"><i class="fas fa-square-root-alt"></i> Rumus</button>
+                                </div>
+                                <textarea id="teksSoal" class="form-control" placeholder="Ketik soal atau narasi di sini..." required style="min-height: 120px; overflow-y: hidden; resize: none;" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';" onkeyup="cekStatusFormat('teksSoal')" onmouseup="cekStatusFormat('teksSoal')"></textarea>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label><i class="fas fa-image"></i> Link Gambar (Opsional)</label>
+                                <input type="url" id="linkGambar" class="form-control" placeholder="https://...">
+                            </div>
+
+                            <!-- Opsi Pilihan Ganda (PG) -->
+                            <div id="areaPG" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 20px;">
+                                <label style="color: var(--ses-blue);"><i class="fas fa-dot-circle"></i> Opsi PG (Pilih 1 Kunci Benar)</label>
+                                
+                                <div style="margin-top: 15px; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="radio" name="kunciPG" value="0" style="transform: scale(1.3); margin-top: 15px;" required> <span style="font-weight: bold; margin-top: 12px;">A.</span> <textarea id="pgA" class="form-control" placeholder="Teks opsi A (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#cbd5e1; margin-top:10px;"></i> <input type="url" id="pgImgA" class="form-control" style="font-size: 0.8rem; padding: 8px 12px;" placeholder="Link gambar Opsi A (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="radio" name="kunciPG" value="1" style="transform: scale(1.3); margin-top: 15px;"> <span style="font-weight: bold; margin-top: 12px;">B.</span> <textarea id="pgB" class="form-control" placeholder="Teks opsi B (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#cbd5e1; margin-top:10px;"></i> <input type="url" id="pgImgB" class="form-control" style="font-size: 0.8rem; padding: 8px 12px;" placeholder="Link gambar Opsi B (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px; padding-bottom: 12px; border-bottom: 1px dashed #e2e8f0;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="radio" name="kunciPG" value="2" style="transform: scale(1.3); margin-top: 15px;"> <span style="font-weight: bold; margin-top: 12px;">C.</span> <textarea id="pgC" class="form-control" placeholder="Teks opsi C (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#cbd5e1; margin-top:10px;"></i> <input type="url" id="pgImgC" class="form-control" style="font-size: 0.8rem; padding: 8px 12px;" placeholder="Link gambar Opsi C (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="radio" name="kunciPG" value="3" style="transform: scale(1.3); margin-top: 15px;"> <span style="font-weight: bold; margin-top: 12px;">D.</span> <textarea id="pgD" class="form-control" placeholder="Teks opsi D (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#cbd5e1; margin-top:10px;"></i> <input type="url" id="pgImgD" class="form-control" style="font-size: 0.8rem; padding: 8px 12px;" placeholder="Link gambar Opsi D (Opsional)..."></div>
+                                </div>
+                            </div>
+
+                            <!-- Opsi PGK MCMA (Hanya 3 Pilihan & Tanpa Abjad A,B,C) -->
+                            <div id="areaMulti" class="hidden" style="background: #fffbeb; padding: 20px; border-radius: 12px; border: 1px dashed var(--ses-gold); margin-bottom: 20px;">
+                                <label style="color: var(--ses-gold-dark);"><i class="fas fa-check-square"></i> Opsi Pilihan Ganda Kompleks (Isi 3 Pernyataan / Jawaban)</label>
+                                
+                                <div style="margin-top: 15px; padding-bottom: 12px; border-bottom: 1px dashed #fde68a;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="checkbox" id="kunciMulti0" style="transform: scale(1.3); margin-top: 15px;"> <textarea id="multiA" class="form-control" placeholder="Pilihan ke-1 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#d97706; margin-top:10px;"></i> <input type="url" id="multiImgA" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #fde68a;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px; padding-bottom: 12px; border-bottom: 1px dashed #fde68a;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="checkbox" id="kunciMulti1" style="transform: scale(1.3); margin-top: 15px;"> <textarea id="multiB" class="form-control" placeholder="Pilihan ke-2 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#d97706; margin-top:10px;"></i> <input type="url" id="multiImgB" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #fde68a;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><input type="checkbox" id="kunciMulti2" style="transform: scale(1.3); margin-top: 15px;"> <textarea id="multiC" class="form-control" placeholder="Pilihan ke-3 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#d97706; margin-top:10px;"></i> <input type="url" id="multiImgC" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #fde68a;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                            </div>
+
+                            <!-- Opsi Tabel Benar / Salah -->
+                            <div id="areaTF" class="hidden" style="background: #f0fdf4; padding: 20px; border-radius: 12px; border: 1px dashed #10b981; margin-bottom: 20px;">
+                                <label style="color: #065f46;"><i class="fas fa-list"></i> Daftar Pernyataan Tabel</label>
+                                
+                                <div style="margin-top: 15px; padding-bottom: 12px; border-bottom: 1px dashed #bbf7d0;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><span style="font-weight: bold; margin-top: 12px;">1.</span> <textarea id="tfTeks0" class="form-control" placeholder="Pernyataan ke-1 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea><select id="tfKunci0" class="form-control" style="width: 130px; margin-top: 2px;"><option value="true">Benar (Kiri)</option><option value="false">Salah (Kanan)</option></select></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#166534; margin-top:10px;"></i> <input type="url" id="tfImg0" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #bbf7d0;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px; padding-bottom: 12px; border-bottom: 1px dashed #bbf7d0;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><span style="font-weight: bold; margin-top: 12px;">2.</span> <textarea id="tfTeks1" class="form-control" placeholder="Pernyataan ke-2 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea><select id="tfKunci1" class="form-control" style="width: 130px; margin-top: 2px;"><option value="true">Benar (Kiri)</option><option value="false">Salah (Kanan)</option></select></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#166534; margin-top:10px;"></i> <input type="url" id="tfImg1" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #bbf7d0;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                                
+                                <div style="margin-top: 12px;">
+                                    <div style="display: flex; gap: 10px; align-items: flex-start;"><span style="font-weight: bold; margin-top: 12px;">3.</span> <textarea id="tfTeks2" class="form-control" placeholder="Pernyataan ke-3 (Bisa tekan Enter)..." rows="1" style="overflow-y: hidden; resize: none; min-height: 45px;" oninput="this.style.height='auto'; this.style.height=this.scrollHeight+'px';"></textarea><select id="tfKunci2" class="form-control" style="width: 130px; margin-top: 2px;"><option value="true">Benar (Kiri)</option><option value="false">Salah (Kanan)</option></select></div>
+                                    <div style="display: flex; gap: 10px; margin-top: 8px; padding-left: 35px;"><i class="fas fa-image" style="color:#166534; margin-top:10px;"></i> <input type="url" id="tfImg2" class="form-control" style="font-size: 0.8rem; padding: 8px 12px; border-color: #bbf7d0;" placeholder="Link gambar (Opsional)..."></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pembahasan dengan Toolbar Mini -->
+                            <div class="form-group" style="margin-bottom: 20px; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px dashed #cbd5e1;">
+                                <label style="color: var(--ses-blue-dark); display: block; margin-bottom: 10px;"><i class="fas fa-lightbulb" style="color: #f59e0b;"></i> Pembahasan / Penjelasan Jawaban</label>
+                                
+                                <!-- Toolbar Mini Pembahasan Super Lengkap -->
+                                <div style="display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap;">
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatTeksAdmin('teksPembahasan', 'b')" title="Cetak Tebal"><i class="fas fa-bold"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatTeksAdmin('teksPembahasan', 'i')" title="Cetak Miring"><i class="fas fa-italic"></i></button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; margin-left: 5px;" onclick="formatAlignAdmin('teksPembahasan', 'left')" title="Rata Kiri"><i class="fas fa-align-left"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksPembahasan', 'center')" title="Rata Tengah"><i class="fas fa-align-center"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksPembahasan', 'right')" title="Rata Kanan"><i class="fas fa-align-right"></i></button>
+<button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px;" onclick="formatAlignAdmin('teksPembahasan', 'justify')" title="Rata Kiri Kanan (Justify)"><i class="fas fa-align-justify"></i></button>
+                                    
+                                    <!-- 👇 INI TAMBAHAN TOMBOL WACANA UNTUK PEMBAHASAN 👇 -->
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 12px; font-size: 0.85rem; border-radius: 6px; margin-left: 5px; background: #e2e8f0;" onclick="formatWacanaAdmin('teksPembahasan')" title="Buat Blok Bacaan Abu-abu"><i class="fas fa-quote-left"></i> Wacana</button>
+                                    
+                                    <div style="width: 2px; background: #cbd5e1; margin: 0 5px; border-radius: 2px;"></div> <!-- Garis Pembatas -->
+                                    
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #bbf7d0; color: #16a34a; background: #f0fdf4;" onclick="formatKotakWarna('teksPembahasan', 'sukses')" title="Kotak Benar (Hijau)"><i class="fas fa-check-circle"></i> Kotak Benar</button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #fde68a; color: #d97706; background: #fffbeb;" onclick="formatKotakWarna('teksPembahasan', 'penting')" title="Kotak Penting (Kuning)"><i class="fas fa-lightbulb"></i> Kotak Penting</button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #bfdbfe; color: #1d4ed8; background: #eff6ff;" onclick="formatKotakWarna('teksPembahasan', 'info')" title="Kotak Info (Biru)"><i class="fas fa-info-circle"></i> Info</button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; border-color: #fecaca; color: #b91c1c; background: #fef2f2;" onclick="formatKotakWarna('teksPembahasan', 'bahaya')" title="Kotak Peringatan (Merah)"><i class="fas fa-exclamation-triangle"></i> Peringatan</button>
+                                    
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; background: #fef08a; color: #854d0e; border: none; margin-left: 5px;" onclick="formatHighlight('teksPembahasan')" title="Sorot Teks (Stabilo)"><i class="fas fa-highlighter"></i> Sorot</button>
+                                    <button type="button" class="btn btn-outline" style="padding: 5px 10px; font-size: 0.85rem; border-radius: 6px; background: #1e293b; color: white; border: none;" onclick="formatMath('teksPembahasan')" title="Bungkus dengan Rumus Matematika"><i class="fas fa-square-root-alt"></i> Rumus</button>
+                                </div>
+                                
+                                <textarea id="teksPembahasan" class="form-control" placeholder="Ketik penjelasan mengapa jawaban tersebut benar di sini... (Opsional)" style="min-height: 120px; overflow-y: hidden; resize: none;" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';" onkeyup="cekStatusFormat('teksPembahasan')" onmouseup="cekStatusFormat('teksPembahasan')"></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 1.1rem; justify-content: center;">
+                                <i class="fas fa-cloud-upload-alt"></i> Simpan ke Bank Soal
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- ==========================================
+                         KOLOM KANAN: DAFTAR REKAP BANK SOAL
+                         ========================================== -->
+                    <div class="panel" style="margin-bottom: 0; position: sticky; top: 20px; border: 1px solid #cbd5e1;">
+                        <div class="panel-header" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom-color: #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h2 style="font-size: 1.2rem; color: var(--ses-blue-dark); margin: 0;"><i class="fas fa-database"></i> Daftar Rekap Soal</h2>
+                            </div>
+                            <button type="button" class="btn btn-outline" style="padding: 6px 12px;" onclick="muatDaftarSoalTable()"><i class="fas fa-sync-alt"></i> Segarkan</button>
+                        </div>
+
+                        <!-- Filter Khusus untuk Tabel Daftar Soal -->
+                        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-direction: column;">
+                            <select id="filterPaketSoalTable" class="form-control" onchange="muatDaftarSoalTable()" style="font-size: 0.85rem; padding: 8px 10px;">
+                                <option value="">Semua Paket</option>
+                                <!-- Opsi di-inject oleh JS -->
+                            </select>
+                            <select id="filterMapelSoalTable" class="form-control" onchange="muatDaftarSoalTable()" style="font-size: 0.85rem; padding: 8px 10px;">
+                                <option value="">Semua Mata Pelajaran</option>
+                                <option value="Matematika">Matematika</option>
+                                <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                            </select>
+                        </div>
+
+                        <div style="overflow-x: auto; max-height: 550px; overflow-y: auto; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <table class="table-data" style="font-size: 0.85rem;">
+                                <thead style="position: sticky; top: 0; z-index: 5;">
+                                    <tr>
+                                        <th style="width: 40px; text-align: center;">No</th>
+                                        <th>Pertanyaan & Tipe</th>
+                                        <th style="width: 70px; text-align: center;">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tabelDaftarSoal">
+                                    <tr><td colspan="3" style="text-align: center; padding: 25px; color: var(--text-muted);">Pilih Filter di atas untuk memuat soal...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- VIEW: MANAJEMEN GAMBAR CLOUDINARY -->
+            <div id="view-gambar" class="view-section">
+                <div class="panel">
+                    <div class="panel-header">
+                        <i class="fas fa-cloud-upload-alt" style="color: var(--ses-blue);"></i>
+                        <h2>Manajemen & Unggah Gambar (Cloudinary)</h2>
+                    </div>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Unggah gambar materi atau soal langsung ke Cloudinary akun <strong>oj7ryexi</strong>. Salin link gambar hasil unggahan untuk ditempelkan ke soal atau modul pembelajaran.</p>
+                    
+                    <!-- Form Upload -->
+                    <div style="background: #f8fafc; padding: 25px; border-radius: 12px; border: 2px dashed #cbd5e1; margin-bottom: 30px; text-align: center;">
+                        <input type="file" id="inputfileGambar" accept="image/*" multiple style="display: none;" onchange="previewUploadGambar(event)">
+
+<div id="areaPreviewUpload" style="margin-bottom: 15px; display: none; flex-wrap: wrap; gap: 10px; justify-content: center;">
+    <!-- Preview banyak gambar akan di-inject ke sini oleh JS -->
+</div>
+                        
+                        <div id="labelPilihFile">
+                            <i class="fas fa-image" style="font-size: 3rem; color: var(--ses-blue); margin-bottom: 10px;"></i>
+                            <h4 style="color: var(--ses-blue-dark); margin: 0 0 5px; font-weight: 800;">Pilih File Gambar untuk Diunggah</h4>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 15px;">Format yang didukung: JPG, PNG, WEBP (Maks. 5MB)</p>
+                        </div>
+                        
+                        <button type="button" class="btn btn-outline" onclick="document.getElementById('inputfileGambar').click()" style="margin-right: 10px;">
+                            <i class="fas fa-folder-open"></i> Pilih Berkas
+                        </button>
+                        <button type="button" id="btnProsesUpload" class="btn btn-primary hidden" onclick="unggahKeCloudinary()">
+                            <i class="fas fa-cloud-upload-alt"></i> Unggah ke Cloudinary Sekarang
+                        </button>
+                    </div>
+
+                    <!-- Galeri / Riwayat Gambar -->
+                    <h3 style="color: var(--ses-blue-dark); font-size: 1.15rem; margin-bottom: 15px;"><i class="fas fa-photo-video"></i> Riwayat Gambar Cloudinary</h3>
+                    <div style="overflow-x: auto;">
+                        <table class="table-data">
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px; text-align: center;">Pratinjau</th>
+                                    <th>Nama / ID Berkas</th>
+                                    <th>Tautan URL Cloudinary</th>
+                                    <th style="text-align: center; width: 150px;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelGaleriGambar">
+                                <tr><td colspan="4" style="text-align: center; padding: 30px; color: var(--text-muted);">Memuat galeri gambar...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- ==========================================
+                 VIEW: ARUS KAS & KEUANGAN (DENGAN FILTER & CETAK)
+                 ========================================== -->
+            <div id="view-keuangan" class="view-section">
+                
+                <!-- 👇 KONTROL FILTER & CETAK (Tidak ikut tercetak) 👇 -->
+                <div class="panel hide-on-print" style="padding: 15px 25px; margin-bottom: 25px; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; justify-content: space-between; border-left: 5px solid #10b981;">
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <label style="font-weight: 800; color: var(--ses-blue-dark);"><i class="fas fa-filter"></i> Filter Periode:</label>
+                        <select id="filterPeriodeKas" class="form-control" style="width: auto; font-weight: 700; padding: 8px 12px; border-color: var(--ses-blue);" onchange="ubahFilterKas()">
+                            <option value="semua">Semua Waktu</option>
+                            <option value="hari_ini">Hari Ini</option>
+                            <option value="minggu_ini">Minggu Ini</option>
+                            <option value="bulan_ini">Bulan Ini</option>
+                            <option value="tahun_ini">Tahun Ini</option>
+                            <option value="custom">Kustom Tanggal...</option>
+                        </select>
+                        
+                        <!-- Input Tanggal Kustom (Sembunyi otomatis) -->
+                        <div id="wadahCustomTanggal" style="display: none; align-items: center; gap: 8px;">
+                            <input type="date" id="tglKasMulai" class="form-control" style="padding: 6px; width: auto;" onchange="terapkanFilterKas()">
+                            <span style="font-weight: 700; color: #64748b;">s/d</span>
+                            <input type="date" id="tglKasSelesai" class="form-control" style="padding: 6px; width: auto;" onchange="terapkanFilterKas()">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-outline" style="background: white;" onclick="window.print()"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+                    </div>
+                </div>
+
+                <!-- Kartu Ringkasan (Ikut difilter) -->
+                <div class="dash-summary" style="margin-bottom: 25px;">
+                    <div class="dash-card card-teal">
+                        <div class="dc-icon"><i class="fas fa-arrow-down"></i></div>
+                        <div class="dc-text"><h3 id="keuanganTotalMasuk">Rp 0</h3><p>Total Pemasukan</p></div>
+                    </div>
+                    <div class="dash-card card-pink">
+                        <div class="dc-icon"><i class="fas fa-arrow-up"></i></div>
+                        <div class="dc-text"><h3 id="keuanganTotalKeluar">Rp 0</h3><p>Total Pengeluaran</p></div>
+                    </div>
+                    <div class="dash-card card-green">
+                        <div class="dc-icon"><i class="fas fa-money-bill-wave"></i></div>
+                        <div class="dc-text"><h3 id="keuanganTotalSaldo">Rp 0</h3><p>Saldo Kas</p></div>
+                    </div>
+                </div>
+
+                <!-- AREA CETAK LAPORAN (Tabel) -->
+                <div id="areaCetakKeuangan" class="panel" style="background: white; padding: 25px;">
+                    
+                    <!-- Kop Surat Laporan (Hanya muncul rapi saat diprint) -->
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px double var(--ses-blue-dark); padding-bottom: 20px;">
+                        <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" style="height: 50px; margin-bottom: 10px;" alt="Logo SES">
+                        <h2 style="margin: 0; color: var(--ses-blue-dark); font-weight: 900; font-size: 1.3rem; text-transform: uppercase;">LAPORAN ARUS KAS KEUANGAN</h2>
+                        <h3 id="labelPeriodeCetak" style="margin: 5px 0 0; color: #b45309; font-size: 1rem; font-weight: 800;">PERIODE: SEMUA WAKTU</h3>
+                        <p style="margin: 5px 0 0; font-size: 0.85rem; color: #64748b; font-weight: 600;">LKP Smart Education Solution (SES) - NPSN: K5651703</p>
+                    </div>
+
+                    <div class="panel-header hide-on-print" style="justify-content: space-between; flex-wrap: wrap; gap: 15px; border-bottom: none; margin-bottom: 10px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-book-open" style="color: var(--ses-blue);"></i>
+                            <h2 style="font-size: 1.2rem;">Buku Kas (Riwayat Transaksi)</h2>
+                        </div>
+                        <div style="display: flex; gap: 10px;">
+                            <button class="btn btn-success" onclick="bukaModalKas('masuk')"><i class="fas fa-plus"></i> Catat Pemasukan</button>
+                            <button class="btn btn-danger" onclick="bukaModalKas('keluar')"><i class="fas fa-minus"></i> Catat Pengeluaran</button>
+                        </div>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="table-data" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 120px;">Tanggal</th>
+                                    <th style="text-align: center; width: 100px;">Jenis</th>
+                                    <th>Keterangan / Uraian</th>
+                                    <th style="text-align: right; width: 150px;">Nominal (Rp)</th>
+                                    <th style="text-align: center; width: 80px;" class="hide-on-print">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelRiwayatKas">
+                                <tr><td colspan="5" style="text-align: center; padding: 30px; color: var(--text-muted);">Memuat buku kas...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Tempat Tanda Tangan (Hanya terlihat rapi saat dicetak) -->
+                    <div style="margin-top: 40px; text-align: right; font-size: 0.9rem; color: #333; font-weight: 600; padding-right: 20px;">
+                        <p style="margin: 0 0 50px 0;">Bojonegoro, ................................ 2026<br>Pimpinan / Bendahara LKP SES,</p>
+                        <p style="margin: 0; font-weight: 800; text-decoration: underline;">PAMBUDI, S.Pd.SD</p>
+                    </div>
+                </div>
+            </div>
+            <!-- ==========================================
+                 VIEW: REKAP NILAI SISWA (LEADERBOARD PAKET)
+                 ========================================== -->
+            <div id="view-rekap" class="view-section">
+                <div class="panel" style="margin-bottom: 20px; border-top: 5px solid var(--ses-blue);">
+                    <div class="panel-header" style="justify-content: space-between; flex-wrap: wrap; gap: 15px; border-bottom: none; margin-bottom: 0; padding-bottom: 0;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <i class="fas fa-clipboard-list" style="color: var(--ses-blue);"></i>
+                            <h2>Laporan Rekapitulasi Nilai</h2>
+                        </div>
+                        
+                        <!-- 👇 BAGIAN INI YANG DIGANTI 👇 -->
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <!-- Dropdown Pilih Paket -->
+                            <select id="filterPaketRekap" class="form-control" style="width: auto; min-width: 200px; font-weight: 800; border-color: var(--ses-blue);" onchange="muatRekapNilai()">
+                                <option value="" disabled selected>-- Pilih Paket Ujian --</option>
+                            </select>
+                            
+                            <!-- Dropdown Baru: Filter Mata Pelajaran -->
+                            <select id="filterMapelRekap" class="form-control" style="width: auto; font-weight: 800; border-color: var(--ses-gold);" onchange="muatRekapNilai()">
+                                <option value="Semua">Semua Mapel (Gabungan)</option>
+                                <option value="Matematika">Hanya Matematika</option>
+                                <option value="Bahasa Indonesia">Hanya B. Indonesia</option>
+                            </select>
+
+                            <button class="btn btn-success" onclick="window.print()" style="font-size: 1rem; padding: 12px 20px;"><i class="fas fa-print"></i> Cetak / Simpan PDF</button>
+                        </div>
+                        <!-- 👆 SAMPAI SINI 👆 -->
+                        
+                    </div>
+                </div>
+                <!-- Area yang akan tercetak ke Kertas / PDF -->
+                <div id="areaCetakRekap" class="panel" style="background: white; padding: 40px; min-height: 500px;">
+                    
+                    <!-- Kop / Header Laporan -->
+                    <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px double var(--ses-blue-dark); padding-bottom: 20px;">
+                        <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" style="height: 60px; margin-bottom: 10px;" alt="Logo">
+                        <h2 style="margin: 0; color: var(--ses-blue-dark); font-weight: 900; font-size: 1.5rem; text-transform: uppercase;">LAPORAN HASIL TRYOUT TKA NASIONAL</h2>
+                        <h3 id="judulLaporanPaket" style="margin: 8px 0 0; color: #b45309; font-size: 1.1rem; font-weight: 800;">PAKET: BELUM DIPILIH</h3>
+                        <p style="margin: 5px 0 0; font-size: 0.9rem; color: #64748b; font-weight: 600;">LKP Smart Education Solution (SES) - NPSN: K5651703</p>
+                    </div>
+                    
+                    <table class="table-data" style="width: 100%; font-size: 0.9rem; border-collapse: collapse;">
+                        <thead id="headerTabelRekap">
+                            <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+                                <th style="text-align: center; width: 60px;">Peringkat</th>
+                                <th style="text-align: center; width: 100px;">No. Peserta</th>
+                                <th>Nama Lengkap Peserta</th>
+                                <th>Asal Lembaga / Sekolah</th>
+                                <th>Alamat</th>
+                                <th style="text-align: center;">Nilai Mapel</th>
+                                <th style="text-align: center; width: 90px;">No. WA</th>
+                                <th style="text-align: center; width: 110px;">Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelRekapNilai">
+                            <tr><td colspan="8" style="text-align: center; padding: 40px; color: #94a3b8; font-weight: 600;"><i class="fas fa-hand-point-up" style="font-size: 2rem; display: block; margin-bottom: 10px;"></i>Silakan pilih paket ujian di atas untuk memuat data rekap peserta.</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="margin-top: 40px; text-align: right; font-size: 0.9rem; color: #333; font-weight: 600; padding-right: 20px;">
+                        <p style="margin: 0 0 50px 0;">Bojonegoro, ................................ 2026<br>Ketua Pelaksana / Admin LMS,</p>
+                        <p style="margin: 0; font-weight: 800; text-decoration: underline;">PAMBUDI, S.Pd.SD</p>
+                    </div>
+                </div>
+            </div>
+            <!-- VIEW: ANALISIS BUTIR SOAL -->
+<div id="view-analisisSoal" class="view-section">
+    <div class="panel">
+        <div class="panel-header" style="justify-content: space-between; flex-wrap: wrap; gap: 10px;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <i class="fas fa-chart-bar" style="color: var(--ses-blue);"></i>
+                <h2>Analisis Tingkat Kesulitan Butir Soal</h2>
+            </div>
+
+            <!-- Filter Paket & Mapel untuk Analisis -->
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="filterAnalisisPaket" class="form-control" style="width: auto; font-weight: 700; padding: 6px 12px;" onchange="muatDataAnalisisSoal()">
+                    <option value="" disabled selected>-- Pilih Paket Tryout --</option>
+                </select>
+                <select id="filterAnalisisMapel" class="form-control" style="width: auto; font-weight: 700; padding: 6px 12px;" onchange="muatDataAnalisisSoal()">
+                    <option value="Matematika">Matematika</option>
+                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                </select>
+            </div>
+        </div>
+
+        <p style="color: var(--text-muted); margin-bottom: 20px; font-size: 0.9rem;">
+            Analisis ini menghitung persentase tingkat keberhasilan siswa dalam menjawab setiap butir soal secara akurat berdasarkan data jawaban riil peserta.
+        </p>
+
+        <!-- Tabel Hasil Analisis -->
+        <table class="table-data">
+            <thead>
+                <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+                    <th style="text-align: center; width: 80px;">No. Soal</th>
+                    <th>Cuplikan Pertanyaan</th>
+                    <th style="text-align: center; width: 130px;">Jumlah Menjawab</th>
+                    <th style="text-align: center; width: 140px;">Tingkat Kebenaran</th>
+                    <th style="text-align: center; width: 150px;">Status Kesulitan</th>
+                    <th style="text-align: center; width: 110px;">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="tabelAnalisisSoal">
+                <tr><td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">Silakan pilih paket dan mata pelajaran di atas.</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+        </div> <!-- PENUTUP DARI CONTENT AREA -->
+        <!-- FOOTER ADMIN -->
+        <footer class="admin-footer">
+            &copy; 2026 <strong>LKP dan BIMBEL SES (Smart Education Solution)</strong><br>
+            NPSN: K5651703 | Alamat: Desa Temu, Kecamatan Kanor | No HP: 085855111386
+        </footer>
+    </main>
+
+    <div id="toast">Notifikasi</div>
+
+    <!-- Script Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <script src="ses-ui.js"></script>
+    <script src="admin.js"></script>
+    <!-- MODAL POP-UP INPUT KAS KEUANGAN -->
+    <div id="modalKeuangan" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: white; width: 100%; max-width: 450px; border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 12px;">
+                <h3 id="modalKasJudul" style="margin: 0; color: var(--ses-blue-dark); font-weight: 800;"><i class="fas fa-wallet"></i> Catat Keuangan</h3>
+                <button type="button" onclick="tutupModalKas()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form onsubmit="simpanTransaksiKas(event)">
+                <input type="hidden" id="kasJenis" value="masuk">
+                
+                <!-- 👇 INPUT TANGGAL TRANSAKSI 👇 -->
+                <div class="form-group">
+                    <label>Tanggal Transaksi</label>
+                    <input type="date" id="kasTanggal" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Nominal Rupiah (Angka Saja)</label>
+                    <input type="number" id="kasNominal" class="form-control" placeholder="Contoh: 50000" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Keterangan Transaksi</label>
+                    <textarea id="kasKeterangan" class="form-control" rows="3" placeholder="Contoh: Beli alat tulis kantor / Tambahan donasi..." required></textarea>
+                </div>
+
+                <!-- 👇 INPUT PENANGGUNG JAWAB (READONLY / OTOMATIS) 👇 -->
+                <div class="form-group">
+                    <label>Penanggung Jawab (Admin)</label>
+                    <input type="text" id="kasAdmin" class="form-control" readonly style="background: #e2e8f0; color: var(--text-muted); cursor: not-allowed;">
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;" onclick="tutupModalKas()">Batal</button>
+                    <button type="submit" id="btnSimpanKas" class="btn btn-primary" style="flex: 1;"><i class="fas fa-save"></i> Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pendaftaran Tryout TKA Nasional | SES</title>
+    <!-- Icon FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PANGGILAN KE CSS GLOBAL -->
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        /* =========================================================
+           CSS KHUSUS HALAMAN PENDAFTARAN
+           ========================================================= */
+        body { 
+            display: flex; 
+            justify-content: center; 
+            align-items: center;
+            min-height: 100vh;
+            padding: 40px 20px; 
+        }
+        
+        .container { 
+            max-width: 650px; 
+            width: 100%; 
+            background: var(--white); 
+            border-radius: 20px; 
+            box-shadow: 0 15px 40px rgba(0, 55, 128, 0.08); 
+            border-top: 6px solid var(--ses-blue);
+            border-bottom: 8px solid var(--ses-gold);
+            position: relative;
+            height: auto;
+            overflow: visible; 
+        }
+        
+        .header { 
+            background: var(--white); 
+            padding: 35px 25px 20px; 
+            text-align: center; 
+            border-bottom: 2px dashed #e2e8f0; 
+            border-radius: 20px 20px 0 0;
+        }
+        .header img { height: 55px; margin-bottom: 15px; object-fit: contain; }
+        .header h1 { margin: 0; font-size: 1.6rem; font-weight: 800; color: var(--ses-blue-dark); letter-spacing: -0.5px; }
+        .header p { margin: 5px 0 0 0; font-size: 0.95rem; color: var(--text-muted); font-weight: 600; }
+        
+        .form-body { padding: 30px; }
+        
+        .info-box { 
+            background: #fffbeb; border-left: 4px solid var(--ses-gold); 
+            padding: 15px; border-radius: 8px; margin-bottom: 25px; 
+            font-size: 0.85rem; color: #b45309; font-weight: 600;
+        }
+
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-weight: 800; margin-bottom: 6px; color: var(--ses-blue-dark); font-size: 0.95rem; }
+        .form-group p.sub-label { font-size: 0.8rem; color: var(--text-muted); margin: 0 0 10px; font-weight: 600; }
+
+        .form-group input[type="text"], 
+        .form-group input[type="tel"], 
+        .form-group select { 
+            width: 100%; padding: 14px 16px; border: 2px solid #cbd5e1; 
+            border-radius: 10px; outline: none; font-size: 1rem; font-weight: 600;
+            transition: 0.3s; background: #f8fafc; color: var(--text-main);
+        }
+        .form-group input:focus, .form-group select:focus { 
+            border-color: var(--ses-blue); background: var(--white); 
+            box-shadow: 0 0 0 4px rgba(0, 88, 198, 0.1);
+        }
+
+        .payment-options { display: flex; gap: 15px; margin-top: 5px; }
+        .radio-card {
+            flex: 1; background: #f8fafc; border: 2px solid #cbd5e1; border-radius: 10px;
+            padding: 14px 10px; text-align: center; cursor: pointer; font-weight: 700;
+            font-size: 0.9rem; transition: 0.3s; display: flex; align-items: center;
+            justify-content: center; gap: 8px; color: var(--text-muted);
+        }
+        .radio-card input { accent-color: var(--ses-blue); transform: scale(1.3); cursor: pointer; }
+        .radio-card:hover { border-color: #93c5fd; background: #eff6ff; }
+        .radio-card.active { border-color: var(--ses-blue); background: #eff6ff; color: var(--ses-blue-dark); }
+
+        .rek-info {
+            background: #e0f2fe; border: 1px solid #bae6fd; border-left: 4px solid var(--ses-blue);
+            color: #0369a1; padding: 15px; border-radius: 8px; font-size: 0.85rem;
+            margin-bottom: 25px; line-height: 1.6;
+        }
+
+        .upload-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 25px; }
+        .upload-grid.single { grid-template-columns: 1fr; }
+        
+        .file-upload-box { 
+            border: 2px dashed #94a3b8; border-radius: 12px; padding: 25px 15px; 
+            text-align: center; background: #f8fafc; cursor: pointer; transition: 0.3s; 
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; min-height: 160px; 
+        }
+        .file-upload-box:hover { border-color: var(--ses-blue); background: #eff6ff; }
+        .file-upload-box input[type="file"] { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+        .file-upload-box i { font-size: 2.2rem; margin-bottom: 12px; }
+        .file-upload-box p { margin: 0; font-weight: 800; font-size: 0.9rem; color: var(--text-main); }
+        .file-name-display { margin-top: 10px; font-size: 0.8rem; color: #10b981; font-weight: 800; word-break: break-all; }
+
+        .box-foto i { color: var(--ses-blue); }
+        .box-bukti i { color: var(--ses-gold); }
+
+        .btn-submit { 
+            width: 100%; padding: 16px; border: none; border-radius: 12px; 
+            background: linear-gradient(135deg, var(--ses-blue) 0%, var(--ses-blue-dark) 100%); 
+            color: white; font-size: 1.15rem; font-weight: 800; cursor: pointer; 
+            transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 10px; 
+            box-shadow: 0 8px 20px rgba(0, 88, 198, 0.25); margin-top: 10px;
+        }
+        .btn-submit:hover { transform: translateY(-3px); box-shadow: 0 12px 25px rgba(0, 88, 198, 0.35); }
+        .btn-submit:disabled { background: #94a3b8; box-shadow: none; cursor: not-allowed; transform: none; }
+
+        @media (max-width: 600px) {
+            .upload-grid { grid-template-columns: 1fr; }
+            .header { padding: 25px 20px 15px; }
+            .form-body { padding: 20px; }
+            .payment-options { flex-direction: column; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <a href="index.html">
+                <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo SES">
+            </a>
+            <h1>Pendaftaran Tryout TKA</h1>
+            <p>Uji kemampuanmu dengan standar soal AKM Nasional</p>
+        </div>
+        
+        <div class="form-body">
+            <div class="info-box">
+                <i class="fas fa-info-circle"></i> <strong>Informasi:</strong> ID Peserta dan Password ujian akan dikirimkan otomatis ke WhatsApp Anda setelah proses verifikasi.
+            </div>
+
+            <form id="formPendaftaran" onsubmit="prosesPendaftaran(event)">
+                
+                <div class="form-group">
+                    <label><i class="fas fa-user-edit"></i> Nama Lengkap Peserta</label>
+                    <input type="text" id="inputNama" placeholder="Ketik nama lengkap sesuai KTP/Kartu Pelajar..." required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fas fa-school"></i> Asal Sekolah</label>
+                    <input type="text" id="inputSekolah" placeholder="Contoh: SDN 1 Bakung" required>
+                </div>
+                
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp"></i> No. WhatsApp Aktif</label>
+                    <input type="tel" id="inputWa" placeholder="Contoh: 081234567890 (Wajib aktif untuk terima Password)" required>
+                </div>
+
+                <div class="form-group" style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 25px;">
+                    
+                    <div style="margin-bottom: 20px;">
+                        <label style="color: var(--ses-blue-dark); font-size: 1.05rem;"><i class="fas fa-box-open" style="color: var(--ses-blue);"></i> 1. Pilih Produk / Paket Tryout</label>
+                        <p class="sub-label" style="margin-bottom: 12px;">Pilih nama paket soal atau acara tryout yang ingin Anda beli tiketnya.</p>
+                        <select id="inputPaket" required style="border-color: var(--ses-blue); border-width: 2px;">
+                            <option value="" disabled selected>Memuat daftar paket dari server...</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label style="color: var(--ses-blue-dark); font-size: 1.05rem;"><i class="fas fa-crown" style="color: var(--ses-gold);"></i> 2. Pilih Tingkat Layanan & Harga</label>
+                        <p class="sub-label" style="margin-bottom: 12px;">Pilih fasilitas apa saja yang ingin Anda dapatkan di dalam portal siswa.</p>
+                        <select id="inputTipeAkses" required style="border-color: var(--ses-gold); border-width: 2px;">
+                            <option value="" disabled selected>-- Pilih Layanan Akun --</option>
+                            <option value="Basic">🥉 AKUN BASIC - Rp 15.000 (Akses Semua Soal Label Latihan)</option>
+                            <option value="Pro">🥈 AKUN PRO - Rp 25.000 (Akses Soal Latihan & Ujian Resmi)</option>
+                            <option value="Ultimate">👑 AKUN ULTIMATE - Rp 50.000 (Full Akses + Cetak Sertifikat & ID Card)</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-wallet"></i> Status Pembayaran</label>
+                    <div class="payment-options">
+                        <label class="radio-card active" id="lblSudah">
+                            <input type="radio" name="statusBayar" value="sudah" onchange="aturFormPembayaran()" checked>
+                            Sudah Melakukan Pembayaran
+                        </label>
+                        <label class="radio-card" id="lblBelum">
+                            <input type="radio" name="statusBayar" value="belum" onchange="aturFormPembayaran()">
+                            Belum Melakukan Pembayaran
+                        </label>
+                    </div>
+                </div>
+
+                <div class="rek-info" id="infoRekening">
+                    <i class="fas fa-bullhorn"></i> Pembayaran tiket dapat dilakukan melalui <strong>Transfer Rekening BRI atas nama Pambudi</strong>.<br>
+                    <span style="font-weight: 600; color: var(--ses-gold-dark);"><i class="fas fa-bolt"></i> Juga menerima pembayaran via GOPAY, QRIS, maupun DANA.</span>
+                </div>
+
+                <div class="upload-grid" id="wadahGridUpload">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label><i class="fas fa-portrait"></i> Foto Profil Peserta</label>
+                        <p class="sub-label">Setengah badan, mengenakan pakaian rapi.</p>
+                        <div class="file-upload-box box-foto">
+                            <i class="fas fa-camera-retro"></i>
+                            <p>Unggah Foto Profil</p>
+                            <input type="file" id="inputFotoProfil" accept=".jpg,.jpeg,.png" required onchange="tampilkanNamaFile(this, 'namaFotoTampil')">
+                            <div id="namaFotoTampil" class="file-name-display"></div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="wadahBuktiBayar" style="margin-bottom: 0;">
+                        <label><i class="fas fa-file-invoice-dollar"></i> Bukti Bayar</label>
+                        <p class="sub-label">Struk transfer / Screenshot M-Banking.</p>
+                        <div class="file-upload-box box-bukti">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                            <p>Unggah Bukti Bayar</p>
+                            <input type="file" id="inputBuktiBayar" accept=".jpg,.jpeg,.png" required onchange="tampilkanNamaFile(this, 'namaBuktiTampil')">
+                            <div id="namaBuktiTampil" class="file-name-display"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" id="btnSubmit" class="btn-submit">
+                    <i class="fas fa-paper-plane"></i> Kirim Pendaftaran Sekarang
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="toast">Pesan Notifikasi</div>
+
+    <!-- Script Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    
+    <!-- PANGGILAN FILE JS PENDAFTARAN -->
+    <script src="daftar.js"></script>
+</body>
+</html>

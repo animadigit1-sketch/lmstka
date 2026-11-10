@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tryout TKA Nasional | Smart Education Solution (SES)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- PANGGILAN KE FILE CSS GLOBAL -->
+    <link rel="stylesheet" href="global.css">
+
+    <style>
+        /* =========================================================
+           CSS KHUSUS HALAMAN INDEX / BERANDA SAJA
+           ========================================================= */
+        .hero { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            text-align: center; padding: 85px 20px 115px; 
+            background: radial-gradient(circle at top right, #0066e6 0%, var(--ses-blue) 45%, var(--ses-blue-dark) 100%); 
+            color: var(--white); position: relative; overflow: hidden;
+        }
+        .hero-bg-circle { position: absolute; border-radius: 50%; pointer-events: none; z-index: 1; }
+        .hero-bg-circle.c1 { width: 380px; height: 380px; background: radial-gradient(circle, rgba(255, 170, 0, 0.18) 0%, transparent 70%); top: -120px; left: -100px; }
+        .hero-bg-circle.c2 { width: 450px; height: 450px; background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%); bottom: -180px; right: -120px; }
+
+        .hero-content { position: relative; z-index: 2; max-width: 860px; display: flex; flex-direction: column; align-items: center; }
+        .hero-badge { 
+            background: rgba(255, 255, 255, 0.12); border: 1.5px solid rgba(255, 170, 0, 0.65); 
+            color: var(--ses-gold-light); padding: 8px 22px; border-radius: 50px; font-size: 0.85rem; 
+            font-weight: 800; margin-bottom: 24px; letter-spacing: 1px; text-transform: uppercase;
+            display: inline-flex; align-items: center; gap: 8px; backdrop-filter: blur(4px);
+        }
+        .hero h1 { font-size: 3.1rem; margin-bottom: 18px; font-weight: 800; line-height: 1.22; letter-spacing: -0.5px; }
+        .hero h1 span { color: var(--ses-gold); position: relative; display: inline-block; }
+        .hero p { font-size: 1.12rem; max-width: 660px; margin-bottom: 35px; color: #e2e8f0; font-weight: 500; }
+        .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 520px; }
+        
+        .btn-hero-secondary { color: var(--white); border: 2px solid rgba(255, 255, 255, 0.55); background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(4px); }
+        .btn-hero-secondary:hover { background: var(--white); color: var(--ses-blue-dark); border-color: var(--white); transform: translateY(-3px); }
+
+        .stats-wrapper { max-width: 1080px; margin: -50px auto 20px; padding: 0 20px; position: relative; z-index: 10; }
+        .stats-bar { 
+            background: var(--white); border-radius: 18px; padding: 22px 30px; box-shadow: 0 15px 35px rgba(0, 55, 128, 0.09); 
+            border: 1px solid #e2e8f0; border-bottom: 4px solid var(--ses-blue); display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: center; 
+        }
+        .stat-item { display: flex; align-items: center; justify-content: center; gap: 14px; padding: 5px 10px; }
+        .stat-item:not(:last-child) { border-right: 1.5px dashed #cbd5e1; }
+        .stat-icon { width: 48px; height: 48px; border-radius: 12px; background: #eff6ff; color: var(--ses-blue); display: flex; align-items: center; justify-content: center; font-size: 1.35rem; flex-shrink: 0; }
+        .stat-item:nth-child(2) .stat-icon { background: #fffbeb; color: var(--ses-gold-dark); }
+        .stat-text { text-align: left; }
+        .stat-text h4 { font-size: 1.05rem; font-weight: 800; color: var(--text-main); margin: 0; }
+        .stat-text p { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; margin: 0; }
+        /* =========================================================
+           TEKS IDENTITAS RESMI DI BAWAH BADGE
+           ========================================================= */
+        .hero-instansi {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: -12px; /* Menarik teks agar lebih dekat ke badge */
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+        .hero-instansi strong {
+            color: var(--ses-gold-light);
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* COMMON SECTION STYLES */
+        .section { padding: 80px 5%; max-width: 1220px; margin: 0 auto; }
+        .section-header { text-align: center; max-width: 650px; margin: 0 auto 50px; }
+        .section-tag { display: inline-block; background: #e0effe; color: var(--ses-blue); font-weight: 800; font-size: 0.8rem; padding: 6px 16px; border-radius: 30px; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        .section-header h2 { font-size: 2.1rem; color: var(--text-main); font-weight: 800; margin-bottom: 10px; }
+        .section-header h2 span { color: var(--ses-blue); }
+        .section-header p { color: var(--text-muted); font-size: 1rem; font-weight: 600; }
+
+        /* FITUR GRID */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(310px, 1fr)); gap: 32px; }
+        .feature-card { padding: 42px 30px; border-radius: 24px; text-align: center; transition: all 0.35s ease; position: relative; overflow: hidden; z-index: 1; display: flex; flex-direction: column; align-items: center; }
+        .card-soft-blue { background: linear-gradient(145deg, #f2f8ff 0%, #e0eeff 100%); border: 2px solid #bfdbfe; border-top: 6px solid var(--ses-blue); }
+        .card-soft-gold { background: linear-gradient(145deg, #fffdf4 0%, #fef3c7 100%); border: 2px solid #fde68a; border-top: 6px solid var(--ses-gold); }
+        .card-soft-royal { background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 100%); border: 2px solid #bae6fd; border-top: 6px solid var(--ses-blue-dark); }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 22px 45px rgba(0, 55, 128, 0.15); }
+        .f-icon { width: 78px; height: 78px; background: var(--white); font-size: 2.2rem; display: inline-flex; align-items: center; justify-content: center; border-radius: 22px; margin-bottom: 22px; transition: transform 0.3s ease; }
+        .feature-card:hover .f-icon { transform: scale(1.08) rotate(-3deg); }
+        .card-soft-blue .f-icon { color: var(--ses-blue); border: 2px solid #dbeafe; }
+        .card-soft-gold .f-icon { color: var(--ses-gold-dark); border: 2px solid #fef08a; }
+        .card-soft-royal .f-icon { color: var(--ses-blue-dark); border: 2px solid #bae6fd; }
+        .card-content h3 { color: var(--text-main); margin-bottom: 12px; font-size: 1.35rem; font-weight: 800; }
+        .card-content p { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; }
+
+        /* ALUR CARA KERJA */
+        .steps-wrapper { display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; position: relative; }
+        .step-card { background: var(--white); padding: 40px 30px; border-radius: 20px; text-align: center; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); position: relative; z-index: 2; transition: 0.3s; }
+        .step-card:hover { border-color: var(--ses-blue); transform: translateY(-5px); box-shadow: 0 15px 35px rgba(0, 55, 128, 0.1); }
+        .step-number { width: 50px; height: 50px; background: var(--ses-gold); color: white; font-size: 1.5rem; font-weight: 900; display: flex; align-items: center; justify-content: center; border-radius: 50%; margin: 0 auto 20px; box-shadow: 0 5px 15px rgba(255,170,0,0.4); border: 4px solid var(--white); }
+        .step-card h3 { color: var(--ses-blue-dark); font-size: 1.25rem; font-weight: 800; margin-bottom: 10px; }
+        .step-card p { color: var(--text-muted); font-size: 0.95rem; font-weight: 600; margin: 0; }
+        .steps-line { position: absolute; top: 65px; left: 15%; right: 15%; height: 3px; background: #e2e8f0; z-index: 1; border-top: 3px dashed #cbd5e1; }
+
+        /* TESTIMONI SISWA */
+        .testi-section { background: #f0f7ff; border-top: 2px dashed #bfdbfe; border-bottom: 2px dashed #bfdbfe; }
+        .testi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; }
+        .testi-card { background: var(--white); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0, 55, 128, 0.05); }
+        .stars { color: var(--ses-gold); font-size: 1.1rem; margin-bottom: 15px; }
+        .testi-text { font-size: 0.95rem; color: var(--text-main); font-weight: 600; font-style: italic; margin-bottom: 20px; line-height: 1.6; }
+        .testi-user { display: flex; align-items: center; gap: 15px; }
+        .testi-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 2px solid var(--ses-blue); }
+        .testi-name h4 { margin: 0 0 3px; color: var(--ses-blue-dark); font-size: 1.05rem; font-weight: 800; }
+        .testi-name p { margin: 0; color: var(--text-muted); font-size: 0.8rem; font-weight: 600; }
+
+        /* =========================================================
+           TAMBAHAN 1: FAQ (TANYA JAWAB)
+           ========================================================= */
+        .faq-wrapper { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--white); border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; overflow: hidden; transition: 0.3s; }
+        .faq-item.active { border-color: var(--ses-blue); box-shadow: 0 5px 20px rgba(0,88,198,0.08); }
+        .faq-question { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; color: var(--ses-blue-dark); font-size: 1.05rem; }
+        .faq-icon { transition: transform 0.3s ease; color: var(--ses-gold); font-size: 1.2rem; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; padding: 0 25px; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; opacity: 0; line-height: 1.6; }
+        .faq-item.active .faq-answer { max-height: 300px; padding: 0 25px 25px; opacity: 1; }
+
+        /* BOTTOM CTA BANNER */
+        .cta-bottom { max-width: 1000px; margin: 0 auto; padding: 60px 20px; text-align: center; }
+        .cta-box { background: linear-gradient(135deg, var(--ses-blue-dark) 0%, var(--ses-blue) 100%); padding: 50px 40px; border-radius: 24px; color: var(--white); box-shadow: 0 20px 40px rgba(0, 55, 128, 0.2); position: relative; overflow: hidden; border-bottom: 8px solid var(--ses-gold); }
+        .cta-box h2 { font-size: 2.2rem; font-weight: 800; margin-bottom: 15px; }
+        .cta-box p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 30px; font-weight: 500; max-width: 600px; margin-left: auto; margin-right: auto; }
+
+        /* =========================================================
+           TAMBAHAN 2: PITA LOGO PEMBAYARAN
+           ========================================================= */
+        .payment-section { text-align: center; padding: 30px 20px; border-top: 1px dashed #cbd5e1; background: var(--white); }
+        .payment-section p { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .payment-logos { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .pay-logo { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 18px; border-radius: 8px; font-weight: 800; color: var(--ses-blue-dark); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        
+        /* =========================================================
+           TAMBAHAN 3: TOMBOL WA MELAYANG
+           ========================================================= */
+        .float-wa { 
+            position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-size: 2rem; box-shadow: 0 10px 25px rgba(37,211,102,0.4); 
+            z-index: 9999; text-decoration: none; transition: transform 0.3s ease; 
+        }
+        .float-wa:hover { transform: scale(1.1) translateY(-5px); }
+
+        @media (max-width: 800px) {
+            .steps-wrapper { grid-template-columns: 1fr; gap: 20px; }
+            .steps-line { display: none; }
+            .cta-box { padding: 40px 25px; }
+            .cta-box h2 { font-size: 1.8rem; }
+        }
+        @media (max-width: 768px) {
+            .hero { padding: 55px 18px 85px; }
+            .hero h1 { font-size: 2rem; margin-bottom: 14px; }
+            .stats-wrapper { margin-top: -35px; }
+            .stats-bar { grid-template-columns: 1fr; gap: 14px; padding: 18px 20px; }
+            .stat-item { justify-content: flex-start; }
+            .stat-item:not(:last-child) { border-right: none; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; }
+            .section { padding: 50px 20px; }
+            .section-header { margin-bottom: 32px; }
+            .section-header h2 { font-size: 1.65rem; }
+            .float-wa { width: 50px; height: 50px; font-size: 1.6rem; bottom: 20px; right: 20px; }
+        }
+        /* =========================================================
+           TAMBAHAN 1: FAQ (TANYA JAWAB)
+           ========================================================= */
+        .faq-wrapper { max-width: 800px; margin: 0 auto; }
+        .faq-item { background: var(--white); border: 2px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px; overflow: hidden; transition: 0.3s; }
+        .faq-item.active { border-color: var(--ses-blue); box-shadow: 0 5px 20px rgba(0,88,198,0.08); }
+        .faq-question { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-weight: 800; color: var(--ses-blue-dark); font-size: 1.05rem; }
+        .faq-icon { transition: transform 0.3s ease; color: var(--ses-gold); font-size: 1.2rem; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+        .faq-answer { max-height: 0; padding: 0 25px; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; opacity: 0; line-height: 1.6; }
+        .faq-item.active .faq-answer { max-height: 300px; padding: 0 25px 25px; opacity: 1; }
+
+        /* =========================================================
+           TAMBAHAN 2: PITA LOGO PEMBAYARAN
+           ========================================================= */
+        .payment-section { text-align: center; padding: 30px 20px; border-top: 1px dashed #cbd5e1; background: var(--white); }
+        .payment-section p { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .payment-logos { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        .pay-logo { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 18px; border-radius: 8px; font-weight: 800; color: var(--ses-blue-dark); font-size: 0.9rem; display: flex; align-items: center; gap: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        
+        /* =========================================================
+           TAMBAHAN 3: TOMBOL WA MELAYANG
+           ========================================================= */
+        .float-wa { 
+            position: fixed; bottom: 30px; right: 30px; background: #25D366; color: white; 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-size: 2rem; box-shadow: 0 10px 25px rgba(37,211,102,0.4); 
+            z-index: 9999; text-decoration: none; transition: transform 0.3s ease; 
+        }
+        .float-wa:hover { transform: scale(1.1) translateY(-5px); }
+
+        @media (max-width: 768px) {
+            .float-wa { width: 50px; height: 50px; font-size: 1.6rem; bottom: 20px; right: 20px; }
+        }
+        /* =========================================================
+           TAMBAHAN 2: PITA LOGO PEMBAYARAN (KARTU KUNING LIST BIRU)
+           ========================================================= */
+        .payment-section { text-align: center; padding: 30px 20px; border-top: 1px dashed #cbd5e1; background: var(--white); }
+        .payment-section p { font-size: 0.9rem; font-weight: 800; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .payment-logos { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+        
+        .pay-logo { 
+            background: var(--ses-gold); /* Warna dalam kuning logo */
+            border: 2px solid var(--ses-blue-dark); /* List biru mengelilingi */
+            padding: 8px 18px; 
+            border-radius: 8px; 
+            font-weight: 800; 
+            color: var(--ses-blue-dark); /* Teks biru gelap agar kontras */
+            font-size: 0.9rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            box-shadow: 0 4px 10px rgba(0, 55, 128, 0.15); 
+            transition: transform 0.2s;
+        }
+        .pay-logo:hover { transform: translateY(-3px); }
+        /* Memaksa warna ikon di dalam kotak menjadi biru gelap */
+        .pay-logo i { color: var(--ses-blue-dark) !important; } 
+        
+        /* =========================================================
+           TAMBAHAN 3: TOMBOL WA MELAYANG (POSISI DISESUAIKAN)
+           ========================================================= */
+        .float-wa { 
+            position: fixed; 
+            bottom: 90px; /* Dinaikkan agar tidak tertimpa footer biru */
+            right: 30px; 
+            background: #25D366; color: white; 
+            width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; 
+            align-items: center; font-size: 2rem; box-shadow: 0 10px 25px rgba(37,211,102,0.4); 
+            z-index: 9999; text-decoration: none; transition: transform 0.3s ease; 
+        }
+        .float-wa:hover { transform: scale(1.1) translateY(-5px); }
+
+        @media (max-width: 768px) {
+            .float-wa { width: 50px; height: 50px; font-size: 1.6rem; bottom: 85px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+   <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="index.html" class="logo-area">
+            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo SES">
+        </a>
+        <div class="nav-buttons">
+            <a href="admin.html" class="btn btn-outline"><i class="fas fa-user-shield"></i> Admin</a>
+            <a href="siswa.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login Peserta</a>
+        </div>
+    </nav>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-bg-circle c1"></div>
+        <div class="hero-bg-circle c2"></div>
+        <div class="hero-content">
+            <div class="hero-badge"><i class="fas fa-award"></i> LKP Smart Education Solution (SES)</div>
+            
+            <!-- 👇 TAMBAHAN TEKS IDENTITAS LENGKAP 👇 -->
+            <div class="hero-instansi">
+                NPSN: K5651703 | Alamat: Desa Temu, Kecamatan Kanor | No HP: 085855111386
+            </div>
+            
+            <h1>Uji Kemampuanmu dengan Standar <span>TKA & AKM Nasional</span></h1>
+            <p>Platform simulasi ujian berbasis komputer (CBT) mandiri untuk persiapan seleksi sekolah unggulan. Soal HOTS terstruktur, penilaian otomatis, dan analisis akurat.</p>
+            
+            <div class="hero-buttons">
+                <a href="daftar.html" class="btn btn-gold">
+                    <i class="fas fa-rocket"></i> Daftar Tryout Sekarang
+                </a>
+                <a href="siswa.html" class="btn btn-hero-secondary">
+                    <i class="fas fa-laptop-code"></i> Masuk Ruang Ujian
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- BAR KEUNGGULAN CEPAT -->
+    <div class="stats-wrapper">
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-layer-group"></i></div>
+                <div class="stat-text">
+                    <h4>3 Tipe Soal AKM</h4>
+                    <p>PG, Kompleks & Tabel Dinamis</p>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fab fa-whatsapp"></i></div>
+                <div class="stat-text">
+                    <h4>Aktivasi Otomatis</h4>
+                    <p>ID & Password dikirim via WA</p>
+                </div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-icon"><i class="fas fa-bolt"></i></div>
+                <div class="stat-text">
+                    <h4>Skor Real-Time</h4>
+                    <p>Hasil langsung tampil saat selesai</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FITUR UTAMA -->
+    <section class="section">
+        <div class="section-header">
+            <span class="section-tag">Keunggulan Platform</span>
+            <h2>Dirancang Khusus untuk <span>Evaluasi Modern</span></h2>
+            <p>Pengalaman ujian yang nyaman di perangkat HP maupun Laptop dengan teknologi terkini.</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card card-soft-blue">
+                <div class="card-content">
+                    <div class="f-icon"><i class="fas fa-laptop-code"></i></div>
+                    <h3>Sistem CBT Canggih</h3>
+                    <p>Mendukung penuh soal Pilihan Ganda, Pilihan Ganda Kompleks, serta Tabel Pernyataan dengan rumus MathJax.</p>
+                </div>
+            </div>
+            
+            <div class="feature-card card-soft-gold">
+                <div class="card-content">
+                    <div class="f-icon"><i class="fas fa-chart-line"></i></div>
+                    <h3>Analisis & Peringkat</h3>
+                    <p>Skor dihitung otomatis dengan pembobotan akurat per butir pernyataan. Evaluasi kesiapan belajarmu secara transparan.</p>
+                </div>
+            </div>
+            
+            <div class="feature-card card-soft-royal">
+                <div class="card-content">
+                    <div class="f-icon"><i class="fas fa-user-shield"></i></div>
+                    <h3>Sistem Anti-Cheat</h3>
+                    <p>Menjaga kejujuran dan objektivitas tryout. Sistem mendeteksi otomatis apabila peserta berpindah aplikasi layar ujian.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ALUR CARA KERJA -->
+    <section class="section" style="background: #ffffff; padding-top: 40px;">
+        <div class="section-header">
+            <span class="section-tag">Cara Memulai</span>
+            <h2>3 Langkah Mudah Mengikuti <span>Tryout</span></h2>
+        </div>
+
+        <div class="steps-wrapper">
+            <div class="steps-line"></div>
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <h3>Daftar & Pilih Paket</h3>
+                <p>Isi formulir pendaftaran, unggah foto profil dan bukti pembayaran pada paket ujian yang tersedia.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <h3>Terima Akses WA</h3>
+                <p>Admin akan memvalidasi data Anda. ID Peserta dan Password akan dikirimkan otomatis melalui WhatsApp.</p>
+            </div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <h3>Kerjakan & Lulus</h3>
+                <p>Login ke Portal Siswa, kerjakan soal dengan jujur, dan dapatkan skor serta e-Sertifikat kelulusan Anda.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONI -->
+    <section class="section testi-section">
+        <div class="section-header">
+            <span class="section-tag">Ulasan Siswa</span>
+            <h2>Apa Kata Mereka Tentang <span>Tryout SES?</span></h2>
+        </div>
+
+        <div class="testi-grid">
+            <div class="testi-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                <p class="testi-text">"Soal-soalnya sangat menantang dan mirip dengan soal seleksi aslinya. Sistem webnya juga lancar banget dibuka lewat HP, tidak ngelag sama sekali!"</p>
+                <div class="testi-user">
+                    <img src="https://ui-avatars.com/api/?name=Bima+Satria&background=0058c6&color=fff" class="testi-avatar" alt="Siswa">
+                    <div class="testi-name">
+                        <h4>Bima Satria</h4>
+                        <p>SDN Bakung</p>
+                    </div>
+                </div>
+            </div>
+            <div class="testi-card">
+                <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                <p class="testi-text">"Paling suka bagian setelah ujian, skornya langsung keluar jadi gak perlu nunggu lama. Terus ID loginnya langsung masuk ke WA, praktis banget!"</p>
+                <div class="testi-user">
+                    <img src="https://ui-avatars.com/api/?name=Aisyah+Putri&background=f59e0b&color=fff" class="testi-avatar" alt="Siswa">
+                    <div class="testi-name">
+                        <h4>Aisyah Putri</h4>
+                        <p>Peserta Mandiri</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ (BARU) -->
+    <section class="section" style="background: #ffffff;">
+        <div class="section-header">
+            <span class="section-tag">FAQ</span>
+            <h2>Pertanyaan yang Sering <span>Diajukan</span></h2>
+        </div>
+
+        <div class="faq-wrapper">
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Apakah ujian ini bisa dikerjakan menggunakan HP?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Tentu saja bisa! Platform LMS SES dirancang 100% responsif (Mobile-Friendly). Anda bisa mengerjakan tryout dengan nyaman menggunakan HP, Tablet, maupun Laptop selama terhubung dengan internet.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Berapa lama ID Login akan dikirimkan setelah saya mendaftar?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Setelah Anda mengirimkan formulir dan bukti transfer pembayaran yang valid, Admin kami akan melakukan validasi maksimal 1x24 jam. ID Peserta dan Password akan langsung dikirim ke nomor WhatsApp Anda.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Bagaimana jika tiba-tiba koneksi internet terputus saat ujian?
+                    <i class="fas fa-chevron-down faq-icon"></i>
+                </div>
+                <div class="faq-answer">
+                    Jangan panik. Sistem tidak akan langsung mengeluarkan Anda. Namun, Anda tidak diperkenankan memuat ulang (refresh) halaman atau membuka tab baru agar tidak terdeteksi oleh sistem Anti-Cheat kami.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BOTTOM CTA BANNER -->
+    <div class="cta-bottom">
+        <div class="cta-box">
+            <h2>Siap Mengukur Kemampuanmu?</h2>
+            <p>Jangan tunggu sampai waktu ujian tiba. Persiapkan dirimu dari sekarang dan lihat seberapa jauh pemahaman materimu dengan Tryout SES.</p>
+            <a href="daftar.html" class="btn btn-gold" style="font-size: 1.1rem; padding: 15px 30px;">
+                <i class="fas fa-rocket"></i> Daftar Tryout Sekarang
+            </a>
+        </div>
+    </div>
+
+    <!-- PITA PEMBAYARAN (BARU) -->
+    <div class="payment-section">
+        <p>Metode Pembayaran yang Didukung</p>
+        <div class="payment-logos">
+            <span class="pay-logo"><i class="fas fa-university" style="color: #00529C;"></i> BANK BRI</span>
+            <span class="pay-logo"><i class="fas fa-qrcode" style="color: #ef4444;"></i> QRIS</span>
+            <span class="pay-logo"><i class="fas fa-wallet" style="color: #00A5CF;"></i> DANA</span>
+            <span class="pay-logo"><i class="fas fa-motorcycle" style="color: #00A651;"></i> GOPAY</span>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <!-- FOOTER -->
+    <footer class="footer">
+        &copy; 2026 LKP dan BIMBEL SES (Smart Education Solution)<br>
+        NPSN: K5651703 | Alamat: Desa Temu, Kecamatan Kanor | No HP: 085855111386
+    </footer>
+
+    <!-- TOMBOL WA MELAYANG (BARU) -->
+    <a href="https://wa.me/6285855111386" target="_blank" class="float-wa" title="Hubungi Admin via WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- SCRIPT KECIL UNTUK ANIMASI FAQ -->
+    <script>
+        function toggleFaq(element) {
+            const parent = element.parentElement;
+            // Menutup item lain yang sedang terbuka (opsional, agar lebih rapi)
+            document.querySelectorAll('.faq-item').forEach(item => {
+                if (item !== parent) item.classList.remove('active');
+            });
+            // Membuka/Menutup item yang diklik
+            parent.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
