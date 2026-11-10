@@ -520,10 +520,19 @@
                     <div style="overflow-x: auto;">
                         <table class="table-data">
                             <thead>
-                                <tr><th>ID Login (Username)</th><th>Password</th><th>Nama Peserta</th><th>Asal Sekolah</th><th>No. WA</th></tr>
+                                <tr style="background: #f8fafc; border-bottom: 2px solid #cbd5e1;">
+                                    <th>ID Login (Username)</th>
+                                    <th>Password</th>
+                                    <th>Nama Peserta</th>
+                                    <th>Asal Sekolah</th>
+                                    <th>No. WA</th>
+                                    <!-- 👇 TAMBAHAN DUA KOLOM INI AGAR SINKRON DENGAN JS 👇 -->
+                                    <th style="text-align: center; width: 140px;">Tipe Akun</th>
+                                    <th style="text-align: center; width: 80px;">Aksi</th>
+                                </tr>
                             </thead>
                             <tbody id="tabelPesertaAktif">
-                                <tr><td colspan="5" style="text-align: center; padding: 30px;">Memuat data...</td></tr>
+                                <tr><td colspan="7" style="text-align: center; padding: 30px;">Memuat data...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1165,6 +1174,51 @@
     
     <script src="ses-ui.js"></script>
     <script src="admin.js"></script>
+    <!-- MODAL POP-UP EDIT PESERTA -->
+    <div id="modalEditPeserta" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
+        <div style="background: white; width: 100%; max-width: 500px; border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px dashed #e2e8f0; padding-bottom: 12px;">
+                <h3 style="margin: 0; color: var(--ses-blue-dark); font-weight: 800;"><i class="fas fa-user-edit" style="color: #f59e0b;"></i> Edit Data Peserta</h3>
+                <button type="button" onclick="tutupModalEditPeserta()" style="background: none; border: none; font-size: 1.2rem; cursor: pointer; color: var(--text-muted);"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <form onsubmit="simpanEditPeserta(event)">
+                <input type="hidden" id="editPesertaId">
+                
+                <div class="form-group">
+                    <label>Nama Lengkap Peserta</label>
+                    <input type="text" id="editPesertaNama" class="form-control" required>
+                </div>
+                
+                <div style="display: flex; gap: 15px;">
+                    <div class="form-group" style="flex: 1;">
+                        <label>Password Login</label>
+                        <input type="text" id="editPesertaPassword" class="form-control" required style="font-family: monospace; font-weight: 800; color: var(--ses-blue-dark);">
+                    </div>
+                    <div class="form-group" style="flex: 1;">
+                        <label>No. WhatsApp</label>
+                        <input type="tel" id="editPesertaWa" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Asal Sekolah / Lembaga</label>
+                    <input type="text" id="editPesertaSekolah" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-image" style="color: var(--ses-blue);"></i> Link Foto Profil (Opsional)</label>
+                    <input type="url" id="editPesertaFoto" class="form-control" placeholder="Tempel link gambar dari Cloudinary...">
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; margin-bottom: 0; font-weight: 600;">*Gunakan menu "Manajemen Gambar" untuk mengunggah foto baru, lalu tempel link-nya di sini.</p>
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1; justify-content: center; padding: 12px;" onclick="tutupModalEditPeserta()">Batal</button>
+                    <button type="submit" id="btnSimpanEditPeserta" class="btn btn-primary" style="flex: 1; justify-content: center; padding: 12px;"><i class="fas fa-save"></i> Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <!-- MODAL POP-UP INPUT KAS KEUANGAN -->
     <div id="modalKeuangan" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
         <div style="background: white; width: 100%; max-width: 450px; border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease;">

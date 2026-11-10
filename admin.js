@@ -61,9 +61,13 @@ document.addEventListener('DOMContentLoaded', () => {
 let jumlahAntreanSebelumnya = 0; 
 let inisialisasiAwal = true;
 
+// ==========================================
+// FUNGSI ADMIN: MUAT ANTREAN PENDAFTAR (DIREVISI)
+// ==========================================
 function muatAntreanPendaftar() {
-    db.collection("pendaftaran_tryout")
-      .where("status", "in", ["Menunggu Verifikasi", "Belum Bayar"])
+    // SEKARANG MEMBACA DARI KOLEKSI 'leads' SESUAI DAFTAR.JS
+    db.collection("leads")
+      .where("status", "in", ["Lead Baru", "Sedang Chat", "Demo Produk", "Negosiasi", "Menunggu Verifikasi", "Belum Bayar"])
       .onSnapshot(snap => {
         const tbody = document.getElementById('tabelAntrean');
         const badgeSidebar = document.getElementById('badgeAntrean');
@@ -72,6 +76,7 @@ function muatAntreanPendaftar() {
         const dashCount = document.getElementById('dashCountAntrean');
         if(dashCount) dashCount.textContent = snap.size;
         
+        if(!tbody) return;
         tbody.innerHTML = '';
         const jumlahSekarang = snap.size;
 
@@ -81,7 +86,7 @@ function muatAntreanPendaftar() {
             
             if (!inisialisasiAwal && jumlahSekarang > jumlahAntreanSebelumnya) {
                 tampilkanToast("🔔 Ada Pendaftar Baru Masuk!");
-                mainkanSuaraNotifikasi();
+                // mainkanSuaraNotifikasi(); // Aktifkan jika Anda punya fungsi audio
             }
         } else {
             if (badgeSidebar) badgeSidebar.style.display = 'none';
@@ -99,16 +104,26 @@ function muatAntreanPendaftar() {
             const d = doc.data(); 
             const idDoc = doc.id;
             const fotoHtml = d.fotoProfilUrl ? `<img src="${d.fotoProfilUrl}" class="avatar-img" alt="Foto">` : `<div class="avatar-img" style="background:#e2e8f0; display:flex; align-items:center; justify-content:center;"><i class="fas fa-user"></i></div>`;
-            let statusHtml = (d.statusPembayaran === 'sudah' || d.status === 'Menunggu Verifikasi') ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Sudah Bayar</span><br>${d.buktiBayarUrl ? `<a href="${d.buktiBayarUrl}" target="_blank" style="font-size:0.8rem; color:var(--ses-blue); text-decoration:none; font-weight:bold; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Cek Bukti</a>` : ''}` : `<span class="badge badge-warning"><i class="fas fa-clock"></i> Belum Bayar</span>`;
+            
+            // Logika Status Bayar (Mengikuti field baru di daftar.js)
+            let statusHtml = (d.statusPembayaran === 'sudah' || d.status === 'Menunggu Verifikasi') 
+                ? `<span class="badge badge-success"><i class="fas fa-check-circle"></i> Sudah Bayar</span><br>${d.buktiBayarUrl ? `<a href="${d.buktiBayarUrl}" target="_blank" style="font-size:0.8rem; color:var(--ses-blue); text-decoration:none; font-weight:bold; margin-top:5px; display:inline-block;"><i class="fas fa-external-link-alt"></i> Cek Bukti</a>` : ''}` 
+                : `<span class="badge badge-warning"><i class="fas fa-clock"></i> Belum Bayar</span>`;
 
-            // Menarik pilihan tipe akses yang dipilih siswa saat mendaftar
+            // Menarik pilihan tipe akses (tier)
             const tier = d.tipeAkses || "Premium";
+            
+            // MENGGUNAKAN NAMA FIELD BARU: namaProspek, minatProduk
+            const namaSiswa = d.namaProspek || d.namaPeserta || "Anonim";
+            const namaPaket = d.minatProduk || d.paketTryout || "-";
+            const nomorWa = d.noWa || "-";
+            const asalSekolah = d.asalSekolah || "-";
 
             tbody.innerHTML += `
                 <tr>
-                    <td><div class="td-user">${fotoHtml}<div><strong style="color:var(--ses-blue-dark); font-size:1rem;">${d.namaPeserta}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${d.asalSekolah}</span></div></div></td>
-                    <td style="font-weight: 700;">${d.noWa}</td>
-                    <td><span style="background:#eff6ff; color:var(--ses-blue); padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:bold;">${d.paketTryout}</span></td>
+                    <td><div class="td-user">${fotoHtml}<div><strong style="color:var(--ses-blue-dark); font-size:1rem;">${namaSiswa}</strong><br><span style="font-size:0.8rem; color:var(--text-muted);">${asalSekolah}</span></div></div></td>
+                    <td style="font-weight: 700;">${nomorWa}</td>
+                    <td><span style="background:#eff6ff; color:var(--ses-blue); padding:4px 10px; border-radius:6px; font-size:0.8rem; font-weight:bold;">${namaPaket}</span></td>
                     <td>${statusHtml}</td>
                     <td style="text-align: center;">
                         <select id="akses_${idDoc}" class="form-control" style="font-size:0.75rem; padding:6px; margin-bottom:8px; border-color:var(--ses-blue);">
@@ -116,13 +131,17 @@ function muatAntreanPendaftar() {
                             <option value="Pro" ${tier === 'Pro' ? 'selected' : ''}>🥈 Pro (Latihan + Ujian)</option>
                             <option value="Basic" ${tier === 'Basic' || (!tier && tier !== 'Pro' && tier !== 'Ultimate') ? 'selected' : ''}>🥉 Basic (Hanya Latihan)</option>
                         </select>
-                        <button onclick="terimaPendaftar('${idDoc}', '${d.namaPeserta}', '${d.noWa}', '${d.asalSekolah}', '${d.paketTryout}', document.getElementById('akses_${idDoc}').value)" class="btn btn-success" style="width: 100%;"><i class="fas fa-check"></i> ACC & Buat ID</button>
+                        <!-- Panggil terimaPendaftar dengan parameter yang benar -->
+                        <button onclick="terimaPendaftar('${idDoc}', '${namaSiswa.replace(/'/g, "\\'")}', '${nomorWa}', '${asalSekolah.replace(/'/g, "\\'")}', '${namaPaket.replace(/'/g, "\\'")}', document.getElementById('akses_${idDoc}').value)" class="btn btn-success" style="width: 100%;"><i class="fas fa-check"></i> ACC & Buat ID</button>
                     </td>
                 </tr>`;
         });
     });
 }
 
+// ==========================================
+// FUNGSI ADMIN: TERIMA PENDAFTAR & BUAT ID (DIREVISI)
+// ==========================================
 async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
     const konfirmasi = await sesConfirm("Terima Pendaftar?", `Terima pendaftar <b>${nama}</b> dan berikan Tipe Akun <b>${tipeAkses}</b>?`, "fas fa-user-check", "var(--ses-blue)");
     if (!konfirmasi) return; 
@@ -134,10 +153,10 @@ async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
     if(btn) { btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Memproses...'; btn.disabled = true; }
     
     try {
-        // 1. Cek Data Pendaftaran untuk mencari Kode Referral
-        const docDaftar = await db.collection("pendaftaran_tryout").doc(idDoc).get();
+        // 1. Cek Data Pendaftaran di koleksi 'leads'
+        const docDaftar = await db.collection("leads").doc(idDoc).get();
         const dataDaftar = docDaftar.data();
-        const kodeReferral = dataDaftar.referralDari || null;
+        const kodeReferral = dataDaftar.affiliate || dataDaftar.referralDari || null;
 
         // 2. Ambil Harga Paket
         let nominalPemasukan = 0;
@@ -146,7 +165,7 @@ async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
             nominalPemasukan = Number(snapshotPaket.docs[0].data().hargaPaket) || 0;
         }
 
-        // 3. Buat Akun Siswa Baru
+        // 3. Buat Akun Siswa Baru di tabel 'users_tryout'
         await db.collection("users_tryout").add({ 
             username: newUsername, 
             password: newPassword, 
@@ -158,8 +177,8 @@ async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
             waktuDiterima: firebase.firestore.FieldValue.serverTimestamp() 
         });
         
-        // 4. Ubah Status Pendaftaran
-        await db.collection("pendaftaran_tryout").doc(idDoc).update({ status: "Diterima" });
+        // 4. Ubah Status Pendaftaran di tabel 'leads' menjadi Closing agar terekam sukses di Affiliate
+        await db.collection("leads").doc(idDoc).update({ status: "Closing" });
 
         // 👇 5. LOGIKA SPLIT KEUANGAN & KOMISI AFFILIATE 👇
         if (nominalPemasukan > 0) {
@@ -177,14 +196,12 @@ async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
                     waktuDibuat: firebase.firestore.FieldValue.serverTimestamp()
                 });
 
-                // B. Catat saldo komisi (20%) ke Riwayat Mitra/Guru
-                await db.collection("riwayat_komisi").add({
-                    kodeReferral: kodeReferral,
-                    namaSiswa: nama,
-                    paket: paket,
-                    nominalKomisi: nominalKomisiGuru,
-                    statusCair: false, // Belum ditarik (withdraw) oleh guru
-                    waktuDibuat: firebase.firestore.FieldValue.serverTimestamp()
+                // B. Catat saldo komisi (20%) ke tabel komisi agar terbaca di dashboard Affiliate
+                await db.collection("komisi").add({
+                    usernameAff: kodeReferral,
+                    produk: paket,
+                    jumlah: nominalKomisiGuru,
+                    waktu: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })
                 });
                 
                 tampilkanToast(`Akun dibuat! Kas LKP & Komisi Affiliate tercatat otomatis!`);
@@ -219,7 +236,7 @@ async function terimaPendaftar(idDoc, nama, wa, sekolah, paket, tipeAkses) {
 }
 
 // ==========================================
-// FUNGSI ADMIN: MUAT PESERTA AKTIF (DENGAN TOMBOL WA & EDIT AKSES)
+// FUNGSI ADMIN: MUAT PESERTA AKTIF (DIREVISI: TAMBAH TOMBOL EDIT)
 // ==========================================
 function muatPesertaAktif() {
     db.collection("users_tryout").onSnapshot(snap => {
@@ -228,7 +245,7 @@ function muatPesertaAktif() {
         const tbody = document.getElementById('tabelPesertaAktif');
         if(!tbody) return;
         
-        // Pastikan Header Tabel memiliki kolom "Aksi / Tipe Akun" jika belum ada
+        // Memastikan Header Tabel memiliki kolom "Aksi"
         const thead = tbody.previousElementSibling;
         if (thead) {
             thead.innerHTML = `
@@ -238,7 +255,8 @@ function muatPesertaAktif() {
                     <th>Nama Peserta</th>
                     <th>Asal Sekolah</th>
                     <th>No. WA</th>
-                    <th style="text-align: center; width: 180px;">Tipe Akun (Akses)</th>
+                    <th style="text-align: center; width: 140px;">Tipe Akun</th>
+                    <th style="text-align: center; width: 80px;">Aksi</th>
                 </tr>
             `;
         }
@@ -246,14 +264,13 @@ function muatPesertaAktif() {
         tbody.innerHTML = '';
         
         if(snap.empty) {
-            tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-muted); padding: 30px;">Belum ada peserta aktif.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; color: var(--text-muted); padding: 30px;">Belum ada peserta aktif.</td></tr>';
         } else {
             snap.forEach(doc => {
                 const d = doc.data();
                 const idDoc = doc.id;
                 const tierAktif = d.tipeAkses || "Basic";
                 
-                // Cerdas: Mengecek apakah user ini sudah pernah menyelesaikan minimal 1 ujian
                 let sudahUjian = false;
                 Object.keys(d).forEach(key => {
                     if (key.startsWith("skor_") || key.startsWith("riwayat_skor_")) {
@@ -263,11 +280,11 @@ function muatPesertaAktif() {
                 
                 if (!sudahUjian) countBelum++; 
 
-                // 👇 LOGIKA BARU: Format Nomor & Tombol WhatsApp 👇
+                // Logika Format Nomor WA
                 let waHtml = "-";
                 if (d.wa) {
-                    let cleanWa = d.wa.replace(/\D/g, ''); // Buang karakter selain angka
-                    if (cleanWa.startsWith('0')) cleanWa = '62' + cleanWa.substring(1); // Ubah awalan 0 jadi 62 (kode negara ID)
+                    let cleanWa = d.wa.replace(/\D/g, ''); 
+                    if (cleanWa.startsWith('0')) cleanWa = '62' + cleanWa.substring(1); 
                     
                     let pesanTemplate = encodeURIComponent(`Halo ${d.nama}, ini dari Admin LKP SES...`);
                     waHtml = `
@@ -281,18 +298,23 @@ function muatPesertaAktif() {
                 }
                 
                 tbody.innerHTML += `
-                    <tr>
+                    <tr style="border-bottom: 1px solid #e2e8f0;">
                         <td><strong style="color: var(--ses-blue); font-size: 1.05rem;">${d.username}</strong></td>
                         <td style="font-family: monospace; font-size: 1.05rem; letter-spacing: 1px; color: #475569;">${d.password}</td>
                         <td><strong style="text-transform: uppercase; color: var(--ses-blue-dark);">${d.nama}</strong></td>
                         <td>${d.sekolah || 'Mandiri'}</td>
                         <td style="font-weight: 700;">${waHtml}</td>
                         <td style="text-align: center;">
-                            <select id="editTier_${idDoc}" class="form-control" style="font-size: 0.8rem; padding: 6px; border-color: var(--ses-blue); font-weight: 700; cursor: pointer;" onchange="ubahTipeAksesSiswa('${idDoc}', this.value)">
+                            <select id="editTier_${idDoc}" class="form-control" style="font-size: 0.75rem; padding: 6px; border-color: var(--ses-blue); font-weight: 700; cursor: pointer;" onchange="ubahTipeAksesSiswa('${idDoc}', this.value)">
                                 <option value="Basic" ${tierAktif === 'Basic' ? 'selected' : ''}>🥉 Basic</option>
                                 <option value="Pro" ${tierAktif === 'Pro' ? 'selected' : ''}>🥈 Pro</option>
                                 <option value="Ultimate" ${tierAktif === 'Ultimate' ? 'selected' : ''}>👑 Ultimate</option>
                             </select>
+                        </td>
+                        <td style="text-align: center;">
+                            <button onclick="bukaModalEditPeserta('${idDoc}')" class="btn btn-warning btn-sm" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 6px; background: #f59e0b; color: white; border: none; cursor: pointer;" title="Edit Data Peserta">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
                         </td>
                     </tr>
                 `;
@@ -2375,3 +2397,200 @@ async function pindahDanEditSoal(idBankSoal) {
         tampilkanToast("Gagal memuat data soal.", "error");
     }
 }
+// ==========================================
+// FUNGSI ADMIN: EDIT DATA PESERTA (MODAL)
+// ==========================================
+async function bukaModalEditPeserta(idDoc) {
+    try {
+        tampilkanToast("Mengambil data peserta...");
+        const docSnap = await db.collection("users_tryout").doc(idDoc).get();
+        
+        if (!docSnap.exists) {
+            return sesAlert("Error", "Data peserta tidak ditemukan di database!", "fas fa-exclamation-triangle", "#ef4444");
+        }
+        
+        const data = docSnap.data();
+        
+        // Isi otomatis form di dalam pop-up
+        document.getElementById('editPesertaId').value = idDoc;
+        document.getElementById('editPesertaNama').value = data.nama || "";
+        document.getElementById('editPesertaPassword').value = data.password || "";
+        document.getElementById('editPesertaWa').value = data.wa || "";
+        document.getElementById('editPesertaSekolah').value = data.sekolah || "";
+        document.getElementById('editPesertaFoto').value = data.fotoProfilUrl || "";
+        
+        // Tampilkan Modal
+        document.getElementById('modalEditPeserta').style.display = 'flex';
+    } catch (error) {
+        console.error("Gagal membuka data peserta:", error);
+        tampilkanToast("Terjadi kesalahan saat memuat data.", "error");
+    }
+}
+
+function tutupModalEditPeserta() {
+    document.getElementById('modalEditPeserta').style.display = 'none';
+    document.getElementById('editPesertaId').value = '';
+}
+
+async function simpanEditPeserta(e) {
+    e.preventDefault();
+    const idDoc = document.getElementById('editPesertaId').value;
+    const nama = document.getElementById('editPesertaNama').value.trim();
+    const password = document.getElementById('editPesertaPassword').value.trim();
+    const wa = document.getElementById('editPesertaWa').value.trim();
+    const sekolah = document.getElementById('editPesertaSekolah').value.trim();
+    const fotoProfilUrl = document.getElementById('editPesertaFoto').value.trim();
+    
+    const btn = document.getElementById('btnSimpanEditPeserta');
+    const teksAsli = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+    btn.disabled = true;
+    
+    try {
+        // Simpan pembaruan (update) ke Firebase Database
+        await db.collection("users_tryout").doc(idDoc).update({
+            nama: nama,
+            password: password,
+            wa: wa,
+            sekolah: sekolah,
+            fotoProfilUrl: fotoProfilUrl
+        });
+        
+        tampilkanToast(`Data peserta ${nama} berhasil diperbarui!`);
+        tutupModalEditPeserta(); // Tutup Pop-Up
+    } catch (error) {
+        console.error("Gagal menyimpan edit peserta:", error);
+        tampilkanToast("Terjadi kesalahan saat menyimpan perubahan data.", "error");
+    } finally {
+        btn.innerHTML = teksAsli;
+        btn.disabled = false;
+    }
+}
+// ==========================================
+// FUNGSI CHAT WA UNTUK FOLLOW UP LEAD / PEMBELI (ADMIN TRYOUT)
+// ==========================================
+window.chatWA = function(nomor, nama, status, produk) {
+    let formatNomor = nomor.replace(/^0/, '62'); 
+    let faqHtml = '';
+
+    // FAQ Khusus Tryout TKA / Bimbel SES
+    faqHtml = `
+        <div class="mt-4 mb-2 fw-bold text-success" style="font-size: 0.85rem; border-bottom: 2px solid #10b981; padding-bottom: 5px;">
+            <i class="fa-solid fa-clipboard-question"></i> Jawaban Cepat FAQ LKP SES
+        </div>
+        <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_cara_login')">
+            <div class="fw-semibold text-dark" style="font-size: 0.8rem;">1. Bagaimana cara siswa login ke Tryout?</div>
+        </button>
+        <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_hp_atau_laptop')">
+            <div class="fw-semibold text-dark" style="font-size: 0.8rem;">2. Apakah bisa dikerjakan di HP / Laptop?</div>
+        </button>
+        <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_jadwal')">
+            <div class="fw-semibold text-dark" style="font-size: 0.8rem;">3. Kapan jadwal Tryout dimulai & ditutup?</div>
+        </button>
+        <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_sertifikat')">
+            <div class="fw-semibold text-dark" style="font-size: 0.8rem;">4. Bagaimana cara cetak Sertifikat Kelulusan?</div>
+        </button>
+        <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_laporan')">
+            <div class="fw-semibold text-dark" style="font-size: 0.8rem;">5. Apakah orang tua mendapat hasil tryout?</div>
+        </button>
+    `;
+
+    Swal.fire({
+        title: '<span style="font-size: 1.1rem; font-weight: 700;">Pilih Pesan Balasan WA</span>',
+        html: `
+            <div class="text-start mt-2" style="max-height: 60vh; overflow-y: auto; overflow-x: hidden; padding-right: 8px;">
+                
+                <div class="fw-bold mb-2 text-primary" style="font-size: 0.85rem; border-bottom: 2px solid #2563eb; padding-bottom: 5px;">
+                    <i class="fa-solid fa-bullhorn"></i> Skrip Penjualan Utama
+                </div>
+
+                <button class="btn btn-outline-primary w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'sapaan')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-hand-wave me-2"></i>Sapaan Awal (Lead Baru)</div>
+                </button>
+
+                <button class="btn btn-outline-info w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'followup')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-rotate-right me-2"></i>Follow-up Biasa</div>
+                </button>
+
+                <button class="btn btn-outline-success w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'link')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-link me-2"></i>Kirim Link Pendaftaran Promo</div>
+                </button>
+
+                <button class="btn btn-outline-warning w-100 mb-2 text-start p-2 rounded-3 text-dark" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'mahal')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-shield-heart me-2"></i>Jurus Menjawab "Harga Mahal"</div>
+                </button>
+
+                <button class="btn btn-outline-secondary w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'closing')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-check-double me-2"></i>Ucapan Closing (Terima Kasih)</div>
+                </button>
+                
+                <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'cara_beli')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-cart-shopping text-warning me-2"></i>Panduan Cara Pemesanan</div>
+                </button>
+
+                <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'cara_bayar')">
+                    <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-money-bill-wave text-success me-2"></i>Informasi Rekening Pembayaran</div>
+                </button>
+
+                ${faqHtml}
+            </div>
+        `,
+        showConfirmButton: false,
+        showCloseButton: true,
+        width: '450px'
+    });
+};
+
+window.kirimPesanWA = function(nomor, nama, produk, tipe) {
+    const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const linkUtama = baseHref + "daftar.html"; 
+    
+    let pesan = "";
+
+    // --- 1. SKRIP JUALAN UTAMA LKP SES ---
+    if(tipe === 'sapaan') {
+        pesan = `Halo Ayah/Bunda dari ananda *${nama}*, perkenalkan saya tim Edukasi LKP SES. Kami melihat ada ketertarikan untuk mengikuti program *${produk || 'Tryout TKA Nasional'}*. Ada informasi pendaftaran yang bisa saya bantu jelaskan Bunda? 😊`;
+    } else if(tipe === 'followup') {
+        pesan = `Halo Bunda dari *${nama}*, saya ingin menindaklanjuti rencana pendaftaran *${produk || 'Tryout TKA'}*. Apakah ananda sudah siap? Jangan sampai kehabisan kuota diskon pendaftarannya ya Bunda. 🙏`;
+    } else if(tipe === 'link') {
+        pesan = `Halo Bunda, terkait pendaftaran *${produk || 'Tryout TKA LKP SES'}*, Bunda bisa melihat detail fitur lengkap (Sertifikat, Papan Peringkat, dll) dan melakukan pendaftaran langsung melalui link resmi kami ini ya: \n\n👉 ${linkUtama}`;
+    } else if(tipe === 'mahal') {
+        pesan = `Betul Bunda, di awal mungkin terasa ada biaya. Tapi dengan biaya tersebut, ananda sudah mendapatkan akses ke ratusan soal berstandar AKM Nasional, simulasi CBT mirip ujian asli, dan laporan evaluasi lengkap.\n\nJika ikut bimbel atau beli buku kumpulan soal di luar, biayanya bisa ratusan ribu lho Bunda. Ini investasi yang sangat terjangkau untuk prestasi anak! 🏆`;
+    } else if(tipe === 'closing') {
+        pesan = `Halo Bunda dari *${nama}*, terima kasih banyak telah mempercayakan pendidikan ananda di *LKP SES*. ID Login dan Password akan segera diproses oleh tim kami. Jika ada hal yang perlu dibantu ke depannya, jangan ragu hubungi tim support kami ya. Sukses selalu untuk ananda! ✨`;
+    } else if(tipe === 'cara_beli') {
+        pesan = `Untuk cara pendaftarannya sangat mudah Bunda!\n\n1️⃣ Bunda cukup buka link pendaftaran: ${linkUtama}\n2️⃣ Isi formulir data diri ananda secara lengkap.\n3️⃣ Pilih paket yang diinginkan (Basic/Pro/Ultimate).\n4️⃣ Lakukan pembayaran ke rekening resmi kami dan sertakan bukti transfernya di form.\n\nSetelah klik Kirim, tim kami akan langsung merespons dan membuatkan ID Login ruang ujian untuk ananda. 🚀`;
+    } else if(tipe === 'cara_bayar') {
+        pesan = `Baik Bunda, untuk pembayarannya bisa ditransfer ke rekening resmi Lembaga kami berikut ini ya:\n\n💳 *BRI* : 618601014043531 a.n PAMBUDI\n📱 *DANA/OVO/GoPay* : 085855111386 a.n PAMBUDI\n\nKhusus untuk pembayaran via *QRIS*, mohon konfirmasi ke kami terlebih dahulu ya Bunda.\n\nSetelah transfer, mohon foto/screenshot struknya dikirim ke chat ini agar bisa langsung kami aktifkan akun ujian ananda. Terima kasih! 🙏`;
+    }
+    
+    // --- 2. SKRIP FAQ TRYOUT SES ---
+    else if(tipe === 'faq_cara_login') {
+        pesan = `Gampang banget Bunda! Nanti setelah pembayaran terkonfirmasi, ananda akan mendapatkan *ID Peserta* dan *Password*. Bunda cukup buka website LKP SES, masukkan ID tersebut di layar Portal Siswa, dan ananda langsung bisa masuk ke Ruang Ujian CBT. 🚀`;
+    } else if(tipe === 'faq_hp_atau_laptop') {
+        pesan = `Sangat bisa Bunda! Sistem Ujian (CBT) kami sangat ringan dan fleksibel. Ananda bisa mengerjakannya menggunakan HP (Android/iPhone), Tablet, ataupun Laptop/PC kesayangan di rumah. Pastikan koneksi internetnya stabil ya Bunda. 📱💻`;
+    } else if(tipe === 'faq_jadwal') {
+        pesan = `Untuk Paket Latihan, ananda bisa mengerjakannya kapan saja 24 Jam secara mandiri. Namun untuk Paket Ujian Simulasi (Khusus Paket Pro & Ultimate), jadwal pembukaan dan penutupan soalnya akan dikendalikan langsung oleh Admin Pusat LKP SES agar serentak layaknya ujian nasional Bunda. ⏰`;
+    } else if(tipe === 'faq_sertifikat') {
+        pesan = `Sertifikat Kelulusan Resmi (Khusus Akun Ultimate) akan otomatis terbuka dan bisa dicetak (PDF) langsung dari Dashboard Siswa jika nilai rata-rata ujian ananda sudah mencapai batas KKM (di atas 75). Ini sangat bagus untuk memacu semangat ananda meraih nilai terbaik! 🏆`;
+    } else if(tipe === 'faq_laporan') {
+        pesan = `Betul Bunda. Selain nilai yang langsung keluar setelah ujian selesai, sistem LKP SES juga menyusun *Laporan Evaluasi Progres Belajar* berbentuk PDF. Laporan ini bisa Bunda download untuk melihat titik lemah ananda, sehingga belajar ke depannya bisa lebih fokus. 📊`;
+    }
+
+    Swal.close(); 
+    let formatNomor = nomor.replace(/^0/, '62'); 
+    window.open(`https://wa.me/${formatNomor}?text=${encodeURIComponent(pesan)}`, '_blank'); 
+};
+
+// ==========================================
+// FUNGSI CHAT WA KHUSUS ADMIN KE AFFILIATE (MITRA)
+// ==========================================
+window.chatAffiliateAdmin = function(noWa, nama) {
+    if (!noWa || noWa === '-' || noWa.trim() === '') {
+        Swal.fire('Oops!', 'Nomor WhatsApp affiliate ini kosong atau tidak valid.', 'warning');
+        return;
+    }
+    let formatNomor = noWa.replace(/^0/, '62');
+    let pesan = encodeURIComponent(`Halo Kak *${nama}*, saya Admin LKP dan Bimbel SES.\n\nBagaimana kabarnya? Apakah ada kendala terkait promosi program Tryout atau pencairan komisi yang bisa saya bantu?`);
+    window.open(`https://wa.me/${formatNomor}?text=${pesan}`, '_blank');
+};

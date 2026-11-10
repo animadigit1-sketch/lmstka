@@ -1,0 +1,2730 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2563EB">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Dashboard Affiliate | LKP dan BIMBEL SES</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root { 
+            --primary-color: #0058c6; /* Biru Utama SES */
+            --secondary-color: #003780; /* Biru Gelap SES */
+            --accent-color: #f59e0b; /* Emas SES */
+            --bg-color: #F8FAFC; 
+            --card-radius: 18px; 
+            --transition: all 0.3s ease;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--secondary-color); overflow-x: hidden; }
+        #app-wrapper { display: flex; width: 100%; height: 100vh; position: relative; }
+        
+        /* Sidebar Affiliate SES (Biru Ke Emas) */
+        .sidebar { 
+            width: 260px; 
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%); 
+            border-right: none; 
+            display: flex; 
+            flex-direction: column; 
+            z-index: 1050; 
+            transition: var(--transition);
+        }
+        .sidebar-brand { 
+            padding: 30px 24px 20px; 
+            text-decoration: none; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 8px; 
+            border-bottom: 1px dashed rgba(255,255,255,0.2); 
+        }
+        .sidebar-brand img {
+            width: 85%; 
+            height: auto;
+            max-height: 50px;
+            object-fit: contain; 
+            background: white; 
+            padding: 6px 12px; 
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .sidebar-brand span { 
+            font-weight: 900; 
+            color: #ffffff; 
+            font-size: 0.95rem; /* Ukuran font diperkecil */
+            text-align: center; /* Memastikan teks panjang tetap di tengah */
+            line-height: 1.2;
+        }
+        .sidebar-menu { 
+            padding: 20px 0; 
+            flex-grow: 1; 
+            overflow-y: auto; 
+            overflow-x: hidden; 
+        }
+        
+        /* Desain Item Menu */
+        .menu-item { 
+            padding: 12px 24px; 
+            color: rgba(255,255,255,0.7); 
+            text-decoration: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            transition: var(--transition); 
+            font-weight: 600; 
+            cursor: pointer;
+            white-space: nowrap; 
+        }
+        .menu-item:hover, .menu-item.active { 
+            background-color: rgba(255, 255, 255, 0.15); 
+            color: #ffffff; 
+            border-right: 5px solid var(--accent-color); /* Garis indikator EMAS SES */
+        }
+        /* Perbaikan Warna Kategori Menu Sidebar Agar Terlihat Jelas */
+        .sidebar-menu .px-4.mb-2.text-uppercase {
+            color: #fde047 !important; /* Diubah menjadi warna kuning emas terang agar kontras */
+            font-size: 0.68rem !important;
+            letter-spacing: 1.2px;
+            font-weight: 800 !important;
+            opacity: 0.95;
+            margin-top: 15px;
+        }
+        
+        /* Overlay Gelap Khusus Mobile */
+        .sidebar-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.5); z-index: 1040;
+            opacity: 0; visibility: hidden; transition: var(--transition);
+        }
+        .sidebar-overlay.show { opacity: 1; visibility: visible; }
+
+        /* Main Content */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; width: 100%; }
+        .topbar { 
+            height: 70px; background: #fff; padding: 0 20px; 
+            display: flex; align-items: center; justify-content: space-between; 
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02); z-index: 1000; position: sticky; top: 0;
+        }
+        .content-view { padding: 20px 30px; display: none; animation: fadeIn 0.4s ease-in-out; }
+        .content-view.active { display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .saas-card { background: #fff; border-radius: var(--card-radius); border: 1px solid #e2e8f0; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
+        
+        /* Kartu Produk Pro Style */
+        .product-card { border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; transition: var(--transition); background: #fff; }
+        .product-card:hover { transform: translateY(-6px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
+        /* KODE BARU (UBAH BAGIAN INI) */
+.product-img-container { 
+    position: relative; 
+    aspect-ratio: 4 / 5; /* Mengubah rasio menjadi 4 banding 5 */
+    width: 100%; 
+    background-color: #f1f5f9; 
+}
+.product-img-container img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+}
+        .product-badge { position: absolute; top: 12px; left: 12px; font-size: 0.7rem; font-weight: 600; padding: 6px 12px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .btn-youtube { background-color: #FEF2F2; color: #DC2626; border: 1px solid #FEE2E2; font-weight: 600; font-size: 0.8rem; transition: var(--transition); }
+        .btn-youtube:hover { background-color: #DC2626; color: #ffffff; border-color: #DC2626; }
+
+        /* Desain Kustom untuk Tabs Materi Promosi (Bisa di-swipe di HP) */
+        .nav-pills .nav-link { color: #64748b; font-weight: 500; font-size: 0.85rem; padding: 10px 20px; border-radius: 8px; white-space: nowrap; }
+        .nav-pills .nav-link.active { background-color: var(--primary-color); color: #fff; }
+        .nav-pills-container { overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 5px; }
+        .nav-pills-container::-webkit-scrollbar { height: 4px; }
+        .nav-pills-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Tombol Install App PWA */
+        .btn-install {
+            background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+            color: white; border: none; font-weight: 600; font-size: 0.8rem;
+            display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+            transition: var(--transition);
+        }
+        .btn-install:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); color: white; }
+
+        /* Responsive Mobile Styles */
+        @media (max-width: 768px) {
+            .sidebar { 
+                position: fixed; left: -260px; top: 0; height: 100vh; 
+                box-shadow: 5px 0 15px rgba(0,0,0,0.1); 
+            }
+            .sidebar.open { left: 0; }
+            .topbar { padding: 0 15px; }
+            .content-view { padding: 15px; }
+            
+            .saas-card h2 { font-size: 1.8rem; }
+            #page-title { font-size: 1.1rem; }
+            .table-responsive { border: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ========================================== -->
+    <!-- LAYAR LOGIN & DAFTAR KHUSUS AFFILIATE (PREMIUM) -->
+    <!-- ========================================== -->
+    <style>
+        .auth-bg {
+            background: #f0f4f8; 
+            background-image: 
+                radial-gradient(circle at top left, rgba(0, 88, 198, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at bottom right, rgba(245, 158, 11, 0.15) 0%, transparent 40%);
+            position: relative;
+        }
+        .auth-card {
+            background: rgba(255, 255, 255, 0.98);
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 55, 128, 0.1);
+            border: 1px solid rgba(0, 88, 198, 0.1);
+            position: relative; 
+            z-index: 1;
+            border-top: 6px solid var(--primary-color);
+            border-bottom: 6px solid var(--accent-color);
+        }
+        .auth-logo {
+            width: 180px; height: auto; object-fit: contain; 
+            margin-bottom: 15px;
+        }
+        .auth-input-group .form-control {
+            border-radius: 12px; padding: 12px 16px; border: 1px solid #e2e8f0; background-color: #f8fafc;
+            font-size: 0.9rem; font-weight: 500; transition: all 0.3s ease;
+        }
+        .auth-input-group .input-group-text {
+            border-radius: 12px 0 0 12px; background-color: #f8fafc; border: 1px solid #e2e8f0; border-right: none;
+        }
+        .auth-input-group .form-control:focus {
+            background-color: #fff; border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+        }
+        .auth-btn {
+            background: linear-gradient(135deg, #2563EB 0%, #1e40af 100%);
+            border: none; border-radius: 12px; padding: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+            font-size: 0.9rem; transition: all 0.3s ease;
+        }
+        .auth-btn:hover {
+            transform: translateY(-3px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.4); color: white;
+        }
+        .auth-btn-success { background: linear-gradient(135deg, #10B981 0%, #059669 100%); }
+        .auth-btn-success:hover { box-shadow: 0 10px 20px rgba(16, 185, 129, 0.4); }
+    </style>
+
+    <div id="auth-screen" class="auth-bg" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1050; display: flex; align-items: center; justify-content: center; overflow-y: auto;">
+        <!-- Container diperlebar agar form pendaftaran proporsional seperti di gambar -->
+        <div class="container py-5">
+            <div class="row justify-content-center">
+                <div class="col-11 col-md-8 col-lg-6 col-xl-5">
+                    
+                    <!-- ========================================== -->
+                    <!-- KOTAK FORM LOGIN (Tetap Premium)           -->
+                    <!-- ========================================== -->
+                    <div id="form-login" class="auth-card p-4 p-sm-5 mb-3">
+                        <div class="text-center mb-4">
+                            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" class="auth-logo mb-2" alt="Logo LKP SES">
+                            <h3 class="fw-bold text-dark mb-0" style="letter-spacing: -0.5px; font-size: 1.2rem;">LKP dan BIMBEL SES</h3>
+                            <p class="text-muted" style="font-size: 0.85rem; font-weight: 500;">Affiliate Bimbingan Belajar & Tryout</p>
+                        </div>
+
+                        <div class="auth-input-group mb-3">
+                            <label class="form-label fw-bold text-secondary" style="font-size: 0.7rem; letter-spacing: 0.5px;">USERNAME</label>
+                            <div class="input-group">
+                                <span class="input-group-text text-primary"><i class="fa-solid fa-user"></i></span>
+                                <input type="text" id="login-username" class="form-control border-start-0 ps-2" placeholder="Ketik username Anda" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="auth-input-group mb-4">
+                            <label class="form-label fw-bold text-secondary" style="font-size: 0.7rem; letter-spacing: 0.5px;">PASSWORD</label>
+                            <div class="input-group">
+                                <span class="input-group-text text-primary"><i class="fa-solid fa-lock"></i></span>
+                                <input type="password" id="login-password" class="form-control border-start-0 ps-2" placeholder="Ketik password rahasia" autocomplete="off">
+                                <button class="btn btn-light border border-start-0 text-muted" type="button" onclick="togglePasswordVisibility('login-password', this)" style="border-radius: 0 12px 12px 0;"><i class="fa-solid fa-eye"></i></button>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary auth-btn text-white w-100 mb-4" onclick="prosesLoginAffiliate()">
+                            Masuk ke Dasbor <i class="fa-solid fa-arrow-right-to-bracket ms-2"></i>
+                        </button>
+                        
+                        <div class="text-center bg-light p-3 rounded-3 border" style="border-style: dashed !important;">
+                            <span class="text-muted" style="font-size: 0.8rem;">Belum bergabung menjadi partner?</span><br>
+                            <a href="#" class="text-primary fw-bold text-decoration-none mt-1 d-inline-block" onclick="toggleAuthForm('register')">Mendaftar Gratis Sekarang!</a>
+                        </div>
+                    </div>
+
+                    <!-- ========================================== -->
+                    <!-- KOTAK FORM REGISTER (Desain Sesuai LKP SES)-->
+                    <!-- ========================================== -->
+                    <div id="form-register" class="auth-card p-4 p-sm-5 mb-3" style="display: none;">
+                        <div class="text-center mb-4">
+                            <!-- Logo Resmi Lembaga -->
+                            <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" class="auth-logo mb-2" alt="Logo LKP SES">
+                            
+                            <!-- Nama Lembaga Utama -->
+                            <h3 class="fw-bold mb-1" style="color: var(--primary-color); font-size: 1.15rem;">LKP Smart Education Solution (SES)</h3>
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #b45309; margin-bottom: 6px;">NPSN: K5651703 • Swasta (Pendidikan Nonformal)</div>
+                            
+                            <!-- Alamat Resmi -->
+                            <p class="text-muted mb-2" style="font-size: 0.72rem; line-height: 1.4;">
+                                <i class="fa-solid fa-location-dot text-primary me-1"></i>Jl. Raya Desa Temu, Kec. Kanor, Kab. Bojonegoro, Jawa Timur 62193
+                            </p>
+
+                            <hr class="my-3 opacity-25">
+
+                            <h5 class="fw-bold mb-1" style="color: var(--secondary-color); font-size: 1rem;">Pendaftaran Mitra Affiliate</h5>
+                            <p class="text-muted fw-semibold" style="font-size: 0.8rem;">Sebarkan Link, Dapatkan Komisi</p>
+                        </div>
+                        <!-- Banner Info Biru -->
+                        <div class="alert mb-4 text-start" style="background-color: #eff6ff; color: #1e40af; border: none; border-radius: 8px; padding: 12px 16px;">
+                            <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">🔥 Jadilah Bagian dari Kesuksesan!</div>
+                            <div style="font-size: 0.75rem; line-height: 1.5; opacity: 0.9;">Daftar sekarang, raih komisi tanpa batas, dan wujudkan impian finansial Anda bersama kami. Lengkapi data di bawah ini untuk memudahkan pencairan komisi Anda kelak.</div>
+                        </div>
+
+                        <div class="mb-3 text-start">
+                            <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Nama Lengkap (Sesuai KTP)</label>
+                            <input type="text" id="reg-nama" class="form-control" placeholder="Contoh: Budi Santoso" style="font-size: 0.85rem; border-radius: 6px; padding: 10px 12px;" autocomplete="off">
+                        </div>
+
+                        <div class="mb-3 text-start">
+                            <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Tempat, Tanggal Lahir</label>
+                            <input type="text" id="reg-ttl" class="form-control" placeholder="Contoh: Surabaya, 15 Agustus 1990" style="font-size: 0.85rem; border-radius: 6px; padding: 10px 12px;" autocomplete="off">
+                        </div>
+
+                        <div class="mb-3 text-start">
+                            <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Alamat Lengkap (Sesuai KTP)</label>
+                            <textarea id="reg-alamat" class="form-control" placeholder="Contoh: Jl. Sudirman No. 12, RT 01/RW 02, Kec. Genteng, Kota Surabaya" style="height: 70px; font-size: 0.85rem; border-radius: 6px; padding: 10px 12px; resize: none;"></textarea>
+                        </div>
+
+                        <div class="row text-start">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Alamat Email</label>
+                                <input type="email" id="reg-email" class="form-control" placeholder="Contoh: budi@gmail.com" style="font-size: 0.85rem; border-radius: 6px; padding: 10px 12px;">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Nomor WhatsApp</label>
+                                <input type="number" id="reg-wa" class="form-control" placeholder="Contoh: 081234567890" style="font-size: 0.85rem; border-radius: 6px; padding: 10px 12px;">
+                            </div>
+                        </div>
+
+                        <div class="mb-4 text-start">
+                            <label class="form-label text-secondary fw-semibold" style="font-size: 0.75rem;">Bank & No. Rekening</label>
+                            <input type="text" id="reg-bank" class="form-control" placeholder="Contoh: BCA - 1234567890 a.n Budi Santoso" style="font-size: 0.85rem; border-radius: 6px; padding: 10px 12px;">
+                        </div>
+
+                        <div class="d-flex justify-content-center gap-2 mt-2">
+                            <button class="btn btn-primary fw-semibold px-4 w-100" style="border-radius: 6px; font-size: 0.85rem; padding: 10px;" onclick="prosesDaftarAffiliateLengkap()">
+                                <i class="fa-solid fa-paper-plane me-1"></i> Kirim Pendaftaran
+                            </button>
+                            <button class="btn btn-secondary fw-semibold px-4 w-100" style="border-radius: 6px; font-size: 0.85rem; padding: 10px; background-color: #64748b; border-color: #64748b;" onclick="toggleAuthForm('login')">
+                                Batal
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="app-wrapper">
+        <div class="sidebar-overlay" id="mobile-overlay"></div>
+
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <img src="https://res.cloudinary.com/x28w7gjn/image/upload/v1791382186/o74vocbwaiaahr94fogz.png" alt="Logo LKP SES">
+                <span class="mt-2">LKP dan BIMBEL SES</span>
+                <div style="font-size: 0.7rem; color: #fde047; font-weight: 700; letter-spacing: 0.5px;">AFFILIATE PARTNER</div>
+            </div>
+            <div class="sidebar-menu">
+                <div class="px-4 mb-2 text-uppercase fw-bold" style="font-size: 0.65rem; color: #fde047; letter-spacing: 1px;">Menu Saya</div>
+                <div class="menu-item active" data-target="dashboard-view"><i class="fa-solid fa-chart-pie"></i> Ringkasan</div>
+                <div class="menu-item" data-target="product-view"><i class="fa-solid fa-book-open"></i> Katalog Tryout</div>
+                <div class="menu-item" data-target="link-view"><i class="fa-solid fa-link"></i> Link Promosi</div>
+                <div class="menu-item" data-target="promo-view"><i class="fa-solid fa-bullhorn"></i> Materi Promosi</div>
+                <div class="menu-item" data-target="academy-view"><i class="fa-solid fa-graduation-cap"></i> Panduan Promosi</div>
+                
+                <div class="px-4 mb-2 mt-3 text-uppercase fw-bold" style="font-size: 0.65rem; color: #fde047; letter-spacing: 1px;">Laporan & Performa</div>
+                <div class="menu-item" data-target="crm-view"><i class="fa-solid fa-users"></i> Status Prospek</div>
+                <div class="menu-item" data-target="lead-view"><i class="fa-solid fa-list-ul"></i> Daftar Prospek</div>
+                <div class="menu-item" data-target="komisi-view"><i class="fa-solid fa-wallet"></i> Komisi & Pencairan</div>
+                <div class="menu-item" data-target="leaderboard-view"><i class="fa-solid fa-trophy"></i> Papan Peringkat</div>
+                <div class="menu-item" data-target="settings-view"><i class="fa-solid fa-gear"></i> Pengaturan Profil</div>
+            </div>
+            <div class="p-3 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                <button class="btn w-100 text-white fw-semibold" style="background-color: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4);" onclick="keluarKeLogin()"><i class="fa-solid fa-sign-out-alt"></i> Keluar</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="d-flex align-items-center gap-3">
+                    <button class="btn btn-light d-md-none border-0 shadow-sm" id="btn-toggle-menu">
+                        <i class="fa-solid fa-bars fs-5 text-dark"></i>
+                    </button>
+                    <h5 class="mb-0 fw-bold text-truncate" id="page-title" style="max-width: 150px;">Ringkasan</h5>
+                </div>
+                
+                <div class="d-flex align-items-center gap-2">
+                    <button class="btn btn-install rounded-pill px-3" onclick="pasangAplikasiPWA()" style="background: linear-gradient(135deg, var(--accent-color) 0%, #b45309 100%);">
+                        <i class="fa-solid fa-download me-1 text-white"></i>
+                        <span class="d-none d-sm-inline">Pasang App</span>
+                        <span class="d-inline d-sm-none">Pasang</span> 
+                    </button>
+
+                    <div class="d-flex align-items-center gap-2 ms-2">
+                        <img src="https://ui-avatars.com/api/?name=Affiliate&background=10B981&color=fff" class="rounded-circle shadow-sm" width="40" alt="Profile" id="avatar-affiliate">
+                        <div class="d-none d-md-block">
+                            <div class="fw-bold" style="font-size: 0.875rem;" id="nama-affiliate">Memuat...</div>
+                            <div class="text-success" style="font-size: 0.75rem; font-weight: 600;" id="username-affiliate">AFF-...</div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <!-- ========================================== -->
+            <!-- 1. KAMAR DASHBOARD (RINGKASAN)             -->
+            <!-- ========================================== -->
+            <section id="dashboard-view" class="content-view active">
+                
+                <!-- WADAH BANNER PENGUMUMAN -->
+                <div id="banner-pengumuman" class="alert border-0 shadow-sm rounded-4 mb-4 text-white position-relative overflow-hidden" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); display: none; align-items: center; gap: 15px;">
+                    <div class="position-absolute top-0 end-0 opacity-25" style="transform: translate(10%, -20%); pointer-events: none;">
+                        <i class="fa-solid fa-bullhorn" style="font-size: 8rem;"></i>
+                    </div>
+                    <i class="fa-solid fa-bell fs-2 z-1"></i>
+                    <div class="z-1">
+                        <h6 class="fw-bold mb-1" id="banner-judul" style="letter-spacing: 0.5px;">PENGUMUMAN PENTING!</h6>
+                        <p class="mb-0 fw-medium" id="banner-teks" style="font-size: 0.85rem;">Memuat informasi...</p>
+                    </div>
+                </div>
+
+                <!-- KARTU LINK PROMOSI UTAMA (Versi Update Per Produk) -->
+<div class="alert bg-white border-0 shadow-sm p-3 mb-4 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-3">
+    <div>
+        <h6 class="fw-bold mb-1">Link Promosi Utama</h6>
+        <small class="text-muted d-block mb-2">Salin dan bagikan untuk mulai jualan!</small>
+        
+        <!-- BAGIAN BARU: STATISTIK KLIK -->
+        <div class="d-flex flex-column gap-2">
+            <span class="badge bg-primary bg-opacity-10 text-primary border border-primary shadow-sm px-3 py-2 rounded-pill w-fit" style="font-size: 0.75rem;">
+                <i class="fa-solid fa-hand-pointer me-1"></i> Total Klik: <span id="stat-total-klik" class="fw-bold fs-6">0</span>
+            </span>
+            <div id="stat-rincian-klik" class="d-flex flex-wrap gap-1" style="font-size: 0.7rem;">
+                <!-- Rincian produk akan muncul di sini otomatis -->
+            </div>
+        </div>
+    </div>
+
+    <div class="input-group" style="max-width: 350px;">
+        <input type="text" id="aff-link-copy" class="form-control form-control-sm bg-light" readonly>
+        <button class="btn btn-primary btn-sm px-3" onclick="copyLinkUtama()"><i class="fa-solid fa-copy"></i> Copy</button>
+    </div>
+</div>
+
+                <!-- 4 KARTU KPI -->
+                <div class="row">
+                    <div class="col-md-3">
+    <div class="saas-card text-center py-3">
+        <div class="text-muted fw-semibold" style="font-size: 0.75rem;">TOTAL CLOSING</div>
+        <h3 class="fw-bold text-primary mb-1" id="stat-closing">0</h3>
+        <!-- WADAH PROGRESS BAR -->
+        <div class="px-2">
+            <div class="progress" style="height: 8px; border-radius: 10px;">
+                <div id="bar-level" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 0%"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-1" style="font-size: 0.65rem;">
+                <span id="text-level" class="fw-bold text-secondary">Newbie</span>
+                <span id="text-target" class="text-muted">Target: 5</span>
+            </div>
+        </div>
+    </div>
+</div>
+                    <div class="col-md-3"><div class="saas-card text-center py-3"><div class="text-muted fw-semibold" style="font-size: 0.75rem;">LEAD AKTIF</div><h3 class="fw-bold text-warning mb-0" id="stat-lead">0</h3></div></div>
+                    <div class="col-md-3">
+    <div class="saas-card text-center py-3">
+        <div class="text-muted fw-semibold" style="font-size: 0.75rem;">SALDO KOMISI</div>
+        <h3 class="fw-bold text-success mb-0" id="stat-komisi">Rp 0</h3>
+        
+        <div id="stat-bisa-ditarik" class="text-muted mt-1 fw-semibold" style="font-size: 0.65rem;">Bisa ditarik: Rp 0</div>
+    </div>
+</div>
+                    <div class="col-md-3"><div class="saas-card text-center py-3"><div class="text-muted fw-semibold" style="font-size: 0.75rem;">KONVERSI (WIN RATE)</div><h3 class="fw-bold text-info mb-0" id="stat-rate">0%</h3></div></div>
+                </div>
+
+                <!-- GRAFIK & LEADERBOARD -->
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="saas-card">
+                            <h6 class="fw-bold mb-3">Tren Prospek Minggu Ini</h6>
+                            <!-- Pengunci tinggi grafik -->
+                            <div style="position: relative; height: 260px; width: 100%;">
+                                <canvas id="chart-leads"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="saas-card">
+                            <h6 class="fw-bold mb-3">Ranking Global</h6>
+                            <div id="live-leaderboard-affiliate"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ========================================== -->
+
+
+            <!-- ========================================== -->
+            <!-- 2. KAMAR AKADEMI JUALAN                    -->
+            <!-- ========================================== -->
+            <section id="academy-view" class="content-view">
+                <div class="saas-card bg-primary text-white border-0 position-relative overflow-hidden" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);">
+                    <div class="position-absolute top-0 end-0 opacity-10" style="transform: translate(10%, -10%); pointer-events: none;">
+                        <i class="fa-solid fa-graduation-cap" style="font-size: 10rem;"></i>
+                    </div>
+                    <div class="position-relative z-1">
+                        <h4 class="fw-bold mb-2"><i class="fa-solid fa-graduation-cap me-2"></i>Akademi Jualan</h4>
+                        <p class="mb-0" style="font-size: 0.9rem; opacity: 0.9;">Pusat edukasi dan strategi rahasia untuk mencetak closing pertama Anda.</p>
+                    </div>
+                </div>
+                
+                <div class="row g-4 mt-2">
+                    <div class="col-md-4">
+                        <div class="saas-card h-100 p-0 overflow-hidden d-flex flex-column border">
+                            <div style="aspect-ratio: 16/9; background-color: #0f172a;" class="position-relative">
+                                <div class="position-absolute top-50 start-50 translate-middle text-white text-center w-100">
+                                    <i class="fa-brands fa-youtube fs-1 text-danger mb-2"></i>
+                                    <div style="font-size: 0.8rem;">(Video Segera Hadir)</div>
+                                </div>
+                            </div>
+                            <div class="p-3 flex-grow-1">
+                                <span class="badge bg-primary bg-opacity-10 text-primary mb-2">Modul 1</span>
+                                <h6 class="fw-bold text-dark">Cara Follow-up Prospek yang Diam</h6>
+                                <p class="text-muted mb-0" style="font-size: 0.8rem;">Teknik memancing balasan dari prospek tanpa terlihat memaksa (spam).</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="saas-card h-100 p-0 overflow-hidden d-flex flex-column border">
+                            <div style="aspect-ratio: 16/9; background-color: #0f172a;" class="position-relative">
+                                <div class="position-absolute top-50 start-50 translate-middle text-white text-center w-100">
+                                    <i class="fa-brands fa-youtube fs-1 text-danger mb-2"></i>
+                                    <div style="font-size: 0.8rem;">(Video Segera Hadir)</div>
+                                </div>
+                            </div>
+                            <div class="p-3 flex-grow-1">
+                                <span class="badge bg-success bg-opacity-10 text-success mb-2">Modul 2</span>
+                                <h6 class="fw-bold text-dark">Strategi Jualan Laris di WA Story</h6>
+                                <p class="text-muted mb-0" style="font-size: 0.8rem;">Cara membuat penonton story WA Anda penasaran dan klik link Anda.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="saas-card h-100 p-0 overflow-hidden d-flex flex-column border">
+                            <div style="aspect-ratio: 16/9; background-color: #0f172a;" class="position-relative">
+                                <div class="position-absolute top-50 start-50 translate-middle text-white text-center w-100">
+                                    <i class="fa-brands fa-youtube fs-1 text-danger mb-2"></i>
+                                    <div style="font-size: 0.8rem;">(Video Segera Hadir)</div>
+                                </div>
+                            </div>
+                            <div class="p-3 flex-grow-1">
+                                <span class="badge bg-warning bg-opacity-10 text-warning text-dark mb-2">Modul 3</span>
+                                <h6 class="fw-bold text-dark">Menjawab Penolakan "Harganya Mahal"</h6>
+                                <p class="text-muted mb-0" style="font-size: 0.8rem;">Skrip ampuh untuk membalikkan penolakan harga menjadi closing.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- ========================================== -->
+
+            <section id="product-view" class="content-view">
+    <div class="saas-card">
+        <h5 class="fw-bold mb-1">Katalog Aplikasi & Komisi</h5>
+        <p class="text-muted mb-4" style="font-size: 0.85rem;">Klik tombol di setiap produk untuk mempelajari kecanggihan aplikasinya melalui video iklan atau playlist tutorial.</p>
+        
+        <div class="row" id="katalog-produk-affiliate">
+            <div class="col-12 text-center text-muted py-5">
+                <i class="fa-solid fa-spinner fa-spin fs-2 mb-3"></i>
+                <p>Memuat katalog produk terbaru...</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <section id="link-view" class="content-view">
+                <div class="saas-card">
+                    <h5 class="fw-bold mb-1">Mulai Ambil Link Afiliasi</h5>
+                    <p class="text-muted mb-4" style="font-size: 0.85rem;">Gunakan link unik ini untuk disebarkan. Setiap prospek yang masuk lewat link ini otomatis tercatat atas nama Anda.</p>
+                    
+                    <div class="bg-light p-3 p-md-4 rounded-3 border">
+                        <label class="form-label fw-semibold text-secondary" style="font-size: 0.8rem;">Link Utama Promosi Anda:</label>
+                        <div class="input-group mb-3 flex-column flex-md-row gap-2 gap-md-0">
+                            <input type="text" id="link-hasil" class="form-control p-2 fw-semibold text-primary rounded" readonly style="background-color: #fff;">
+                            <button class="btn btn-primary px-4 rounded shadow-sm" onclick="copyLink()"><i class="fa-regular fa-copy"></i> Salin Link</button>
+                        </div>
+                        <span class="text-muted" style="font-size: 0.75rem;"><i class="fa-solid fa-circle-info text-info"></i> Tips: Anda bisa memperpendek link ini menggunakan s.id atau bit.ly.</span>
+                    </div>
+                </div>
+            </section>
+
+            <section id="promo-view" class="content-view">
+                <div class="saas-card">
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <h5 class="fw-bold mb-0">Amunisi & Materi Promosi</h5>
+                        <span class="badge bg-success bg-opacity-10 text-success border border-success"><i class="fa-solid fa-cloud-arrow-down"></i> Auto-Sync</span>
+                    </div>
+                    <p class="text-muted mb-4 mt-2" style="font-size: 0.85rem;">Pilih jenis materi yang ingin Anda gunakan. Data di bawah ini diperbarui secara otomatis dari server Admin Pusat.</p>
+                    
+                    <!-- Filter Produk Otomatis -->
+                    <div class="mb-4 bg-light p-2 rounded-3 border d-flex align-items-center gap-2">
+                        <div class="text-muted fw-bold ms-2" style="font-size: 0.8rem;"><i class="fa-solid fa-filter"></i> Filter:</div>
+                        <select id="filter-produk-promo-aff" class="form-select form-select-sm border-primary shadow-sm" style="max-width: 250px;" onchange="if(typeof renderMateriAffiliate === 'function') renderMateriAffiliate()">
+                            <option value="">Semua Produk</option>
+                        </select>
+                    </div>
+
+                    <div class="nav-pills-container mb-4">
+                        <ul class="nav nav-pills flex-nowrap" id="promoTabs" role="tablist">
+                            <li class="nav-item" role="presentation">
+                                <button class="nav-link active shadow-sm" id="text-tab" data-bs-toggle="pill" data-bs-target="#text-promo" type="button" role="tab"><i class="fa-solid fa-file-lines me-1"></i> Skrip Copywriting</button>
+                            </li>
+                            <li class="nav-item ms-2" role="presentation">
+                                <button class="nav-link shadow-sm" id="media-tab" data-bs-toggle="pill" data-bs-target="#media-promo" type="button" role="tab"><i class="fa-solid fa-image me-1"></i> Gambar & Video</button>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="tab-content" id="promoTabsContent">
+                        <!-- WADAH COPYWRITING (Akan Diisi JS) -->
+                        <div class="tab-pane fade show active" id="text-promo" role="tabpanel">
+                            <div id="wadah-copywriting" class="row g-3">
+                                <div class="col-12 text-center text-muted py-5"><i class="fa-solid fa-spinner fa-spin me-2"></i> Menarik data teks dari server...</div>
+                            </div>
+                        </div>
+
+                        <!-- WADAH MEDIA GAMBAR/VIDEO (Akan Diisi JS) -->
+                        <div class="tab-pane fade" id="media-promo" role="tabpanel">
+                            <div id="wadah-media" class="row g-3">
+                                <div class="col-12 text-center text-muted py-5"><i class="fa-solid fa-spinner fa-spin me-2"></i> Menarik aset media dari server...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="crm-view" class="content-view">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                        <div class="info-status-wa alert mb-3 border-0 shadow-sm d-none" style="font-size: 0.85rem; border-radius: 12px;"></div>
+                        <h5 class="fw-bold mb-0">Papan Kendali Prospek (CRM)</h5>
+                        <p class="text-muted mb-0" style="font-size: 0.85rem;">Pantau status calon pembeli Anda yang sedang diproses Admin secara real-time.</p>
+                    </div>
+                    <button class="btn btn-primary-saas text-white btn-sm shadow-sm" onclick="tambahLeadManual()">
+                        <i class="fa-solid fa-plus"></i> Tambah Prospek
+                    </button>
+                </div>
+
+                <!-- Papan Kanban Bisa Digeser Kiri-Kanan (Bisa di-swipe di HP) -->
+                <div class="d-flex gap-3 overflow-auto pb-3" style="min-height: 65vh; scroll-snap-type: x mandatory;">
+                    <!-- Kolom Lead Baru -->
+                    <div class="kanban-column bg-light p-3 rounded-3 border" style="min-width: 280px; border-top: 4px solid #6c757d !important; scroll-snap-align: start;">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between">
+                            <span><i class="fa-solid fa-inbox text-secondary me-2"></i>Baru</span>
+                            <span class="badge bg-secondary rounded-pill" id="aff-count-baru">0</span>
+                        </h6>
+                        <div id="aff-board-baru" class="d-flex flex-column gap-2"></div>
+                    </div>
+
+                    <!-- Kolom Sedang Chat -->
+                    <div class="kanban-column bg-light p-3 rounded-3 border" style="min-width: 280px; border-top: 4px solid #f59e0b !important; scroll-snap-align: start;">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between">
+                            <span><i class="fa-brands fa-whatsapp text-warning me-2"></i>Chat</span>
+                            <span class="badge bg-warning text-dark rounded-pill" id="aff-count-chat">0</span>
+                        </h6>
+                        <div id="aff-board-chat" class="d-flex flex-column gap-2"></div>
+                    </div>
+
+                    <!-- Kolom Konsultasi Ortu -->
+                    <div class="kanban-column bg-light p-3 rounded-3 border" style="min-width: 280px; border-top: 4px solid #8b5cf6 !important; scroll-snap-align: start;">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between">
+                            <span><i class="fa-solid fa-comments text-primary me-2"></i>Konsultasi Ortu</span>
+                            <span class="badge" style="background-color:#8b5cf6;" id="aff-count-nego">0</span>
+                        </h6>
+                        <div id="aff-board-nego" class="d-flex flex-column gap-2"></div>
+                    </div>
+
+                    <!-- Kolom Negosiasi -->
+                    <div class="kanban-column bg-light p-3 rounded-3 border" style="min-width: 280px; border-top: 4px solid #8b5cf6 !important; scroll-snap-align: start;">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between">
+                            <span><i class="fa-solid fa-handshake text-primary me-2"></i>Nego</span>
+                            <span class="badge" style="background-color:#8b5cf6;" id="aff-count-nego">0</span>
+                        </h6>
+                        <div id="aff-board-nego" class="d-flex flex-column gap-2"></div>
+                    </div>
+
+                    <!-- Kolom Closing -->
+                    <div class="kanban-column bg-light p-3 rounded-3 border" style="min-width: 280px; border-top: 4px solid #10b981 !important; scroll-snap-align: start;">
+                        <h6 class="fw-bold mb-3 d-flex justify-content-between">
+                            <span><i class="fa-solid fa-circle-check text-success me-2"></i>Goal / Closing</span>
+                            <span class="badge bg-success rounded-pill" id="aff-count-closing">0</span>
+                        </h6>
+                        <div id="aff-board-closing" class="d-flex flex-column gap-2"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="lead-view" class="content-view">
+                <div class="info-status-wa alert mb-3 border-0 shadow-sm d-none" style="font-size: 0.85rem; border-radius: 12px;"></div>
+                <div class="saas-card">
+                    <h5 class="fw-bold mb-1">Data Prospek Saya</h5>
+                    <p class="text-muted mb-4" style="font-size: 0.85rem;">Gunakan data di bawah ini untuk memantau nama-nama yang masuk lewat link promosi Anda. Silakan hubungi nomor WA mereka untuk di-follow up secara berkala.</p>
+                    
+                    <div class="table-responsive">
+    <table class="table table-hover align-middle">
+        <thead class="table-light">
+            <tr>
+                <th>Nama Prospek</th>
+                <th>Status Pipeline</th>
+                <th>Aksi</th> <!-- TAMBAHKAN BARIS INI -->
+            </tr>
+        </thead>
+        <tbody id="list-lead-affiliate">
+            <!-- Data akan muncul di sini -->
+        </tbody>
+    </table>
+</div>
+                </div>
+            </section>
+
+            <section id="komisi-view" class="content-view">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="fw-bold mb-0">Data Keuangan</h5>
+        <button class="btn btn-primary shadow-sm" onclick="requestPencairan()">
+            <i class="fa-solid fa-money-bill-transfer me-2"></i> Tarik Komisi
+        </button>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-6 mb-4 mb-md-0">
+            <div class="saas-card h-100">
+                <h6 class="fw-bold mb-1">Riwayat Pendapatan</h6>
+                <p class="text-muted mb-3" style="font-size: 0.8rem;">Daftar komisi masuk dari hasil closing link promosi Anda.</p>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle" style="font-size: 0.85rem;">
+                        <thead class="table-light"><tr><th>Waktu</th><th>Produk Digital</th><th>Nominal</th></tr></thead>
+                        <tbody id="list-komisi"><tr><td colspan="3" class="text-center text-muted py-3">Memuat data komisi...</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="saas-card h-100">
+                <h6 class="fw-bold mb-1">Riwayat Pencairan</h6>
+                <p class="text-muted mb-3" style="font-size: 0.8rem;">Status mutasi penarikan dana ke rekening bank Anda.</p>
+                <div class="table-responsive">
+                    <table class="table table-sm align-middle" style="font-size: 0.85rem;">
+                        <thead class="table-light"><tr><th>Waktu Request</th><th>Nominal</th><th>Status</th></tr></thead>
+                        <tbody id="list-pencairan"><tr><td colspan="3" class="text-center text-muted py-3">Belum ada riwayat penarikan.</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+            <section id="leaderboard-view" class="content-view">
+                <div class="saas-card position-relative overflow-hidden">
+                    <!-- Ornamen Background -->
+                    <div class="position-absolute top-0 end-0 opacity-10" style="transform: translate(20%, -20%); pointer-events: none;">
+                        <i class="fa-solid fa-trophy" style="font-size: 15rem; color: #F59E0B;"></i>
+                    </div>
+
+                    <div class="position-relative z-1 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+                        <div>
+                            <h5 class="fw-bold mb-1"><i class="fa-solid fa-crown text-warning me-2"></i>Top 10 Leaderboard</h5>
+                            <p class="text-muted mb-0" style="font-size: 0.85rem;">Peringkat juara penjualan nasional secara *real-time*.</p>
+                        </div>
+                        
+                        <!-- Dropdown Filter Peringkat -->
+                        <div class="d-flex align-items-center gap-2 bg-light p-1 rounded-3 border shadow-sm">
+                            <i class="fa-solid fa-filter text-muted ms-2" style="font-size: 0.8rem;"></i>
+                            <select id="filter-leaderboard" class="form-select form-select-sm border-0 bg-transparent fw-bold text-primary" style="max-width: 180px; box-shadow: none;" onchange="renderLeaderboardAffiliate()">
+                                <option value="closing">🏆 Paling Banyak Closing</option>
+                                <option value="komisi">💰 Pendapatan Tertinggi</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Wadah Daftar Peringkat -->
+                    <div id="live-leaderboard-affiliate" class="position-relative z-1" style="max-width: 600px;">
+                        <div class="text-center text-muted py-5 border rounded-3 bg-light">
+                            <i class="fa-solid fa-spinner fa-spin fs-3 mb-2"></i><br>Menghitung Peringkat Server...
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="settings-view" class="content-view">
+                <div class="saas-card position-relative overflow-hidden" style="border: 0; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
+                    <div class="position-absolute top-0 end-0 opacity-10" style="transform: translate(20%, -20%); pointer-events: none;">
+                        <i class="fa-solid fa-fingerprint" style="font-size: 18rem; color: var(--primary-color);"></i>
+                    </div>
+                    
+                    <h5 class="fw-bold mb-1 position-relative z-1 text-dark"><i class="fa-solid fa-shield-check text-success me-2"></i>Keamanan & Profil Akun</h5>
+                    <p class="text-muted mb-4 position-relative z-1" style="font-size: 0.85rem;">Kelola identitas dan tingkatkan keamanan akun AnimaSales Anda di sini.</p>
+                    
+                    <div class="row position-relative z-1">
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 bg-light rounded-4 border border-secondary border-opacity-25 h-100">
+                                <h6 class="fw-bold text-dark mb-4"><i class="fa-regular fa-id-card text-primary me-2"></i>Data Identitas Terdaftar</h6>
+                                
+                                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Nama Lengkap (Sesuai KTP)</label>
+                                <input type="text" id="profile-nama" class="form-control mb-3 shadow-sm border-0 text-dark" readonly style="background-color: #fff; font-weight: 600;">
+                                
+                                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Username Akses (ID Login)</label>
+                                <input type="text" id="profile-user" class="form-control text-primary mb-3 shadow-sm border-0" readonly style="background-color: #fff; font-weight: 700; letter-spacing: 1px;">
+                                
+                                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Rekening Pencairan Komisi</label>
+                                <div class="p-3 border rounded shadow-sm bg-white text-dark fw-bold mb-2 text-truncate" id="profile-bank" style="font-size: 0.85rem;">Memuat...</div>
+                                <div class="alert bg-success bg-opacity-10 border-0 text-success p-2 mt-2" style="font-size: 0.65rem; border-radius: 8px;">
+                                    <i class="fa-solid fa-lock"></i> <b>Terkunci.</b> Hubungi Admin Pusat jika ingin mengubah data Bank.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6 mb-4">
+                            <div class="p-4 rounded-4 border h-100" style="background: linear-gradient(135deg, #ffffff 0%, #eff6ff 100%); box-shadow: inset 0 0 20px rgba(37,99,235,0.05);">
+                                <h6 class="fw-bold text-dark mb-4"><i class="fa-solid fa-key text-warning me-2"></i>Ubah Kata Sandi (Password)</h6>
+                                
+                                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Password Baru</label>
+                                <div class="input-group mb-3 shadow-sm border rounded bg-white">
+                                    <span class="input-group-text bg-white border-0"><i class="fa-solid fa-lock text-muted"></i></span>
+                                    <input type="password" id="input-password-baru" class="form-control border-0 bg-transparent" placeholder="Ketik sandi rahasia baru...">
+                                    <button class="btn btn-outline-secondary bg-white border-0" type="button" onclick="togglePasswordVisibility('input-password-baru', this)"><i class="fa-solid fa-eye"></i></button>
+                                </div>
+                                
+                                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Konfirmasi Password Baru</label>
+                                <div class="input-group mb-4 shadow-sm border rounded bg-white">
+                                    <span class="input-group-text bg-white border-0"><i class="fa-solid fa-check-double text-muted"></i></span>
+                                    <input type="password" id="input-password-konfirmasi" class="form-control border-0 bg-transparent" placeholder="Ulangi sandi baru...">
+                                </div>
+                                
+                                <button class="btn btn-primary w-100 fw-bold shadow-sm rounded-pill mt-2 py-2" onclick="simpanPasswordBaru()"><i class="fa-solid fa-save me-1"></i> Simpan Password Baru</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+        // KITA TAMBAHKAN 'doc' DI BARIS IMPORT INI AGAR BANNER BISA MUNCUL:
+        import { getFirestore, collection, getDocs, addDoc, query, where, onSnapshot, orderBy, doc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAk4SgTso8ZjPdyNRNL07OZ1JIxKQlJ1Ok",
+            authDomain: "lms-tka-18e1e.firebaseapp.com",
+            projectId: "lms-tka-18e1e",
+            storageBucket: "lms-tka-18e1e.firebasestorage.app",
+            messagingSenderId: "530605119207",
+            appId: "1:530605119207:web:f80317e0e00da03fe4f442",
+            measurementId: "G-GE5H0MLLTJ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.db = db;
+        window.collection = collection;
+        window.query = query;
+        window.where = where;
+        window.onSnapshot = onSnapshot;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.addDoc = addDoc;
+        
+        // --- INI DIA KUNCI YANG HILANG ---
+        window.doc = doc;
+        // ---------------------------------
+
+        console.log("Portal Affiliate Terhubung ke Database Pusat!");
+    </script>
+
+    <script>
+        $(document).ready(function() {
+            // ----------------------------------------------------
+            // LOGIKA UI MOBILE RESPONSIVE
+            // ----------------------------------------------------
+            const $sidebar = $('#sidebar');
+            const $overlay = $('#mobile-overlay');
+            const $btnToggle = $('#btn-toggle-menu');
+
+            // 1. Membuka Sidebar di Mobile saat hamburger diklik
+            $btnToggle.click(function() {
+                $sidebar.addClass('open');
+                $overlay.addClass('show');
+            });
+
+            // 2. Menutup Sidebar saat Overlay Gelap diklik
+            $overlay.click(function() {
+                $sidebar.removeClass('open');
+                $overlay.removeClass('show');
+            });
+
+            // 3. Logika Perpindahan Menu SPA & Autoclose di Mobile
+            $('.menu-item').click(function(e) {
+                e.preventDefault();
+                $('.menu-item').removeClass('active');
+                $(this).addClass('active');
+                
+                const targetView = $(this).data('target');
+                const titleText = $(this).text().trim();
+                
+                $('.content-view').removeClass('active');
+                $('#' + targetView).addClass('active');
+                $('#page-title').text(titleText);
+
+                // Menutup sidebar otomatis jika layar seukuran HP (lebar < 768px)
+                if (window.innerWidth <= 768) {
+                    $sidebar.removeClass('open');
+                    $overlay.removeClass('show');
+                }
+            });
+            // ----------------------------------------------------
+
+            // Ambil data dari "ID Card" yang dititipkan saat login
+            const namaAktif = localStorage.getItem("sesi_affiliate_nama") || "Affiliate";
+            const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+
+            // Jika belum login, munculkan Layar Login Affiliate dan sembunyikan Dasbor
+            if (!usernameAktif) { 
+                document.getElementById('auth-screen').style.display = 'flex';
+                document.getElementById('app-wrapper').style.display = 'none';
+                return; 
+            } else {
+                document.getElementById('auth-screen').style.display = 'none';
+                document.getElementById('app-wrapper').style.display = 'flex';
+            }
+
+            // Menampilkan info user di topbar & dasbor sapaan
+            $('#nama-affiliate').text(namaAktif);
+            $('#sapaan-nama').text(namaAktif);
+            $('#username-affiliate').text(usernameAktif);
+            $('#avatar-affiliate').attr('src', `https://ui-avatars.com/api/?name=${namaAktif.replace(" ", "+")}&background=10B981&color=fff`);
+
+            // Isi ke tab pengaturan profil
+            $('#profile-nama').val(namaAktif);
+            $('#profile-user').val(usernameAktif);
+
+            // --- MULAI: SISTEM KOMISI & PENCAIRAN CLOUD ---
+            // Variabel penampung untuk kalkulasi saldo yang aman
+            let totalPendapatanKotor = 0;
+            let totalSudahDitarik = 0;
+            window.batasMengendapGlobal = 100000; // Default awal
+
+            // Pemantau Pengaturan dari Pusat Admin (Real-Time)
+            window.onSnapshot(window.doc(window.db, "pengaturan", "sistem_utama"), (docSnap) => {
+                if (docSnap.exists() && docSnap.data().minimumPencairan !== undefined) {
+                    window.batasMengendapGlobal = Number(docSnap.data().minimumPencairan);
+                    hitungSaldoAktif(); // Hitung ulang layar setiap kali admin merubah setting
+                }
+            });
+
+            function hitungSaldoAktif() {
+                const saldoBersih = totalPendapatanKotor - totalSudahDitarik;
+                $('#stat-komisi').text("Rp " + Math.max(0, saldoBersih).toLocaleString('id-ID'));
+                
+                // Menghitung jumlah yang bisa ditarik berdasarkan Setingan Admin
+                const bisaDitarik = Math.max(0, saldoBersih - window.batasMengendapGlobal);
+                $('#stat-bisa-ditarik').text("Bisa ditarik: Rp " + bisaDitarik.toLocaleString('id-ID'));
+            }
+
+            function inisialisasiPortal() {
+               // A. Real-time Prospek (Leads)
+                const qLeads = window.query(window.collection(window.db, "leads"), window.where("affiliate", "==", usernameAktif));
+                window.onSnapshot(qLeads, (snapshot) => {
+                    let totalLeads = snapshot.size; let totalClosing = 0; let htmlLead = "";
+                    snapshot.forEach(doc => {
+                        const d = doc.data();
+                        if(d.status === "Closing") totalClosing++;
+                        let badgeColor = "bg-primary";
+                        if (d.status === "Sedang Chat") badgeColor = "bg-warning text-dark";
+                        else if (d.status === "Demo Produk") badgeColor = "bg-info text-dark";
+                        else if (d.status === "Negosiasi") badgeColor = "bg-secondary";
+                        else if (d.status === "Closing") badgeColor = "bg-success";
+                        htmlLead += `
+    <tr style="border-bottom: 1px solid #f8fafc;">
+        <td class="fw-bold" style="font-size:0.85rem;">${d.namaProspek || 'Anonim'}</td>
+        <td><span class="badge ${badgeColor}" style="font-size:0.75rem;">${d.status || 'Lead Baru'}</span></td>
+        <td>
+            <button class="btn btn-sm btn-outline-success border-0" onclick="chatWA('${d.noWa}', '${d.namaProspek}', '${d.status}', '${d.minatProduk}')">
+                <i class="fab fa-whatsapp text-success"></i> Chat
+            </button>
+        </td>
+    </tr>`;
+                    });
+                    
+                    $('#stat-lead').text(totalLeads); 
+                    $('#stat-closing').text(totalClosing);
+                    
+                    // Update Teks Kecil Total Closing
+                    $('#stat-teks-closing').text("Total Closing: " + totalClosing);
+                    
+                    updateLevelAffiliate(totalClosing);
+                    
+                    // --- PERBAIKAN: MENGHITUNG RASIO KONVERSI (WIN RATE) ---
+                    let winRate = totalLeads > 0 ? Math.round((totalClosing / totalLeads) * 100) : 0;
+                    $('#stat-rate').text(winRate + '%');
+                    
+                    $('#list-lead-affiliate').html(htmlLead || '<tr><td colspan="3" class="text-center text-muted py-3">Belum ada prospek terdaftar.</td></tr>');
+                });
+
+                // B. Real-time Komisi Keuangan (Pendapatan)
+                const qKomisi = window.query(window.collection(window.db, "komisi"), window.where("usernameAff", "==", usernameAktif));
+                window.onSnapshot(qKomisi, (snapshot) => {
+                    totalPendapatanKotor = 0; let htmlKomisi = "";
+                    snapshot.forEach(doc => {
+                        const d = doc.data();
+                        totalPendapatanKotor += Number(d.jumlah || 0);
+                        htmlKomisi += `<tr style="border-bottom: 1px solid #f8fafc;"><td style="font-size:0.85rem;" class="text-muted">${d.waktu || '-'}</td><td style="font-size:0.85rem;" class="fw-semibold">${d.produk || '-'}</td><td style="font-size:0.85rem;" class="text-success fw-bold">Rp ${(d.jumlah || 0).toLocaleString('id-ID')}</td></tr>`;
+                    });
+                    $('#list-komisi').html(htmlKomisi || '<tr><td colspan="3" class="text-center text-muted py-3">Belum ada komisi tercatat.</td></tr>');
+                    hitungSaldoAktif(); // Hitung ulang setiap ada komisi baru
+                });
+
+                // C. Real-time Riwayat Pencairan Dana
+                const qPencairan = window.query(window.collection(window.db, "pencairan"), window.where("usernameAff", "==", usernameAktif));
+                window.onSnapshot(qPencairan, (snapPenc) => {
+                    totalSudahDitarik = 0; let htmlPencairan = "";
+                    snapPenc.forEach(docP => {
+                        const dP = docP.data();
+                        // Potong saldo HANYA jika statusnya Lunas atau masih Pending
+                        if (dP.status === "Pending" || dP.status === "Lunas") {
+                            totalSudahDitarik += Number(dP.nominal || 0);
+                        }
+                        
+                        let badgeStatus = '<span class="badge bg-warning text-dark">Pending</span>';
+                        if(dP.status === "Lunas") badgeStatus = '<span class="badge bg-success">Lunas</span>';
+                        else if(dP.status === "Ditolak") badgeStatus = '<span class="badge bg-danger">Ditolak</span>';
+                        
+                        htmlPencairan += `<tr><td class="text-muted">${dP.waktu || '-'}</td><td class="fw-bold text-dark">Rp ${(dP.nominal || 0).toLocaleString('id-ID')}</td><td>${badgeStatus}</td></tr>`;
+                    });
+                    $('#list-pencairan').html(htmlPencairan || '<tr><td colspan="3" class="text-center text-muted py-3">Belum ada riwayat penarikan.</td></tr>');
+                    hitungSaldoAktif(); // Hitung ulang setiap ada pencairan baru
+                });
+
+                // D. Sinkronisasi Data Profil (Rekening) & Sensor Klik Tautan
+                setTimeout(() => {
+                    try {
+                       // Membaca data Affiliate secara Real-Time
+                        const qUser = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", usernameAktif));
+                        window.onSnapshot(qUser, (snapUser) => {
+                            snapUser.forEach(doc => { 
+                                const dataUser = doc.data();
+                                
+                                // 1. Tampilkan data Rekening Bank di menu Pengaturan
+                                $('#profile-bank').text(dataUser.rekening || 'Belum mengisi rekening bank.'); 
+                                
+                                // 2. Tampilkan Total Klik
+                                $('#stat-total-klik').text(dataUser.totalKlik || 0);
+                                
+                                // 3. Tampilkan Rincian Klik per Produk (Versi Baru)
+                                const rincian = dataUser.klik_produk || {};
+                                let htmlRincian = Object.entries(rincian).map(([produk, jumlah]) => 
+                                    `<span class="badge bg-secondary bg-opacity-10 text-dark me-1 border" style="font-size: 0.65rem;">${produk.toUpperCase()}: ${jumlah}</span>`
+                                ).join('');
+                                
+                                // Masukkan rincian ke dalam wadah yang baru kita buat
+                                $('#stat-rincian-klik').html(htmlRincian || '<span class="text-muted" style="font-size: 0.7rem;">Belum ada data klik.</span>');
+                            });
+                        });
+                    } catch (e) { console.error("Gagal memuat data sekunder:", e); }
+                }, 1000);
+            }
+
+            // E. Tombol Eksekusi Pengajuan Pencairan (Sistem Saldo Mengendap Dinamis)
+            window.requestPencairan = async function() {
+                const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+                const namaAktif = localStorage.getItem("sesi_affiliate_nama");
+                
+                const saldoBersih = totalPendapatanKotor - totalSudahDitarik;
+                const bisaDitarik = saldoBersih - window.batasMengendapGlobal;
+                
+                // Cek dengan angka dinamis dari Admin
+                if(bisaDitarik <= 0) {
+                    Swal.fire('Saldo Belum Mencukupi', `Sesuai kebijakan pusat, Anda wajib menyisakan saldo mengendap sebesar Rp ${window.batasMengendapGlobal.toLocaleString('id-ID')}. Saat ini saldo yang bisa ditarik masih Rp 0.`, 'warning');
+                    return;
+                }
+
+                Swal.fire({ title: 'Memeriksa Data Akun...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
+                try {
+                    const qUser = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", usernameAktif));
+                    const snapUser = await window.getDocs(qUser);
+                    
+                    let bankRek = ""; let noWa = "-";
+                    snapUser.forEach(doc => { 
+                        bankRek = doc.data().rekening || "";
+                        noWa = doc.data().noWA || "-"; 
+                    });
+
+                    if(!bankRek || bankRek === '-' || bankRek.toLowerCase().includes('belum')) {
+                        Swal.fire('Data Bank Kosong', 'Nomor rekening Anda belum terdaftar di sistem. Silakan hubungi Admin Pusat untuk melengkapinya.', 'warning');
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Tarik Komisi',
+                        html: `Dana yang akan ditarik sebesar <b class="text-success fs-5">Rp ${bisaDitarik.toLocaleString('id-ID')}</b>.<br><br><span style="font-size: 0.8rem; color: #6c757d;">(Sisa saldo Rp ${window.batasMengendapGlobal.toLocaleString('id-ID')} akan dipertahankan di akun Anda)</span><br><br>Dana akan ditransfer ke rekening:<br><b class="text-primary">${bankRek}</b>`,
+                        icon: 'question', showCancelButton: true, confirmButtonColor: '#10B981', confirmButtonText: 'Ya, Ajukan Penarikan', cancelButtonText: 'Batal'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({ title: 'Mengirim Request...', didOpen: () => { Swal.showLoading(); }});
+                            try {
+                                await window.addDoc(window.collection(window.db, "pencairan"), {
+                                    waktu: new Date().toLocaleString('id-ID'),
+                                    usernameAff: usernameAktif, namaAff: namaAktif, bankRekening: bankRek,
+                                    nominal: bisaDitarik, status: "Pending", noWa: noWa
+                                });
+                                Swal.fire('Berhasil!', 'Request penarikan dana terkirim! Admin akan memproses transfer dalam 1x24 jam.', 'success');
+                            } catch (error) { Swal.fire('Gagal Mengirim', error.message, 'error'); }
+                        }
+                    });
+                } catch (error) { Swal.fire('Error', 'Gagal memverifikasi data akun: ' + error.message, 'error'); }
+            };
+            // --- SELESAI: SISTEM KOMISI & PENCAIRAN CLOUD ---
+
+            // E. Tombol Eksekusi Pengajuan Pencairan (Sistem Saldo Mengendap 100.000)
+            window.requestPencairan = async function() {
+                const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+                const namaAktif = localStorage.getItem("sesi_affiliate_nama");
+                
+                const saldoBersih = totalPendapatanKotor - totalSudahDitarik;
+                const bisaDitarik = saldoBersih - 100000;
+                
+                // Cek apakah ada saldo lebih dari 100.000 yang bisa ditarik
+                if(bisaDitarik <= 0) {
+                    Swal.fire('Saldo Belum Mencukupi', 'Sesuai ketentuan, Anda wajib menyisakan saldo mengendap sebesar Rp 100.000. Saat ini saldo yang bisa ditarik masih Rp 0.', 'warning');
+                    return;
+                }
+
+                // Munculkan loading saat mengecek ke server
+                Swal.fire({ title: 'Memeriksa Data Akun...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); }});
+
+                try {
+                    // Tarik data rekening & WA terbaru LANGSUNG dari server
+                    const qUser = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", usernameAktif));
+                    const snapUser = await window.getDocs(qUser);
+                    
+                    let bankRek = "";
+                    let noWa = "-";
+                    
+                    snapUser.forEach(doc => { 
+                        const dataUser = doc.data();
+                        bankRek = dataUser.rekening || "";
+                        noWa = dataUser.noWA || "-"; 
+                    });
+
+                    if(!bankRek || bankRek === '-' || bankRek.toLowerCase().includes('belum')) {
+                        Swal.fire('Data Bank Kosong', 'Nomor rekening Anda belum terdaftar di sistem. Silakan hubungi Admin Pusat untuk melengkapinya.', 'warning');
+                        return;
+                    }
+
+                    // Jika rekening ada, lanjut ke konfirmasi tarik dana (Dengan Teks Penjelasan)
+                    Swal.fire({
+                        title: 'Tarik Komisi',
+                        html: `Dana yang akan ditarik sebesar <b class="text-success fs-5">Rp ${bisaDitarik.toLocaleString('id-ID')}</b>.<br><br><span style="font-size: 0.8rem; color: #6c757d;">(Sisa saldo Rp 100.000 akan dipertahankan di akun Anda sesuai ketentuan)</span><br><br>Dana akan ditransfer ke rekening:<br><b class="text-primary">${bankRek}</b>`,
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#10B981',
+                        confirmButtonText: 'Ya, Ajukan Penarikan',
+                        cancelButtonText: 'Batal'
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            Swal.fire({ title: 'Mengirim Request...', didOpen: () => { Swal.showLoading(); }});
+                            try {
+                                // Tembakkan data tagihan ke Laci "pencairan" Admin (HANYA NOMINAL YANG BISA DITARIK)
+                                await window.addDoc(window.collection(window.db, "pencairan"), {
+                                    waktu: new Date().toLocaleString('id-ID'),
+                                    usernameAff: usernameAktif,
+                                    namaAff: namaAktif,
+                                    bankRekening: bankRek,
+                                    nominal: bisaDitarik, 
+                                    status: "Pending",
+                                    noWa: noWa
+                                });
+
+                                Swal.fire('Berhasil!', 'Request penarikan dana terkirim! Admin akan memproses transfer dalam 1x24 jam.', 'success');
+                            } catch (error) {
+                                Swal.fire('Gagal Mengirim', error.message, 'error');
+                            }
+                        }
+                    });
+
+                } catch (error) {
+                    Swal.fire('Error', 'Gagal memverifikasi data akun: ' + error.message, 'error');
+                }
+            };
+            // --- SELESAI: SISTEM KOMISI & PENCAIRAN CLOUD ---
+
+            // --- MULAI: SENSOR MATERI PROMOSI (CLOUD SYNC - SAFE MODE) ---
+window.dataMateriGlobalAff = []; 
+
+window.muatMateriPromosiAffiliate = function() {
+    const wadahText = document.getElementById('wadah-copywriting');
+    try {
+        // 1. Jika Firebase belum siap, tunggu 1 detik lalu coba lagi secara otomatis
+        if(!window.db || !window.collection) {
+            console.log("Firebase belum siap, mencoba lagi dalam 1 detik...");
+            setTimeout(window.muatMateriPromosiAffiliate, 1000);
+            return;
+        }
+
+        // 2. Tarik Data
+        const qMateri = window.query(window.collection(window.db, "materi_promosi"), window.orderBy("waktuUpload", "desc"));
+        window.onSnapshot(qMateri, (snapshot) => {
+            window.dataMateriGlobalAff = [];
+            snapshot.forEach(doc => {
+                let d = doc.data();
+                d.idDoc = doc.id;
+                window.dataMateriGlobalAff.push(d);
+            });
+            // 3. Render ke layar
+            if(typeof window.renderMateriAffiliate === "function") window.renderMateriAffiliate();
+        }, (error) => {
+            // Jika ada error izin Firebase, tampilkan di layar!
+            console.error("Firebase Error:", error);
+            if(wadahText) wadahText.innerHTML = `<div class="col-12 text-center text-danger py-4"><i class="fa-solid fa-triangle-exclamation fs-3 mb-2"></i><br>Akses Data Ditolak/Gagal: ${error.message}</div>`;
+        });
+    } catch (error) {
+        console.error("Script Error:", error);
+        if(wadahText) wadahText.innerHTML = `<div class="col-12 text-center text-danger py-4"><i class="fa-solid fa-triangle-exclamation fs-3 mb-2"></i><br>Terjadi Kesalahan Sistem: ${error.message}</div>`;
+    }
+};
+
+window.renderMateriAffiliate = function() {
+    try {
+        const elFilter = document.getElementById('filter-produk-promo-aff');
+        const filterProd = elFilter ? elFilter.value : '';
+        const wadahText = document.getElementById('wadah-copywriting');
+        const wadahMedia = document.getElementById('wadah-media');
+        
+        if(!wadahText || !wadahMedia) return;
+
+        // Auto-fill Dropdown
+        let unikProduk = [...new Set(window.dataMateriGlobalAff.map(item => item.produk).filter(p => p && p !== 'Umum (Semua Produk)'))];
+        let selectHtml = '<option value="">Semua Produk</option>';
+        unikProduk.forEach(p => { selectHtml += `<option value="${p}">${p}</option>`; });
+        
+        if(elFilter && elFilter.options.length <= 1) { 
+             elFilter.innerHTML = selectHtml;
+             elFilter.value = filterProd;
+        }
+
+        // Filter Data
+        let filtered = window.dataMateriGlobalAff.filter(d => filterProd === "" || d.produk === filterProd || d.produk === 'Umum (Semua Produk)');
+
+        let htmlText = '';
+        let htmlMedia = '';
+        const userAktif = localStorage.getItem("sesi_affiliate_username") || "AFFILIATE";
+        const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+        const linkAsli = baseHref + "daftar.html?ref=" + userAktif;
+
+        filtered.forEach(item => {
+            let badgePlatform = `<span class="badge bg-secondary bg-opacity-10 text-dark border shadow-sm" style="font-size: 0.65rem;"><i class="fa-solid fa-share-nodes text-primary"></i> ${item.platform || 'Umum'}</span>`;
+            let teksSiapPakai = (item.isiTeks || '').replace(/\[LINK_AFFILIATE_ANDA\]/g, linkAsli);
+
+            // 1. TIPE COPYWRITING
+            if (item.tipe === 'Copywriting') {
+                htmlText += `
+                <div class="col-md-6 mb-3">
+                    <div class="card border h-100" style="border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div class="card-header bg-white fw-bold py-3 d-flex justify-content-between align-items-center border-bottom-0" style="font-size: 0.85rem;">
+                            <span class="text-primary"><i class="fa-solid fa-align-left me-1"></i> ${item.judul || 'Materi Promosi'}</span>
+                            ${badgePlatform}
+                        </div>
+                        <div class="card-body d-flex flex-column pt-0">
+                            <span class="text-muted mb-2 fw-semibold" style="font-size: 0.7rem;"><i class="fa-solid fa-box-open text-warning"></i> ${item.produk || 'Umum'}</span>
+                            <textarea id="copy-${item.idDoc}" class="form-control text-dark flex-grow-1 mb-3 shadow-sm border-secondary" readonly style="font-size: 0.8rem; background-color: #f8fafc; resize: none; height: 180px;">${teksSiapPakai}</textarea>
+                            <button class="btn btn-primary btn-sm w-100 fw-semibold shadow-sm" onclick="salinCopywriting('copy-${item.idDoc}')">
+                                <i class="fa-regular fa-copy"></i> Salin Teks Siap Kirim
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            
+            // 2. TIPE VIDEO
+            } else if (item.tipe === 'Video') {
+                htmlMedia += `
+                <div class="col-md-4 mb-3">
+                    <div class="card border h-100" style="border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div class="card-body d-flex flex-column text-center p-3">
+                            <div class="mb-2 rounded" style="background:#1e293b; height:70px; display:flex; align-items:center; justify-content:center;">
+                                <i class="fa-solid fa-video text-white fs-3 opacity-50"></i>
+                            </div>
+                            <h6 class="fw-bold mb-1 text-truncate" title="${item.judul}" style="font-size: 0.9rem;">${item.judul || 'Video Ads'}</h6>
+                            <span class="text-muted mb-2 fw-semibold" style="font-size: 0.7rem;">${item.produk || 'Umum'}</span>
+                            
+                            ${item.isiTeks ? `<textarea id="copy-${item.idDoc}" class="form-control text-dark mb-2 shadow-sm border-secondary" readonly style="font-size: 0.7rem; background-color: #f8fafc; resize: none; height: 60px;">${teksSiapPakai}</textarea>` : ''}
+
+                            <div class="mt-auto">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6"><a href="${item.linkFile}" target="_blank" class="btn btn-sm btn-danger w-100 fw-bold shadow-sm" style="font-size: 0.75rem;"><i class="fa-solid fa-download"></i> Video</a></div>
+                                    <div class="col-6"><button class="btn btn-sm btn-outline-primary w-100 fw-bold shadow-sm" onclick="salinCopywriting('copy-${item.idDoc}')" style="font-size: 0.75rem;"><i class="fa-solid fa-copy"></i> Skrip</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            
+            // 3. TIPE GAMBAR (SEKARANG ADA CAPTION)
+            } else {
+                htmlMedia += `
+                <div class="col-md-4 mb-3">
+                    <div class="card border h-100" style="border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+                        <div class="card-body d-flex flex-column text-center p-3">
+                            <div class="mb-2 rounded overflow-hidden position-relative" style="height: 70px; background-color: #f1f5f9;">
+                                <img src="${item.linkFile}" alt="Thumbnail" class="w-100 h-100" style="object-fit: cover;">
+                            </div>
+                            <h6 class="fw-bold mb-1 text-truncate" title="${item.judul}" style="font-size: 0.9rem;">${item.judul || 'Media Visual'}</h6>
+                            <span class="text-muted mb-2 fw-semibold" style="font-size: 0.7rem;">${item.produk || 'Umum'}</span>
+                            
+                            ${item.isiTeks ? `<textarea id="copy-${item.idDoc}" class="form-control text-dark mb-2 shadow-sm border-secondary" readonly style="font-size: 0.7rem; background-color: #f8fafc; resize: none; height: 60px;">${teksSiapPakai}</textarea>` : ''}
+                            
+                            <div class="mt-auto">
+                                <div class="row g-2 mb-2">
+                                    <div class="col-6"><a href="${item.linkFile}" target="_blank" class="btn btn-sm btn-success w-100 fw-bold shadow-sm" style="font-size: 0.75rem;"><i class="fa-solid fa-download"></i> Gambar</a></div>
+                                    <div class="col-6"><button class="btn btn-sm btn-outline-primary w-100 fw-bold shadow-sm" onclick="salinCopywriting('copy-${item.idDoc}')" style="font-size: 0.75rem;"><i class="fa-solid fa-copy"></i> Caption</button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+        });
+
+        wadahText.innerHTML = htmlText || '<div class="col-12 text-center text-muted py-5"><i class="fa-solid fa-folder-open fs-1 text-secondary opacity-50 mb-3"></i><br>Belum ada Skrip Copywriting dari Admin.</div>';
+        wadahMedia.innerHTML = htmlMedia || '<div class="col-12 text-center text-muted py-5"><i class="fa-solid fa-photo-film fs-1 text-secondary opacity-50 mb-3"></i><br>Belum ada Aset Gambar/Video dari Admin.</div>';
+    
+    } catch (err) {
+        console.error("Render Error:", err);
+    }
+};
+// --- SELESAI: SENSOR MATERI PROMOSI ---
+// --- MULAI: SENSOR LEAD CRM AFFILIATE (CLOUD SYNC) ---
+window.muatCrmAffiliate = function() {
+    const userAktif = localStorage.getItem("sesi_affiliate_username");
+    if(!userAktif) return;
+
+    try {
+        // Hanya tarik prospek milik Affiliate yang sedang login
+        const qCrm = window.query(
+            window.collection(window.db, "leads"), 
+            window.where("affiliate", "==", userAktif)
+        );
+        
+        window.onSnapshot(qCrm, (snapshot) => {
+            let htmlBaru = "", htmlChat = "", htmlDemo = "", htmlNego = "", htmlClosing = "";
+            let cBaru = 0, cChat = 0, cDemo = 0, cNego = 0, cClosing = 0;
+
+            if (snapshot.empty) {
+                const emptyHtml = '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>';
+                $('#aff-board-baru, #aff-board-chat, #aff-board-demo, #aff-board-nego, #aff-board-closing').html(emptyHtml);
+                
+                // Kosongkan juga tabel list-lead-affiliate
+                $('#list-lead-affiliate').html('<tr><td colspan="3" class="text-center text-muted py-3">Belum ada prospek terdaftar.</td></tr>');
+            } else {
+                let leads = [];
+                snapshot.forEach(doc => {
+                    let d = doc.data(); d.idDoc = doc.id;
+                    leads.push(d);
+                });
+                leads.sort((a, b) => new Date(b.waktuMasuk || 0) - new Date(a.waktuMasuk || 0));
+
+                let htmlListLead = ""; // Untuk List Tabel Lead
+
+                leads.forEach(data => {
+                    let borderColor = "#6c757d"; 
+                    let statusTeks = `<span class="text-muted" style="font-size: 0.65rem;"><i class="fa-regular fa-clock"></i> Diproses Admin</span>`;
+                    
+                    let badgeColor = "bg-primary";
+                    if (data.status === "Sedang Chat") { borderColor = "#f59e0b"; badgeColor = "bg-warning text-dark"; }
+                    else if (data.status === "Demo Produk") { borderColor = "#0ea5e9"; badgeColor = "bg-info text-dark"; }
+                    else if (data.status === "Negosiasi") { borderColor = "#8b5cf6"; badgeColor = "bg-secondary"; }
+                    else if (data.status === "Closing") { 
+                        borderColor = "#10b981"; badgeColor = "bg-success";
+                        statusTeks = '<span class="text-success fw-bold" style="font-size: 0.65rem;"><i class="fa-solid fa-check-double"></i> Goal! Lunas</span>'; 
+                    }
+
+                    // *** LOGIKA PENYEMBUNYIAN NOMOR WA ***
+                    let nomorTampil = data.noWa || '-';
+                    // Cek apakah variabel aksesWaAktif eksis dan nilainya false (Admin mematikan fitur)
+                    if (typeof aksesWaAktif !== 'undefined' && !aksesWaAktif) {
+                        if (nomorTampil.length > 4) {
+                            nomorTampil = nomorTampil.substring(0, 4) + "-XXXX-XXXX"; 
+                        } else {
+                            nomorTampil = "Disembunyikan";
+                        }
+                    }
+
+                    const cardHtml = `
+                    <div class="bg-white p-3 rounded shadow-sm position-relative" style="border-left: 4px solid ${borderColor}; cursor: default;">
+                        <div class="d-flex justify-content-between mb-1">
+                            <h6 class="fw-bold mb-0 text-truncate" style="font-size: 0.85rem; max-width: 130px;" title="${data.namaProspek || 'Anonim'}">${data.namaProspek || 'Anonim'}</h6>
+                            ${statusTeks}
+                        </div>
+                        <div class="text-muted mb-2" style="font-size: 0.75rem;"><i class="fa-brands fa-whatsapp text-success"></i> ${nomorTampil}</div>
+                        <div class="bg-light p-1 rounded text-center text-secondary fw-semibold text-truncate mb-3" style="font-size: 0.7rem;">
+                            <i class="fa-solid fa-box-open"></i> ${data.minatProduk || 'Belum Diketahui'}
+                        </div>
+                        
+                        <button class="btn btn-sm btn-outline-success w-100 fw-semibold" style="font-size: 0.75rem;" onclick="chatWA('${data.noWa}', '${data.namaProspek}', '${data.status}', '${data.minatProduk}')">
+                            <i class="fab fa-whatsapp"></i> Chat via WA
+                        </button>
+                    </div>
+                    `;
+
+                    // Render untuk tabel list lead
+                    htmlListLead += `
+                    <tr style="border-bottom: 1px solid #f8fafc;">
+                        <td class="fw-bold" style="font-size:0.85rem;">
+                            ${data.namaProspek || 'Anonim'}<br>
+                            <span class="text-muted fw-normal" style="font-size:0.75rem;"><i class="fa-brands fa-whatsapp text-success"></i> ${nomorTampil}</span>
+                        </td>
+                        <td><span class="badge ${badgeColor}" style="font-size:0.75rem;">${data.status || 'Lead Baru'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success border-0" onclick="chatWA('${data.noWa}', '${data.namaProspek}', '${data.status}', '${data.minatProduk}')">
+                                <i class="fab fa-whatsapp text-success"></i> Chat
+                            </button>
+                        </td>
+                    </tr>`;
+
+                    if (data.status === "Sedang Chat") { htmlChat += cardHtml; cChat++; }
+                    else if (data.status === "Demo Produk") { htmlDemo += cardHtml; cDemo++; }
+                    else if (data.status === "Negosiasi") { htmlNego += cardHtml; cNego++; }
+                    else if (data.status === "Closing") { htmlClosing += cardHtml; cClosing++; }
+                    else { htmlBaru += cardHtml; cBaru++; }
+                });
+
+                $('#aff-board-baru').html(htmlBaru || '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>');
+                $('#aff-board-chat').html(htmlChat || '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>');
+                $('#aff-board-demo').html(htmlDemo || '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>');
+                $('#aff-board-nego').html(htmlNego || '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>');
+                $('#aff-board-closing').html(htmlClosing || '<div class="text-center text-muted py-3" style="font-size:0.75rem;">Kosong</div>');
+                
+                $('#list-lead-affiliate').html(htmlListLead || '<tr><td colspan="3" class="text-center text-muted py-3">Belum ada prospek terdaftar.</td></tr>');
+            }
+
+            $('#aff-count-baru').text(cBaru);
+            $('#aff-count-chat').text(cChat);
+            $('#aff-count-demo').text(cDemo);
+            $('#aff-count-nego').text(cNego);
+            $('#aff-count-closing').text(cClosing);
+        });
+    } catch (error) {
+        console.error("Gagal memuat papan CRM Affiliate:", error);
+    }
+};
+
+window.tambahLeadManual = function() {
+    Swal.fire({
+        title: 'Tambah Prospek Manual',
+        html: `
+            <div class="text-start mt-2">
+                <div class="alert bg-primary bg-opacity-10 border-0 p-2 mb-3 rounded text-primary" style="font-size:0.8rem;">
+                    <i class="fa-solid fa-circle-info"></i> Prospek ini akan masuk ke Dasbor Anda dan Dasbor Admin secara otomatis.
+                </div>
+                <label class="form-label fw-semibold" style="font-size: 0.75rem;">Nama Prospek</label>
+                <input id="lead-nama" class="form-control mb-3" placeholder="Contoh: Pak Budi" style="font-size: 0.85rem;">
+                
+                <label class="form-label fw-semibold" style="font-size: 0.75rem;">Nomor WhatsApp</label>
+                <input id="lead-wa" class="form-control mb-3" type="number" placeholder="Contoh: 08123456789" style="font-size: 0.85rem;">
+                
+                <label class="form-label fw-semibold" style="font-size: 0.75rem;">Produk yang Diminati</label>
+                <select id="lead-produk" class="form-select" style="font-size: 0.85rem;">
+                    <option value="Paket Basic Tryout TKA">Paket Basic Tryout TKA</option>
+                    <option value="Paket Pro Tryout TKA">Paket Pro Tryout TKA</option>
+                    <option value="Paket Ultimate Tryout TKA">Paket Ultimate Tryout TKA</option>
+                    <option value="Belum Diketahui">Lainnya / Belum Tahu</option>
+                </select>
+            </div>
+        `,
+        confirmButtonText: '<i class="fa-solid fa-paper-plane"></i> Serahkan ke Admin',
+        confirmButtonColor: '#2563EB',
+        showCancelButton: true,
+        cancelButtonText: 'Batal',
+        preConfirm: () => {
+            const nama = document.getElementById('lead-nama').value;
+            const wa = document.getElementById('lead-wa').value;
+            if(!nama || !wa) { Swal.showValidationMessage('Nama dan WA wajib diisi lengkap!'); return false; }
+            return {
+                namaProspek: nama,
+                noWa: wa,
+                minatProduk: document.getElementById('lead-produk').value,
+                affiliate: localStorage.getItem("sesi_affiliate_username"),
+                waktuMasuk: new Date().toISOString(),
+                waktuLalu: 'Baru saja',
+                status: 'Lead Baru'
+            }
+        }
+    }).then(async (result) => {
+        if(result.isConfirmed) {
+            Swal.fire({ title: 'Meneruskan ke Admin...', didOpen: () => { Swal.showLoading(); }});
+            try {
+                // Simpan ke database Leads
+                await window.addDoc(window.collection(window.db, "leads"), result.value);
+                
+                // Kirim notifikasi lonceng ke Super Admin
+                await window.addDoc(window.collection(window.db, "notifikasi"), {
+                    tipe: "lead", 
+                    pesan: `Lead Baru disetor manual oleh ${result.value.affiliate} (${result.value.namaProspek}).`,
+                    waktu: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' WIB',
+                    status: "unread"
+                });
+
+                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Berhasil dikirim ke Admin!', showConfirmButton: false, timer: 2000 });
+            } catch(e) {
+                Swal.fire('Gagal', e.message, 'error');
+            }
+        }
+    });
+};
+// --- SELESAI: SENSOR LEAD CRM AFFILIATE ---
+// --- MULAI: SENSOR KATALOG PRODUK AFFILIATE (SAFE MODE) ---
+// Fungsi Helper Salin Tautan Cepat
+window.copyTextAjaib = function(link) {
+    if(!link || link === '#' || link === '') {
+        Swal.fire('Link Kosong', 'URL belum tersedia.', 'warning');
+        return;
+    }
+    navigator.clipboard.writeText(link).then(() => {
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan disalin ke clipboard!', showConfirmButton: false, timer: 1500 });
+    });
+};
+
+// --- MULAI: SENSOR KATALOG PRODUK AFFILIATE (SAFE MODE & ADMIN STYLE) ---
+// Fungsi Helper Salin Tautan Cepat
+window.copyTextAjaib = function(link) {
+    if(!link || link === '#' || link === '') {
+        Swal.fire('Link Kosong', 'URL belum tersedia.', 'warning');
+        return;
+    }
+    navigator.clipboard.writeText(link).then(() => {
+        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan disalin ke clipboard!', showConfirmButton: false, timer: 1500 });
+    });
+};
+
+// Fungsi AJAIB: Salin Link Demo + Otomatis Tempel Parameter Nomor WA Affiliate
+window.copyLinkDemoAjaib = async function(demoUrl) {
+    if(!demoUrl || demoUrl === '#' || demoUrl === '') {
+        Swal.fire('Link Kosong', 'URL Demo belum disediakan Admin.', 'warning');
+        return;
+    }
+
+    const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+    if (!usernameAktif) return;
+
+    Swal.fire({ title: 'Menyiapkan Link Demo...', didOpen: () => { Swal.showLoading(); }});
+
+    try {
+        // Tarik data WA Affiliate dari Firebase
+        const qUser = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", usernameAktif));
+        const snapUser = await window.getDocs(qUser);
+        
+        let noWa = "";
+        snapUser.forEach(doc => { 
+            noWa = doc.data().noWA || ""; 
+        });
+
+        if(!noWa || noWa === '-') {
+            Swal.fire('Data WA Kosong', 'Silakan lengkapi profil nomor WhatsApp Anda terlebih dahulu di menu Pengaturan Profil.', 'warning');
+            return;
+        }
+
+        // Format nomor WA jadi 62...
+        let formatNomor = noWa.replace(/^0/, '62').replace(/\D/g, '');
+        
+        // Gabungkan URL Demo dengan Parameter WA Tracker
+        let separator = demoUrl.includes('?') ? '&' : '?';
+        let linkFinal = demoUrl + separator + 'wa=' + formatNomor;
+
+        navigator.clipboard.writeText(linkFinal).then(() => {
+            Swal.fire({ 
+                toast: true, position: 'top-end', icon: 'success', 
+                title: 'Link Demo Siap Disebar!', 
+                text: 'Tracker URL otomatis menggunakan nomor Anda.',
+                showConfirmButton: false, timer: 3000 
+            });
+        });
+
+    } catch (error) {
+        Swal.fire('Error', 'Gagal memverifikasi data akun: ' + error.message, 'error');
+    }
+};
+window.globalTerjualMap = {}; // Penyimpan data jumlah penjualan per produk
+
+// Ambil data penjualan sekali saja saat halaman dimuat
+async function hitungPenjualan() {
+    const qLeads = window.query(window.collection(window.db, "leads"), window.where("status", "==", "Closing")); // Sesuaikan dengan status sukses di DB Anda
+    const snap = await window.getDocs(qLeads);
+    snap.forEach((doc) => {
+        const d = doc.data();
+        const nama = d.minatProduk.replace('Qurban Care (', '').replace(')', ''); // Sesuaikan format nama produk
+        window.globalTerjualMap[nama] = (window.globalTerjualMap[nama] || 0) + 1;
+    });
+}
+hitungPenjualan();
+// --- MULAI: SENSOR KATALOG PRODUK AFFILIATE DENGAN LABEL TERLARIS ---
+window.globalKatalogProdukAff = [];
+window.globalTerjualMapAff = {};
+
+// --- MULAI: SENSOR KATALOG PRODUK AFFILIATE DENGAN LABEL TERLARIS ---
+window.globalKatalogProdukAff = [];
+window.globalTerjualMapAff = {};
+
+window.muatKatalogAffiliate = function() {
+    const wadahKatalog = document.getElementById('katalog-produk-affiliate');
+    try {
+        if(!window.db || !window.collection) {
+            setTimeout(window.muatKatalogAffiliate, 1000);
+            return;
+        }
+
+        // 1. Pantau Transaksi Global (Cerdas Deteksi Nama Produk)
+        window.onSnapshot(window.collection(window.db, "transaksi"), (snapTrx) => {
+            window.globalTerjualMapAff = {};
+            snapTrx.forEach(docT => {
+                let pNama = docT.data().produk; // Contoh: "Qurban Care (PREMIUM)"
+                if(pNama) {
+                    // Bersihkan nama dari embel-embel paket agar cocok persis dengan Katalog
+                    let namaBersih = pNama.split(' (')[0].trim();
+                    window.globalTerjualMapAff[namaBersih] = (window.globalTerjualMapAff[namaBersih] || 0) + 1;
+                }
+            });
+            if(typeof renderKatalogUiAff === 'function') renderKatalogUiAff();
+        });
+
+        // 2. Pantau Data Katalog Produk
+        const qProduk = window.query(window.collection(window.db, "produk"), window.orderBy("tanggalDitambahkan", "desc"));
+        window.onSnapshot(qProduk, (snapshot) => {
+            window.globalKatalogProdukAff = [];
+            snapshot.forEach((doc) => {
+                let d = doc.data();
+                d.idDoc = doc.id;
+                window.globalKatalogProdukAff.push(d);
+            });
+            if(typeof renderKatalogUiAff === 'function') renderKatalogUiAff();
+        }, (error) => {
+            if(wadahKatalog) wadahKatalog.innerHTML = `<div class="col-12 text-center text-danger py-4">Akses Data Ditolak: ${error.message}</div>`;
+        });
+
+    } catch (error) {
+        if(wadahKatalog) wadahKatalog.innerHTML = `<div class="col-12 text-center text-danger py-4">Terjadi Kesalahan: ${error.message}</div>`;
+    }
+};
+
+function renderKatalogUiAff() {
+    const wadahKatalog = document.getElementById('katalog-produk-affiliate');
+    if(!wadahKatalog) return;
+    
+    let prodData = [...window.globalKatalogProdukAff];
+    if (prodData.length === 0) {
+        wadahKatalog.innerHTML = '<div class="col-12 text-center text-muted py-4">Belum ada produk yang tersedia saat ini.</div>';
+        return;
+    }
+
+    // --- LOGIKA CERDAS MENGHITUNG PENJUALAN ---
+    // Pastikan setiap produk di katalog mengambil jumlah dari Map yang sudah dibersihkan
+    prodData.forEach(p => {
+        let namaKatalog = (p.nama || "").trim();
+        p.jmlTerjual = window.globalTerjualMapAff[namaKatalog] || 0;
+    });
+
+    // Hitung Perangkingan Top 3 Terlaris
+    let sortedBySales = [...prodData].sort((a, b) => b.jmlTerjual - a.jmlTerjual);
+    let rankMap = {};
+    sortedBySales.forEach((p, index) => {
+        if (p.jmlTerjual > 0 && index < 3) rankMap[p.nama] = index + 1; 
+    });
+
+    let htmlKatalog = "";
+    prodData.forEach((d) => {
+        const hb = Number(d.hargaBasic) || Number(d.normalBasic) || 0; 
+        const kb = Number(d.komisiBasic) || 0;
+        const hp = Number(d.hargaPremium) || Number(d.normalPremium) || 0; 
+        const kp = Number(d.komisiPremium) || 0;
+        
+        const kategoriBadge = d.kategori ? `<span class="badge bg-primary position-absolute top-0 start-0 m-2 shadow-sm" style="font-size: 0.65rem; z-index:2;">${d.kategori}</span>` : '';
+
+        // Layout Copy Link Pendukung BARU
+        const htmlLinkDemo = d.linkDemo ? `<div class="input-group input-group-sm mb-2 shadow-sm"><button class="btn btn-warning text-dark fw-bold" onclick="copyLinkDemoAjaib('${d.linkDemo}')" title="Copy Link Demo Ajaib"><i class="fa-solid fa-copy"></i></button><input type="text" class="form-control bg-white text-muted fw-bold" value="Link Demo (Auto-Tracker)" readonly style="font-size: 0.7rem; text-align: center;"><a href="${d.linkDemo}" target="_blank" class="btn btn-outline-warning text-dark" title="Buka Demo"><i class="fa-solid fa-laptop"></i></a></div>` : '';
+        const htmlLinkIklan = d.linkIklan ? `<div class="input-group input-group-sm mb-2 shadow-sm"><button class="btn btn-danger" onclick="copyTextAjaib('${d.linkIklan}')" title="Copy Link Iklan"><i class="fa-solid fa-copy"></i></button><input type="text" class="form-control bg-white text-muted fw-bold" value="Tonton Video Iklan" readonly style="font-size: 0.7rem; text-align: center;"><a href="${d.linkIklan}" target="_blank" class="btn btn-outline-danger" title="Buka Video"><i class="fa-brands fa-youtube"></i></a></div>` : '';
+        const htmlLinkUnduh = d.linkUnduhIklan ? `<div class="input-group input-group-sm mb-2 shadow-sm"><button class="btn btn-success" onclick="copyTextAjaib('${d.linkUnduhIklan}')" title="Copy Link Mentahan"><i class="fa-solid fa-copy"></i></button><input type="text" class="form-control bg-white text-muted fw-bold" value="Mentahan / Unduh Video" readonly style="font-size: 0.7rem; text-align: center;"><a href="${d.linkUnduhIklan}" target="_blank" class="btn btn-outline-success" title="Unduh Video"><i class="fa-solid fa-cloud-arrow-down"></i></a></div>` : '';
+        const htmlLinkTuto = d.linkPlaylist ? `<div class="input-group input-group-sm mb-2 shadow-sm"><button class="btn btn-info text-white" onclick="copyTextAjaib('${d.linkPlaylist}')" title="Copy Link Tutorial"><i class="fa-solid fa-copy"></i></button><input type="text" class="form-control bg-white text-muted fw-bold" value="Video Tutorial Playlist" readonly style="font-size: 0.7rem; text-align: center;"><a href="${d.linkPlaylist}" target="_blank" class="btn btn-outline-info" title="Buka Tutorial"><i class="fa-solid fa-graduation-cap"></i></a></div>` : '';
+
+        // --- SISTEM LABEL TERLARIS & TERJUAL ---
+        let badgeTerlaris = '';
+        if (rankMap[d.nama] === 1) badgeTerlaris = `<span class="badge bg-warning text-dark position-absolute top-0 start-50 translate-middle-x mt-2 shadow-lg" style="font-size: 0.75rem; z-index: 2;"><i class="fa-solid fa-crown"></i> Terlaris #1</span>`;
+        else if (rankMap[d.nama] === 2) badgeTerlaris = `<span class="badge bg-secondary text-white position-absolute top-0 start-50 translate-middle-x mt-2 shadow-sm" style="font-size: 0.7rem; z-index: 2;"><i class="fa-solid fa-medal"></i> Terlaris #2</span>`;
+        else if (rankMap[d.nama] === 3) badgeTerlaris = `<span class="badge text-white position-absolute top-0 start-50 translate-middle-x mt-2 shadow-sm" style="background-color: #b45309; font-size: 0.7rem; z-index: 2;"><i class="fa-solid fa-medal"></i> Terlaris #3</span>`;
+
+        htmlKatalog += `
+        <div class="col-xl-3 col-lg-4 col-md-6 col-sm-6 mb-4">
+            <div class="saas-card h-100 p-0 overflow-hidden d-flex flex-column border" style="border-radius: 14px;">
+                <div class="position-relative">
+                    ${badgeTerlaris}
+                    <img src="${d.gambar || 'https://via.placeholder.com/400x400?text=No+Image'}" alt="Sampul" class="w-100" style="aspect-ratio: 1 / 1; object-fit: cover;">
+                    ${kategoriBadge}
+                    <span class="badge bg-success position-absolute top-0 end-0 m-2 shadow-sm" style="font-size: 0.65rem; z-index: 2;"><i class="fa-solid fa-check-circle"></i> Aktif</span>
+                    <span class="badge bg-dark bg-opacity-75 position-absolute bottom-0 end-0 m-2 shadow-sm border border-secondary" style="font-size: 0.75rem; z-index: 2;"><i class="fa-solid fa-fire text-warning"></i> ${d.jmlTerjual}x Terjual</span>
+                </div>
+                
+                <div class="p-3 flex-grow-1">
+                    <h6 class="fw-bold text-dark mb-3 lh-base" style="font-size: 0.95rem;">${d.nama || 'Produk Tanpa Nama'}</h6>
+                    
+                    <div class="bg-primary bg-opacity-10 rounded p-2 mb-2">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="text-primary fw-semibold" style="font-size: 0.75rem;"><i class="fa-solid fa-cube me-1"></i> Basic</span>
+                            <span class="fw-bold text-dark" style="font-size: 0.85rem;">Rp ${hb.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted" style="font-size: 0.7rem;">Komisi Anda:</span>
+                            <span class="text-success fw-bold" style="font-size: 0.8rem;">Rp ${kb.toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="rounded p-2 mb-3" style="background: rgba(139, 92, 246, 0.1);">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="fw-semibold" style="font-size: 0.75rem; color: #8B5CF6;"><i class="fa-solid fa-gem me-1"></i> Premium</span>
+                            <span class="fw-bold text-dark" style="font-size: 0.85rem;">Rp ${hp.toLocaleString('id-ID')}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="text-muted" style="font-size: 0.7rem;">Komisi Anda:</span>
+                            <span class="text-success fw-bold" style="font-size: 0.8rem;">Rp ${kp.toLocaleString('id-ID')}</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-2 bg-light p-2 rounded border">
+                        <div class="text-muted fw-bold mb-2" style="font-size: 0.65rem; text-transform: uppercase;"><i class="fa-solid fa-share-nodes"></i> Tautan Promosi Anda:</div>
+                        
+                        <div class="input-group input-group-sm mb-2 shadow-sm">
+                            <button class="btn btn-primary" onclick="copyLinkProduk('${d.idDoc}', '${d.nama}', '${d.linkLandingPage || ''}')" title="Copy Link Affiliate"><i class="fa-solid fa-copy"></i></button>
+                            <input type="text" class="form-control bg-white text-muted fw-bold text-center" value="Halaman Utama / Penjualan" readonly style="font-size: 0.7rem;">
+                            <button class="btn btn-success" onclick="shareWaProduk('${d.idDoc}', '${d.nama}', '${d.linkLandingPage || ''}')" title="Share via WhatsApp"><i class="fa-brands fa-whatsapp"></i></button>
+                        </div>
+
+                        ${htmlLinkDemo}
+                        ${htmlLinkIklan}
+                        ${htmlLinkUnduh}
+                        ${htmlLinkTuto}
+                    </div>
+                </div>
+                
+                <div class="p-3 pt-0 mt-auto border-top pt-3">
+                    <div class="row g-2">
+                        <div class="col-6"><button class="btn btn-outline-info text-dark w-100 py-1 rounded-3 shadow-sm" style="font-size: 0.7rem; font-weight: 600;" onclick="bacaFitur('${d.nama}')"><i class="fa-solid fa-lightbulb me-1" style="color: #F59E0B;"></i> Contekan</button></div>
+                        <div class="col-6"><button class="btn btn-outline-secondary text-dark w-100 py-1 rounded-3 shadow-sm" style="font-size: 0.7rem; font-weight: 600;" onclick="downloadGambar('${d.gambar}', '${d.nama}')"><i class="fa-solid fa-download me-1"></i> Gambar</button></div>
+                        <div class="col-6"><button class="btn btn-outline-dark w-100 py-1 rounded-3 shadow-sm" style="font-size: 0.7rem; font-weight: 600;" onclick="skripPenolakan('${d.nama}')"><i class="fa-solid fa-comments me-1" style="color: #3B82F6;"></i> Skrip Nolak</button></div>
+                        <div class="col-6"><button class="btn btn-outline-dark w-100 py-1 rounded-3 shadow-sm" style="font-size: 0.7rem; font-weight: 600;" onclick="bandingkanPaket('${d.nama}')"><i class="fa-solid fa-scale-balanced me-1" style="color: #8B5CF6;"></i> Bandingkan</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    wadahKatalog.innerHTML = htmlKatalog;
+}
+// --- SELESAI: SENSOR KATALOG PRODUK AFFILIATE ---
+                
+                /// Memberi jeda 1.5 detik agar Firebase siap sepenuhnya
+            // --- PEMICU UTAMA APLIKASI (ANTI CRASH) ---
+            setTimeout(() => {
+                console.log("Sistem siap, memulai sinkronisasi data...");
+                
+                // 1. Eksekusi Portal Utama
+                try { 
+                    if(typeof inisialisasiPortal === 'function') inisialisasiPortal(); 
+                } catch(e) { console.error("Error Portal:", e); }
+                
+                // 2. Eksekusi Katalog (Tetap aman walau fungsi tidak ditemukan)
+                try { 
+                    if(typeof window.muatKatalogAffiliate === 'function') window.muatKatalogAffiliate();
+                    else if(typeof muatKatalogAffiliate === 'function') muatKatalogAffiliate(); 
+                } catch(e) { console.error("Error Katalog:", e); }
+                
+                // 3. Eksekusi Materi Promosi
+                try { 
+                    if(typeof window.muatMateriPromosiAffiliate === 'function') window.muatMateriPromosiAffiliate(); 
+                } catch(e) { console.error("Error Materi Promosi:", e); }
+                try { if(typeof window.muatCrmAffiliate === 'function') window.muatCrmAffiliate(); } catch(e) { console.error("Error CRM:", e); }
+                
+            }, 1500);
+            // ------------------------------------------
+
+            // Link Generator Otomatis (Membaca domain SES saat ini)
+            const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const linkBase = baseHref + "daftar.html?ref=" + usernameAktif;
+            $('#link-hasil').val(linkBase);
+        });
+
+        // ----------------------------------------------------
+        // SIMULASI FITUR PASANG APLIKASI (PWA)
+        // ----------------------------------------------------
+        let deferredPrompt;
+
+        // Menangkap event install bawaan sistem HP (Chrome Android)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+
+        function pasangAplikasiPWA() {
+            if (deferredPrompt) {
+                // Jika Android & didukung
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') { console.log('User menginstal PWA'); }
+                    deferredPrompt = null;
+                });
+            } else {
+                // Jika iPhone / browser tidak support pop-up bawaan, tampilkan panduan visual
+                Swal.fire({
+                    title: 'Pasang di Layar Utama',
+                    html: `
+                        <img src="https://res.cloudinary.com/dz5qwtdt7/image/upload/v1781425295/nfsfn0ggkbtlds0rmnxj.jpg" width="60" class="rounded-circle mb-3 shadow-sm">
+                        <p style="font-size: 0.9rem;" class="mb-2">Agar lebih cepat dibuka setiap hari, pasang AnimaSales ke layar HP Anda.</p>
+                        <div class="bg-light p-3 rounded border text-start mx-auto" style="max-width: 250px; font-size: 0.8rem;">
+                            <b>Android (Chrome):</b><br>
+                            Ketuk ikon titik tiga (⋮) di atas, pilih <b>"Tambahkan ke Layar Utama"</b>.<br><br>
+                            <b>iPhone (Safari):</b><br>
+                            Ketuk ikon <b>Bagikan (Share)</b> di bawah, pilih <b>"Add to Home Screen"</b>.
+                        </div>
+                    `,
+                    confirmButtonText: 'Oke, Mengerti!',
+                    confirmButtonColor: '#2563EB'
+                });
+            }
+        }
+        // ----------------------------------------------------
+
+        // Fungsi Bawaan (Copy & Logout)
+        function copyLink() {
+            const copyText = document.getElementById("link-hasil");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Link disalin ke clipboard!', showConfirmButton: false, timer: 1500 });
+        }
+
+        function salinCopywriting(elementId) {
+            const copyText = document.getElementById(elementId);
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value);
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Berhasil disalin ke clipboard!', showConfirmButton: false, timer: 1500 });
+        }
+
+        function keluarKeLogin() {
+            // Hapus data sesi login affiliate
+            localStorage.removeItem("sesi_affiliate_username");
+            localStorage.removeItem("sesi_affiliate_nama");
+            
+            // Cukup refresh halaman, sistem akan otomatis mendeteksi 
+            // bahwa tidak ada login dan memunculkan layar Login Premium tadi.
+            window.location.reload();
+        }
+        // --- MULAI: FITUR PROMOSI PRODUK ---
+        // --- MULAI: GENERATOR LINK DINAMIS ---
+window.copyLinkProduk = function(docId, namaProduk, landingPageUrl) {
+    const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+    
+    // Menggunakan link pendaftaran LKP SES
+    const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const urlTujuan = landingPageUrl || (baseHref + "daftar.html");
+    const linkUnik = `${urlTujuan}?ref=${usernameAktif}`;
+    
+    navigator.clipboard.writeText(linkUnik);
+    
+    Swal.fire({ 
+        toast: true, position: 'top-end', icon: 'success', 
+        title: 'Link Produk Disalin!', 
+        text: namaProduk,
+        showConfirmButton: false, timer: 2000 
+    });
+};
+
+window.shareWaProduk = function(docId, namaProduk, landingPageUrl) {
+    const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+    
+    const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+    const urlTujuan = landingPageUrl || (baseHref + "daftar.html");
+    const linkUnik = `${urlTujuan}?ref=${usernameAktif}`;
+    
+    const teksPromosi = encodeURIComponent(`Halo! Untuk persiapan ujian ananda, saya sangat merekomendasikan *${namaProduk}* dari LKP SES.\n\nCek detail fasilitas lengkap dan harganya, serta daftar langsung di sini ya:\n${linkUnik}`);
+    window.open(`https://wa.me/?text=${teksPromosi}`, '_blank');
+};
+// --- SELESAI ---
+        // --- SELESAI: FITUR PROMOSI PRODUK ---
+        // 3. Fungsi Pop-up Contekan Jualan
+        // 3. Fungsi Pop-up Contekan Jualan (Smart Detektor)
+        // 3. Fungsi Pop-up Contekan Jualan (Smart Detektor)
+        window.bacaFitur = function(namaProduk) {
+            let detailFitur = `
+                <li class="mb-2"><b>Soal Standar Nasional:</b> Disusun berdasarkan standar Asesmen Kompetensi Minimum (AKM) dan HOTS terbaru.</li>
+                <li class="mb-2"><b>Sistem CBT Mirip Asli:</b> Tampilan ruang ujian dibuat semirip mungkin dengan ujian nasional agar siswa terbiasa dan tidak gugup.</li>
+                <li class="mb-2"><b>Pembahasan Komprehensif:</b> Setiap soal dilengkapi kunci jawaban dan pembahasan mendetail agar siswa paham letak kesalahannya.</li>
+                <li class="mb-2"><b>Sertifikat & Papan Peringkat:</b> Siswa yang mencapai target KKM akan mendapatkan Sertifikat Kelulusan Resmi dan bersaing di Leaderboard Nasional.</li>
+                <li><b>Laporan Evaluasi Ortu:</b> Orang tua mendapatkan laporan rinci mengenai kelemahan dan kelebihan belajar anak.</li>
+            `;
+
+            Swal.fire({
+                title: '<span style="font-size:1.1rem;">📝 Contekan Fitur Tryout</span>',
+                html: `
+                    <div class="text-start bg-light p-3 rounded border mt-2" style="font-size: 0.85rem;">
+                        <p class="mb-3">Gunakan poin-poin ini untuk meyakinkan wali murid atau siswa agar membeli <b>${namaProduk}</b>:</p>
+                        <ul class="text-muted ps-3 mb-4" style="text-align: justify;">
+                            ${detailFitur}
+                        </ul>
+                        <div class="alert bg-warning bg-opacity-10 border-warning p-2 mb-0 text-center" style="font-size: 0.8rem; color: #b45309;">
+                            <i class="fa-regular fa-copy me-1"></i> Teks di atas bisa Anda blok dan <b>Copy</b> untuk dikirim ke WA pembeli.
+                        </div>
+                    </div>
+                `,
+                confirmButtonText: 'Oke, Mengerti',
+                confirmButtonColor: '#2563EB',
+                width: '650px'
+            });
+        };
+
+        // 4. Fungsi Download Gambar Paksa
+        window.downloadGambar = async function(urlGambar, namaProduk) {
+            // Cek jika gambar masih menggunakan gambar palsu/kosong
+            if(!urlGambar || urlGambar.includes('via.placeholder')) {
+                Swal.fire('Maaf', 'Gambar sampul belum tersedia.', 'info');
+                return;
+            }
+            
+            Swal.fire({ title: 'Menyiapkan Gambar...', didOpen: () => { Swal.showLoading(); }});
+            
+            try {
+                // Mencoba menarik file gambar dari internet
+                const response = await fetch(urlGambar);
+                const blob = await response.blob();
+                const blobUrl = URL.createObjectURL(blob);
+                
+                // Proses pengunduhan otomatis
+                const link = document.createElement('a');
+                link.href = blobUrl;
+                // Membuat nama file otomatis, misal: Promo_qurban_care.jpg
+                const namaFileBersih = namaProduk.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+                link.download = `Promo_${namaFileBersih}.jpg`;
+                
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                Swal.close();
+            } catch (error) {
+                // Jika sistem keamanan browser memblokir unduhan langsung, buka di tab baru
+                Swal.close();
+                window.open(urlGambar, '_blank');
+            }
+        };
+        window.copyText = function(idInput) {
+    const copyText = document.getElementById(idInput);
+    if (!copyText.value) { 
+        Swal.fire('Oops', 'Link belum diisi oleh Admin!', 'warning');
+        return;
+    }
+    copyText.select();
+    document.execCommand("copy");
+    Swal.fire({ 
+        toast: true, position: 'top-end', icon: 'success', 
+        title: 'Link berhasil disalin!', showConfirmButton: false, timer: 1500 
+    });
+};
+// 5. Fungsi Pop-up Skrip Anti-Penolakan (Lengkap dengan 13 Kasus & FAQ)
+        window.skripPenolakan = function(namaProduk) {
+            Swal.fire({
+                title: '<span style="font-size:1.2rem;">🗣️ Skrip Jawab Penolakan Ortu</span>',
+                html: `
+                    <div class="text-start" style="font-size: 0.9rem; height: 500px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
+                        <p class="text-muted mb-3">Pilih skrip balasan yang sesuai dengan keraguan Wali Murid, lalu klik <b>Copy</b>.</p>
+                        
+                        <div class="border rounded p-3 mb-3 bg-white shadow-sm">
+                            <div class="fw-bold text-danger mb-2"><i class="fa-solid fa-xmark"></i> "Harganya kemahalan Kak..."</div>
+                            <textarea id="skrip-1" class="form-control text-muted mb-3 bg-light" style="font-size: 0.85rem; height: 120px; resize: none;" readonly>Bunda, investasi untuk pendidikan anak memang sering terasa di awal. Tapi bayangkan, dengan ${namaProduk} ini, ananda sudah mendapatkan ratusan soal terstandar Nasional, pembahasan lengkap, dan sertifikat. Kalau ikut les di luar bisa ratusan ribu sebulannya lho Bunda. Ini sangat terjangkau untuk bekal masa depan ananda! 😊</textarea>
+                            <button class="btn btn-primary w-100 fw-semibold" onclick="copyText('skrip-1')"><i class="fa-solid fa-copy"></i> Copy Skrip</button>
+                        </div>
+
+                        <div class="border rounded p-3 mb-3 bg-white shadow-sm">
+                            <div class="fw-bold text-warning mb-2" style="color: #d97706 !important;"><i class="fa-solid fa-users"></i> "Saya diskusikan dengan Suami/Istri dulu ya..."</div>
+                            <textarea id="skrip-2" class="form-control text-muted mb-3 bg-light" style="font-size: 0.85rem; height: 120px; resize: none;" readonly>Baik Bunda/Ayah, tentu sangat setuju. Pendidikan anak memang harus didiskusikan bersama. Nanti boleh disampaikan ke suami/istri bahwa ${namaProduk} ini kuotanya terbatas dan ada laporan belajar langsung ke WA ortu, jadi Ayah/Bunda bisa pantau dari rumah atau kantor. Kabari saya ya Bunda jika butuh bantuan daftarnya. 🙏</textarea>
+                            <button class="btn btn-primary w-100 fw-semibold" onclick="copyText('skrip-2')"><i class="fa-solid fa-copy"></i> Copy Skrip</button>
+                        </div>
+
+                        <div class="border rounded p-3 mb-3 bg-white shadow-sm">
+                            <div class="fw-bold text-info mb-2"><i class="fa-solid fa-child"></i> "Anaknya belum mau/malas belajar..."</div>
+                            <textarea id="skrip-3" class="form-control text-muted mb-3 bg-light" style="font-size: 0.85rem; height: 120px; resize: none;" readonly>Wah wajar banget Bunda, apalagi kalau bentuknya buku tebal. Nah, Tryout LKP SES ini bentuknya CBT (seperti game kuis di HP/Laptop). Ada animasi medali, papan peringkat juara se-nasional, dan sertifikat yang bikin anak-anak tertantang buat dapat nilai bagus. Biasanya kalau lihat temannya ada di Leaderboard, mereka jadi termotivasi lho Bunda! 🏆</textarea>
+                            <button class="btn btn-primary w-100 fw-semibold" onclick="copyText('skrip-3')"><i class="fa-solid fa-copy"></i> Copy Skrip</button>
+                        </div>
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                width: '600px'
+            });
+        };
+       // 6. Fungsi Pop-up Tabel Perbandingan Paket (Dengan Copy ke WA Anti-Bocor)
+        window.bandingkanPaket = function(namaProduk) {
+            let barisFitur = `
+                <tr><td class="text-start">Akses Soal Latihan (Bisa Diulang)</td><td class="text-success"><i class="fa-solid fa-check"></i></td><td class="text-success"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start">Kunci Jawaban & Pembahasan</td><td class="text-success"><i class="fa-solid fa-check"></i></td><td class="text-success"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start fw-bold">Akses Ujian Simulasi Mutlak (1x Kesempatan)</td><td class="text-danger"><i class="fa-solid fa-xmark"></i></td><td class="text-success fw-bold"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start fw-bold">Laporan Progres Belajar Siswa (PDF)</td><td class="text-danger"><i class="fa-solid fa-xmark"></i></td><td class="text-success fw-bold"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start fw-bold">Masuk Papan Peringkat (Leaderboard) Nasional</td><td class="text-danger"><i class="fa-solid fa-xmark"></i></td><td class="text-success fw-bold"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start fw-bold">Cetak Sertifikat Kelulusan Resmi</td><td class="text-danger"><i class="fa-solid fa-xmark"></i></td><td class="text-success fw-bold"><i class="fa-solid fa-check"></i></td></tr>
+                <tr><td class="text-start fw-bold border-bottom-0">Cetak ID Card Peserta Eksklusif</td><td class="text-danger border-bottom-0"><i class="fa-solid fa-xmark"></i></td><td class="text-success fw-bold border-bottom-0"><i class="fa-solid fa-check"></i></td></tr>
+            `;
+                
+            let teksCopyWa = `*PERBANDINGAN PAKET TRYOUT TKA LKP SES* ⚖️
+
+✅ *PAKET BASIC (Dasar):*
+(Cocok untuk perkenalan dan tes awal)
+✅ Akses Soal Latihan (Bisa Diulang)
+✅ Kunci Jawaban & Pembahasan
+❌ Akses Ujian Simulasi Mutlak
+❌ Laporan Progres Belajar Siswa
+❌ Masuk Papan Peringkat Nasional
+❌ Cetak Sertifikat Kelulusan Resmi
+❌ Cetak ID Card Peserta
+
+👑 *PAKET ULTIMATE (Rekomendasi Terbaik):*
+(Fasilitas penuh untuk persiapan maksimal & kebanggaan prestasi anak)
+✅ Akses Soal Latihan (Bisa Diulang)
+✅ Kunci Jawaban & Pembahasan
+✅ Akses Ujian Simulasi Mutlak (Sesuai Aslinya)
+✅ Laporan Progres Belajar Siswa (PDF)
+✅ Masuk Papan Peringkat (Leaderboard) Nasional
+✅ Cetak Sertifikat Kelulusan Resmi
+✅ Cetak ID Card Peserta Eksklusif
+
+💡 *Saran kami:* Ayah/Bunda sangat disarankan mengambil *Paket Ultimate*. Selain anak bisa mengikuti simulasi seperti ujian sungguhan, Sertifikat dan ID Card-nya sangat bagus untuk portofolio dan kebanggaan prestasi ananda!`;
+
+            window.tempTeksCopyWa = teksCopyWa;
+
+            Swal.fire({
+                title: '<span style="font-size:1.1rem;">⚖️ Perbandingan Paket Tryout</span>',
+                html: `
+                    <p class="text-muted mb-3" style="font-size:0.85rem;">Gunakan data ini untuk meyakinkan wali murid agar membeli <b>Paket Ultimate</b>.</p>
+                    <div class="table-responsive border rounded mb-3">
+                        <table class="table table-bordered align-middle text-center mb-0" style="font-size: 0.8rem;">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start border-bottom-0">Fasilitas / Fitur</th>
+                                    <th style="width: 70px;" class="text-primary border-bottom-0">Basic</th>
+                                    <th style="width: 70px; color: #8B5CF6;" class="border-bottom-0">Ultimate</th>
+                                </tr>
+                            </thead>
+                            <tbody>${barisFitur}</tbody>
+                        </table>
+                    </div>
+                    <button class="btn btn-primary w-100 fw-semibold shadow-sm" onclick="copyTeksBandingkanAman()"><i class="fa-brands fa-whatsapp me-1"></i> Copy Format WA untuk Wali Murid</button>
+                `,
+                showConfirmButton: false,
+                showCloseButton: true,
+                width: '700px'
+            });
+        };
+
+        // 7. Fungsi Pembantu untuk Menyalin Teks Tabel ke WA (100% AMAN ANTI-BOCOR HTML)
+        window.copyTeksBandingkanAman = function() {
+            // Ambil teks langsung dari variabel JavaScript, BUKAN dari elemen HTML
+            const isiTeks = window.tempTeksCopyWa;
+            
+            // Gunakan metode dummy textarea yang dibuat secara dinamis (lalu langsung dihapus)
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = isiTeks;
+            dummy.select();
+            dummy.setSelectionRange(0, 99999);
+            document.execCommand("copy");
+            document.body.removeChild(dummy); // Hapus jejak agar tidak bocor
+            
+            Swal.fire({ 
+                toast: true, position: 'top-end', icon: 'success', 
+                title: 'Format tabel berhasil disalin! Tinggal Paste di WA.', 
+                showConfirmButton: false, timer: 2500 
+            });
+        };
+        // A. Fungsi Copy Link Utama
+function copyLinkUtama() {
+    const link = document.getElementById("aff-link-copy");
+    link.select();
+    document.execCommand("copy");
+    Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Link disalin!', showConfirmButton: false, timer: 1500 });
+}
+
+// // --- MULAI: MODUL GRAFIK TREN PROSPEK REAL-TIME ---
+        const ctx = document.getElementById('chart-leads').getContext('2d');
+        window.grafikProspekAff = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'],
+                datasets: [{
+                    label: 'Prospek Masuk',
+                    data: [0, 0, 0, 0, 0, 0, 0], // Akan diisi otomatis
+                    borderColor: '#10B981', // Warna hijau premium
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4, // Melengkung halus
+                    pointBackgroundColor: '#2563EB',
+                    pointBorderColor: '#fff',
+                    pointHoverBackgroundColor: '#fff',
+                    pointHoverBorderColor: '#2563EB',
+                    pointRadius: 5,
+                    pointHoverRadius: 7
+                }]
+            },
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { size: 13, family: 'Inter' },
+                        bodyFont: { size: 14, weight: 'bold', family: 'Inter' },
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: { label: function(context) { return '💥 ' + context.parsed.y + ' Calon Pembeli'; } }
+                    }
+                },
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1, font: { family: 'Inter' } }, border: { display: false } },
+                    x: { grid: { display: false }, ticks: { font: { family: 'Inter', weight: '500' } } }
+                }
+            }
+        });
+
+        window.muatGrafikAffiliate = function() {
+            const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+            if(!usernameAktif) return;
+
+            try {
+                // Tarik data lead khusus milik affiliate ini
+                const qLeads = window.query(window.collection(window.db, "leads"), window.where("affiliate", "==", usernameAktif));
+                window.onSnapshot(qLeads, (snapshot) => {
+                    let dataMingguan = [0, 0, 0, 0, 0, 0, 0]; // 0=Senin, 6=Minggu
+                    
+                    // Rumus mencari tanggal awal minggu ini (Hari Senin jam 00:00)
+                    const hariIni = new Date();
+                    const hari = hariIni.getDay() || 7; 
+                    const seninMingguIni = new Date(hariIni);
+                    seninMingguIni.setDate(hariIni.getDate() - hari + 1);
+                    seninMingguIni.setHours(0, 0, 0, 0);
+
+                    snapshot.forEach(doc => {
+                        const data = doc.data();
+                        if(data.waktuMasuk) {
+                            const tglMasuk = new Date(data.waktuMasuk);
+                            // Jika prospek masuk di minggu yang sama
+                            if(tglMasuk >= seninMingguIni) {
+                                let dayIndex = tglMasuk.getDay(); // 0(Min) - 6(Sab)
+                                let finalIndex = dayIndex === 0 ? 6 : dayIndex - 1; // Konversi ke index array kita
+                                dataMingguan[finalIndex]++;
+                            }
+                        }
+                    });
+
+                    // Tembakkan ke grafik dan update visualnya
+                    window.grafikProspekAff.data.datasets[0].data = dataMingguan;
+                    window.grafikProspekAff.update('none');
+                });
+            } catch (error) {
+                console.error("Gagal memuat grafik:", error);
+            }
+        };
+        // --- SELESAI: MODUL GRAFIK ---
+        // --- MULAI: SENSOR BANNER PENGUMUMAN (REAL-TIME) ---
+        window.muatBannerPengumuman = function() {
+            try {
+                // Telinga Firebase untuk mendengarkan "Laci Pengaturan"
+                const docRef = window.doc(window.db, "pengaturan", "banner_utama");
+                window.onSnapshot(docRef, (docSnap) => {
+                    const bannerEl = document.getElementById('banner-pengumuman');
+                    if(bannerEl) {
+                        if (docSnap.exists()) {
+                            const data = docSnap.data();
+                            // Jika tombol di Dasbor Admin diaktifkan (true)
+                            if (data.aktif === true) {
+                                document.getElementById('banner-judul').innerText = data.judul || "Pengumuman!";
+                                document.getElementById('banner-teks').innerText = data.teks || "";
+                                bannerEl.style.display = 'flex'; // Munculkan Banner!
+                            } else {
+                                bannerEl.style.display = 'none'; // Sembunyikan Banner
+                            }
+                        } else {
+                            bannerEl.style.display = 'none';
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error("Gagal memuat banner:", error);
+            }
+        };
+        // --- SELESAI: SENSOR BANNER ---
+
+        // --- MULAI: MODUL PENGATURAN PROFIL AFFILIATE ---
+        window.togglePasswordVisibility = function(inputId, btnObj) {
+            const input = document.getElementById(inputId);
+            const icon = btnObj.querySelector('i');
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = "password";
+                icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye');
+            }
+        };
+
+        window.simpanPasswordBaru = async function() {
+            const pass1 = document.getElementById('input-password-baru').value;
+            const pass2 = document.getElementById('input-password-konfirmasi').value;
+            const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+
+            if (!pass1 || !pass2) { Swal.fire('Oops!', 'Semua kolom password wajib diisi.', 'warning'); return; }
+            if (pass1 !== pass2) { Swal.fire('Gagal!', 'Konfirmasi password tidak cocok dengan password baru.', 'error'); return; }
+            if (pass1.length < 6) { Swal.fire('Terlalu Pendek!', 'Password minimal harus terdiri dari 6 karakter.', 'warning'); return; }
+
+            Swal.fire({ title: 'Menyimpan...', didOpen: () => { Swal.showLoading(); }});
+
+            try {
+                // Cari docID dari Affiliate yang sedang login
+                const qUser = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", usernameAktif));
+                const querySnapshot = await window.getDocs(qUser);
+                
+                if (querySnapshot.empty) { Swal.fire('Error', 'Data akun tidak ditemukan di server.', 'error'); return; }
+
+                let docId = "";
+                querySnapshot.forEach((doc) => { docId = doc.id; });
+
+                // Update ke Firebase
+                await window.updateDoc(window.doc(window.db, "affiliates", docId), { password: pass1 });
+
+                // Kosongkan form
+                document.getElementById('input-password-baru').value = '';
+                document.getElementById('input-password-konfirmasi').value = '';
+
+                Swal.fire({
+                    icon: 'success', title: 'Password Diperbarui!',
+                    text: 'Kata sandi akun Anda berhasil diubah. Harap ingat kata sandi baru Anda untuk login selanjutnya.',
+                    confirmButtonColor: '#10B981'
+                });
+
+            } catch (error) { Swal.fire('Gagal Menyimpan', error.message, 'error'); }
+        };
+        // --- SELESAI: MODUL PENGATURAN PROFIL AFFILIATE ---
+
+        // A. Fungsi Copy Link Utama
+        window.copyLinkUtama = function() {
+            const link = document.getElementById("aff-link-copy");
+            link.select(); document.execCommand("copy");
+            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Link disalin!', showConfirmButton: false, timer: 1500 });
+        }
+
+        // B. Update Link otomatis saat halaman load (dan Panggil Grafik)
+        const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+document.getElementById('aff-link-copy').value = baseHref + "daftar.html?ref=" + localStorage.getItem("sesi_affiliate_username");
+        
+        // C. PELATUK GRAFIK & BANNER (Nyalakan mesin setelah Firebase siap)
+        setTimeout(() => {
+            if(typeof window.muatGrafikAffiliate === 'function') window.muatGrafikAffiliate();
+            if(typeof window.muatBannerPengumuman === 'function') window.muatBannerPengumuman();
+        }, 3500);
+        window.updateLevelAffiliate = function(totalClosing) {
+            let level = "Newbie";
+            let persen = 0;
+            let target = 5;
+
+            // Logika Level
+            if (totalClosing >= 20) {
+                level = "Master";
+                target = "Max";
+                persen = 100;
+            } else if (totalClosing >= 6) {
+                level = "Pro";
+                target = 20;
+                persen = (totalClosing / 20) * 100;
+            } else {
+                level = "Newbie";
+                target = 5;
+                persen = (totalClosing / 5) * 100;
+            }
+
+            // Update Tampilan
+            $('#bar-level').css('width', persen + '%');
+            $('#text-level').text(level);
+            
+            if(target !== "Max") {
+                $('#text-target').text("Target: " + target);
+            } else {
+                $('#text-target').text("Level Maksimal!");
+            }
+
+            // Ganti warna bar sesuai level
+            if (level === "Pro") $('#bar-level').attr('class', 'progress-bar progress-bar-striped progress-bar-animated bg-warning');
+            else if (level === "Master") $('#bar-level').attr('class', 'progress-bar progress-bar-striped progress-bar-animated bg-success');
+        };
+        // Pastikan fungsi ini ada di baris paling bawah script affiliate.html
+// --- MULAI: FITUR SMART SCRIPT PICKER WA (DENGAN FAQ SUPER LENGKAP) ---
+        window.chatWA = function(nomor, nama, status, produk) {
+            let formatNomor = nomor.replace(/^0/, '62'); 
+            
+            let faqHtml = `
+                <div class="mt-4 mb-2 fw-bold text-success" style="font-size: 0.85rem; border-bottom: 2px solid #10b981; padding-bottom: 5px;">
+                    <i class="fa-solid fa-clipboard-question"></i> FAQ Tryout TKA LKP SES
+                </div>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_cara_login')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">1. Bagaimana cara siswa login ke Tryout?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_hp_atau_laptop')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">2. Apakah bisa dikerjakan di HP / Laptop?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_jadwal')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">3. Kapan jadwal Tryout dimulai & ditutup?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_sertifikat')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">4. Bagaimana cara cetak Sertifikat Kelulusan?</div>
+                </button>
+            `;
+
+            Swal.fire({
+                title: '<span style="font-size: 1.1rem; font-weight: 700;">Pilih Pesan Balasan WA</span>',
+                html: `
+                    <div class="text-start mt-2" style="max-height: 60vh; overflow-y: auto; padding-right: 8px;">
+                        <div class="fw-bold mb-2 text-primary" style="font-size: 0.85rem; border-bottom: 2px solid #2563eb; padding-bottom: 5px;">
+                            <i class="fa-solid fa-bullhorn"></i> Skrip Follow Up Wali Murid
+                        </div>
+                        <button class="btn btn-outline-primary w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'sapaan')">
+                            <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-hand-wave me-2"></i>Sapaan Awal (Calon Pendaftar Baru)</div>
+                        </button>
+                        <button class="btn btn-outline-success w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'link')">
+                            <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-link me-2"></i>Kirim Link Pendaftaran Promo</div>
+                        </button>
+                        <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'cara_bayar')">
+                            <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-money-bill-wave text-success me-2"></i>Informasi Rekening Pembayaran LKP</div>
+                        </button>
+                        ${faqHtml}
+                    </div>
+                `,
+                showConfirmButton: false, showCloseButton: true, width: '450px'
+            });
+        };
+
+        window.kirimPesanWA = function(nomor, nama, produk, tipe) {
+            const usernameAktif = localStorage.getItem("sesi_affiliate_username");
+            // Buat link pendaftaran otomatis agar mengarah ke halaman daftar.html
+            const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const linkUtama = `${baseHref}daftar.html?ref=${usernameAktif}`; 
+
+            let pesan = "";
+
+            if(tipe === 'sapaan') {
+                pesan = `Halo Ayah/Bunda dari ananda *${nama}*, perkenalkan saya tim Edukasi LKP SES. Kami melihat ada ketertarikan untuk mengikuti *${produk || 'Tryout TKA Nasional'}*. Apakah ada informasi pendaftaran yang bisa saya bantu jelaskan Bunda? 😊`;
+            } else if(tipe === 'link') {
+                pesan = `Halo Bunda, untuk mengamankan kuota pendaftaran *${produk || 'Tryout TKA'}*, Bunda bisa langsung mengisi form pendaftaran resminya melalui link promo ini ya:\n\n👉 ${linkUtama}\n\nJika ada kendala saat mengisi form, jangan sungkan kabari saya ya Bunda!`;
+            } else if(tipe === 'cara_bayar') {
+                pesan = `Baik Bunda, untuk pembayarannya bisa ditransfer ke rekening resmi Lembaga kami berikut ini ya:\n\n💳 *BRI* : (Tulis Nomor Rekening Bunda)\n📱 *DANA/OVO* : (Tulis Nomor e-Wallet)\na.n (Tulis Nama Bunda)\n\nSetelah transfer, mohon kirimkan foto struknya ke sini agar segera saya proses ID Login ujian untuk ananda tercinta. Terima kasih Bunda! 🙏`;
+            } else if(tipe === 'faq_cara_login') {
+                pesan = `Gampang banget Bunda! Nanti setelah pembayaran terkonfirmasi, ananda akan mendapatkan *ID Peserta* dan *Password*. Bunda cukup buka website LKP SES, masukkan ID tersebut di layar Portal Siswa, dan ananda langsung bisa masuk ke Ruang Ujian. 🚀`;
+            } else if(tipe === 'faq_hp_atau_laptop') {
+                pesan = `Sangat bisa Bunda! Sistem Ujian (CBT) kami sangat ringan dan fleksibel. Ananda bisa mengerjakannya menggunakan HP (Android/iPhone), Tablet, ataupun Laptop/PC kesayangan di rumah. Pastikan koneksi internetnya stabil ya Bunda. 📱💻`;
+            } else if(tipe === 'faq_jadwal') {
+                pesan = `Untuk Paket Latihan, ananda bisa mengerjakannya kapan saja 24 Jam secara mandiri. Namun untuk Paket Ujian Simulasi (Khusus Pro & Ultimate), jadwal pembukaan dan penutupan soalnya akan dikendalikan langsung oleh Admin Pusat LKP SES agar serentak layaknya ujian nasional Bunda. ⏰`;
+            } else if(tipe === 'faq_sertifikat') {
+                pesan = `Sertifikat Kelulusan Resmi (Khusus Akun Ultimate) akan otomatis terbuka dan bisa dicetak (PDF) langsung dari Dashboard Siswa jika nilai rata-rata ujian ananda sudah mencapai batas KKM (di atas 75). Ini sangat bagus untuk memacu semangat ananda meraih nilai terbaik! 🏆`;
+            }
+
+            Swal.close(); 
+            window.open(`https://wa.me/${nomor.replace(/^0/, '62')}?text=${encodeURIComponent(pesan)}`, '_blank'); 
+        };
+// --- SELESAI: FITUR SMART SCRIPT PICKER WA ---
+        // --- MULAI: SENSOR KUNCI WA & TEKS INFO DARI ADMIN ---
+let aksesWaAktif = true; // Variabel global untuk status WA
+
+window.muatSensorKontrolWaAdmin = function() {
+    if (!document.getElementById('style-kunci-wa')) {
+        const style = document.createElement('style');
+        style.id = 'style-kunci-wa';
+        document.head.appendChild(style);
+    }
+
+    // Memantau perintah dari Admin
+    window.onSnapshot(window.doc(window.db, "pengaturan", "akses_wa_affiliate"), (docSnap) => {
+        const styleTag = document.getElementById('style-kunci-wa');
+        // Menangkap SEMUA kotak HTML yang memiliki class 'info-status-wa'
+        const daftarKotakInfo = document.querySelectorAll('.info-status-wa'); 
+        
+        if (docSnap.exists()) {
+            aksesWaAktif = docSnap.data().aktif !== false;
+        } else {
+            aksesWaAktif = true;
+        }
+
+        if (!aksesWaAktif) {
+            // 1. KUNCI TOMBOL
+            styleTag.innerHTML = `
+                button[onclick*="chatWA"] { 
+                    opacity: 0.6 !important; 
+                    pointer-events: none !important; 
+                    background-color: #f1f5f9 !important;
+                    border-color: #cbd5e1 !important;
+                    color: #94a3b8 !important;
+                }
+                button[onclick*="chatWA"] i { display: none !important; }
+                button[onclick*="chatWA"]::before {
+                    content: '\\f023';
+                    font-family: "Font Awesome 6 Free";
+                    font-weight: 900;
+                    margin-right: 6px;
+                }
+                button[onclick*="chatWA"]::after { content: ' (Dikunci)'; font-size: 0.65rem; }
+            `;
+            
+            // 2. TAMPILKAN NOTIF MERAH DI SEMUA KOTAK
+            daftarKotakInfo.forEach(kotakInfo => {
+                kotakInfo.classList.remove('d-none');
+                kotakInfo.className = 'info-status-wa alert mb-3 border-0 shadow-sm bg-danger bg-opacity-10 text-danger border-start border-danger border-4';
+                kotakInfo.innerHTML = `<strong><i class="fa-solid fa-lock me-1"></i> Sedang Dikelola Admin:</strong> Akses chat WA sementara diambil alih oleh Tim Pusat agar prospek tidak mendapat pesan ganda. Nomor WA prospek disembunyikan. Duduk manis dan pantau status prospek Anda di sini.`;
+            });
+        } else {
+            // 1. BUKA KUNCI TOMBOL
+            styleTag.innerHTML = ``;
+            
+            // 2. TAMPILKAN NOTIF HIJAU DI SEMUA KOTAK
+            daftarKotakInfo.forEach(kotakInfo => {
+                kotakInfo.classList.remove('d-none');
+                kotakInfo.className = 'info-status-wa alert mb-3 border-0 shadow-sm bg-success bg-opacity-10 text-success border-start border-success border-4';
+                kotakInfo.innerHTML = `<strong><i class="fa-solid fa-unlock me-1"></i> Wewenang Follow-up Aktif:</strong> Anda berhak melakukan chat dan negosiasi langsung dengan calon pembeli. <b class="text-dark">Harap fokus dan tangani dengan serius sampai <i>closing</i>, jangan sampai prospek ini lolos!</b> Gunakan tombol chat di bawah untuk meningkatkan peluang <i>closing</i> Anda!`;
+            });
+        }
+
+        // Render ulang tampilan CRM dan Lead Board untuk menyembunyikan/menampilkan WA
+        if(typeof window.muatCrmAffiliate === 'function') window.muatCrmAffiliate();
+    });
+};
+setTimeout(() => { muatSensorKontrolWaAdmin(); }, 2000);
+// --- SELESAI: SENSOR KUNCI WA & TEKS INFO DARI ADMIN ---
+        // ====================================================
+        // MESIN OTENTIKASI (LOGIN & DAFTAR) AFFILIATE
+        // ====================================================
+
+        window.toggleAuthForm = function(tipe) {
+            if(tipe === 'register') {
+                document.getElementById('form-login').style.display = 'none';
+                document.getElementById('form-register').style.display = 'block';
+            } else {
+                document.getElementById('form-login').style.display = 'block';
+                document.getElementById('form-register').style.display = 'none';
+            }
+        };
+
+        window.prosesLoginAffiliate = async function() {
+            const user = document.getElementById('login-username').value.trim();
+            const pass = document.getElementById('login-password').value;
+
+            if(!user || !pass) { Swal.fire('Oops', 'Username dan Password wajib diisi!', 'warning'); return; }
+
+            Swal.fire({ title: 'Mencocokkan Data...', didOpen: () => { Swal.showLoading(); }});
+
+            try {
+                // Mencari data di Firebase berdasarkan Username
+                const q = window.query(window.collection(window.db, "affiliates"), window.where("usernameLogin", "==", user));
+                const snap = await window.getDocs(q);
+
+                if(!snap.empty) {
+                    let dataAff = null;
+                    snap.forEach(doc => dataAff = doc.data());
+
+                    if(dataAff.password === pass) {
+                        // Cek apakah akun sedang dibanned/suspend oleh Admin
+                        if(dataAff.status === 'Suspended') {
+                            Swal.fire('Akun Dibekukan', 'Mohon maaf, akun Affiliate Anda sedang ditangguhkan. Silakan hubungi Admin Pusat.', 'error');
+                            return;
+                        }
+
+                        // Berhasil! Simpan sesi di memori HP/Laptop
+                        localStorage.setItem("sesi_affiliate_username", dataAff.usernameLogin);
+                        localStorage.setItem("sesi_affiliate_nama", dataAff.namaLengkap);
+
+                        Swal.fire({ icon: 'success', title: 'Login Berhasil!', showConfirmButton: false, timer: 1500 }).then(() => {
+                            window.location.reload(); // Refresh halaman agar Dasbor terbuka
+                        });
+                    } else {
+                        Swal.fire('Gagal Masuk', 'Password yang Anda masukkan salah!', 'error');
+                    }
+                } else {
+                    Swal.fire('Tidak Ditemukan', 'Username tersebut tidak terdaftar di sistem kami.', 'error');
+                }
+            } catch(e) { Swal.fire('Error Sistem', e.message, 'error'); }
+        };
+
+        window.prosesDaftarAffiliateLengkap = async function() {
+            const nama = document.getElementById('reg-nama').value.trim();
+            const ttl = document.getElementById('reg-ttl').value.trim();
+            const alamat = document.getElementById('reg-alamat').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const wa = document.getElementById('reg-wa').value.trim();
+            const bank = document.getElementById('reg-bank').value.trim();
+
+            // 1. Validasi Data
+            if(!nama || !ttl || !alamat || !wa || !bank || !email) { 
+                Swal.fire('Oops', 'Mohon lengkapi semua data pendaftaran!', 'warning'); 
+                return; 
+            }
+
+            // 2. Efek Loading Pengiriman Pendaftaran
+            Swal.fire({
+                title: 'Memproses Pendaftaran...',
+                html: 'Sistem sedang mengamankan dan mendaftarkan data Anda.<br><b class="text-primary mt-2 d-block">Mohon tunggu sebentar...</b>',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            try {
+                // Simpan ke database (Tanpa username & password karena akan dibuatkan Admin)
+                await window.addDoc(window.collection(window.db, "affiliates"), {
+                    namaLengkap: nama,
+                    ttl: ttl,
+                    alamat: alamat,
+                    email: email,
+                    noWA: wa,
+                    rekening: bank,
+                    tanggalDaftar: new Date().toISOString(),
+                    statusAccount: "Pending Review", 
+                    totalClosing: 0,
+                    totalKlik: 0
+                });
+
+                // Kirim sinyal ke lonceng Notifikasi Super Admin
+                await window.addDoc(window.collection(window.db, "notifikasi"), {
+                    tipe: "lead", 
+                    pesan: `Affiliate Baru: ${nama} menunggu aktivasi.`,
+                    waktu: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }) + ' WIB',
+                    status: "unread"
+                });
+
+                // Susun Draf WA Konfirmasi ke Admin
+                const teksWA = encodeURIComponent(`Halo Admin LKP dan Bimbel SES,\n\nSaya telah mendaftar sebagai Affiliate. Berikut data saya:\n\n*Nama:* ${nama}\n*Domisili:* ${alamat}\n*No. WA:* ${wa}\n\nMohon verifikasinya agar saya segera mendapatkan akses Username dan Password untuk login ke Dashboard. Terima kasih!`);
+                const linkWA = `https://wa.me/6285855111386?text=${teksWA}`;
+
+                // 3. Tampilkan Notif Sukses & Arahkan ke WA
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Pendaftaran Berhasil!',
+                    html: `
+                        <div class="text-center mt-2">
+                            <p class="mb-3 text-dark fw-semibold">Admin akan segera memverifikasi dan membuatkan Username serta Password untuk Anda.</p>
+                            
+                            <div class="p-3 bg-primary bg-opacity-10 border border-primary rounded-3 text-start">
+                                <p class="text-primary fw-bold mb-1" style="font-size: 0.95rem;">Selamat bergabung di Tim LKP dan Bimbel SES! 🚀</p>
+                                <p class="text-secondary mb-0" style="font-size: 0.8rem; line-height: 1.5;">
+                                    Jadikan setiap interaksi sebagai peluang. Mari raih komisi tanpa batas dan wujudkan impian finansial Anda bersama kami!
+                                </p>
+                            </div>
+                            
+                            <p class="text-muted small mt-3 mb-0">Klik tombol di bawah untuk konfirmasi ke WhatsApp Admin.</p>
+                        </div>
+                    `,
+                    confirmButtonText: '<i class="fa-brands fa-whatsapp"></i> Konfirmasi via WA',
+                    confirmButtonColor: '#10B981',
+                    width: '550px'
+                }).then(() => {
+                    toggleAuthForm('login');
+                    // Kosongkan form setelah sukses
+                    document.getElementById('reg-nama').value = '';
+                    document.getElementById('reg-ttl').value = '';
+                    document.getElementById('reg-alamat').value = '';
+                    document.getElementById('reg-email').value = '';
+                    document.getElementById('reg-wa').value = '';
+                    document.getElementById('reg-bank').value = '';
+                    window.open(linkWA, '_blank');
+                });
+
+            } catch(e) { 
+                Swal.fire('Terjadi Kesalahan', 'Gagal memproses pendaftaran: ' + e.message, 'error'); 
+            }
+        };
+        // --- MULAI: MESIN LEADERBOARD TOP 10 (REAL-TIME) ---
+        window.dataLeaderboardGlobal = [];
+
+        window.muatLeaderboardAffiliate = function() {
+            try {
+                // MENGAMBIL DATA LANGSUNG DARI KOLEKSI 'affiliates' (Lebih Cepat & Akurat)
+                window.onSnapshot(window.collection(window.db, "affiliates"), (snapshot) => {
+                    let susunanData = [];
+                    
+                    snapshot.forEach(doc => {
+                        const d = doc.data();
+                        
+                        // Menarik data username, jumlah closing, dan komisi
+                        // (Jika belum ada komisi, otomatis diset 0 agar tidak error)
+                        susunanData.push({
+                            username: d.usernameLogin || "Anonim",
+                            closing: Number(d.totalClosing || 0),
+                            komisi: Number(d.totalKomisi || d.saldo || 0)
+                        });
+                    });
+
+                    window.dataLeaderboardGlobal = susunanData;
+                    
+                    if(typeof window.renderLeaderboardAffiliate === "function") {
+                        window.renderLeaderboardAffiliate();
+                    }
+                });
+            } catch (error) {
+                console.error("Gagal memuat leaderboard:", error);
+                const wadah = document.getElementById('live-leaderboard-affiliate');
+                if (wadah) wadah.innerHTML = '<div class="text-danger py-4 text-center border rounded bg-light">Gagal memuat data peringkat. Periksa koneksi internet Anda.</div>';
+            }
+        };
+
+        window.renderLeaderboardAffiliate = function() {
+            const filterMode = document.getElementById('filter-leaderboard') ? document.getElementById('filter-leaderboard').value : 'closing';
+            
+            // PERBAIKAN: Kita tangkap SEMUA tempat yang butuh papan peringkat
+            const wadahSemua = document.querySelectorAll('#live-leaderboard-affiliate');
+            if(wadahSemua.length === 0) return;
+
+            // Gandakan array agar data asli tidak rusak
+            let susunanData = [...window.dataLeaderboardGlobal];
+
+            // Urutkan berdasarkan dropdown (Komisi vs Closing)
+            if (filterMode === 'komisi') {
+                susunanData.sort((a, b) => b.komisi - a.komisi); 
+            } else {
+                susunanData.sort((a, b) => b.closing - a.closing); 
+            }
+
+            // Batasi hanya 10 orang teratas (Top 10)
+            const top10 = susunanData.slice(0, 10);
+
+            // Jika belum ada satupun affiliate yang berhasil closing
+            const totalSemuaClosing = top10.reduce((sum, item) => sum + item.closing, 0);
+            if (top10.length === 0 || totalSemuaClosing === 0) {
+                const htmlKosong = `
+                    <div class="text-center text-muted py-5 border rounded-3 bg-light">
+                        <i class="fa-solid fa-medal fs-1 text-secondary mb-3 opacity-50"></i><br>
+                        Belum ada yang mencetak <i>closing</i> bulan ini.<br>
+                        <b class="text-primary mt-1 d-block">Jadilah yang pertama!</b>
+                    </div>`;
+                // Cetak pesan kosong ke semua layar
+                wadahSemua.forEach(w => w.innerHTML = htmlKosong);
+                return;
+            }
+
+            let htmlRender = "";
+            const userLogin = localStorage.getItem("sesi_affiliate_username");
+
+            top10.forEach((item, index) => {
+                // Sembunyikan affiliate yang jumlah closing-nya masih 0
+                if(item.closing === 0) return;
+
+                const rank = index + 1;
+                
+                // Desain Medali & Kartu
+                let warnaRank = "text-muted";
+                let ikonMedali = `<span class="fw-bold text-muted fs-5" style="width: 35px; display: inline-block;">#${rank}</span>`;
+                let bgKartu = "bg-white border";
+
+                if (rank === 1) { 
+                    warnaRank = "text-warning"; 
+                    ikonMedali = `<i class="fa-solid fa-medal text-warning fs-2" style="width: 35px; text-shadow: 0 2px 4px rgba(245, 158, 11, 0.4);"></i>`; 
+                    bgKartu = "bg-warning bg-opacity-10 border-warning border-opacity-50";
+                } else if (rank === 2) { 
+                    warnaRank = "text-secondary"; 
+                    ikonMedali = `<i class="fa-solid fa-medal text-secondary fs-3" style="width: 35px;"></i>`; 
+                    bgKartu = "bg-light border";
+                } else if (rank === 3) { 
+                    warnaRank = "text-danger"; 
+                    ikonMedali = `<i class="fa-solid fa-medal fs-3" style="color: #b45309; width: 35px;"></i>`; 
+                }
+
+                // Efek Spesial Jika User Tampil di Papan Peringkat
+                const isMe = (item.username === userLogin);
+                const badgeMe = isMe ? `<span class="badge bg-success ms-2 animate__animated animate__pulse animate__infinite">It's You!</span>` : '';
+                if (isMe) bgKartu += " border-success border-2 shadow";
+
+                let nilaiUtama = "";
+                let nilaiKecil = "";
+                if (filterMode === 'komisi') {
+                    nilaiUtama = `Rp ${item.komisi.toLocaleString('id-ID')}`;
+                    nilaiKecil = `${item.closing} Trx Sukses`;
+                } else {
+                    nilaiUtama = `${item.closing} <span style="font-size:0.8rem; font-weight:600;">Closing</span>`;
+                    nilaiKecil = `Rp ${item.komisi.toLocaleString('id-ID')}`;
+                }
+
+                htmlRender += `
+                <div class="d-flex align-items-center justify-content-between p-3 mb-2 rounded-4 ${bgKartu} transition-all">
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-center">${ikonMedali}</div>
+                        <img src="https://ui-avatars.com/api/?name=${item.username}&background=random&color=fff" class="rounded-circle shadow-sm border border-2 border-white" width="45" height="45">
+                        <div>
+                            <div class="fw-bold text-dark d-flex align-items-center" style="font-size: 0.95rem; letter-spacing: 0.5px;">
+                                ${item.username} ${badgeMe}
+                            </div>
+                            <div class="text-muted mt-1" style="font-size: 0.75rem;"><i class="fa-solid fa-arrow-trend-up text-success me-1"></i>${nilaiKecil}</div>
+                        </div>
+                    </div>
+                    <div class="text-end">
+                        <div class="fw-bold ${warnaRank} fs-5 lh-1">${nilaiUtama}</div>
+                    </div>
+                </div>`;
+            });
+
+            // Tembakkan hasil desainnya ke SEMUA layar sekaligus
+            wadahSemua.forEach(w => w.innerHTML = htmlRender);
+        };
+        
+        // Eksekusi fungsi
+        setTimeout(() => { muatLeaderboardAffiliate(); }, 2000);
+        // --- SELESAI: MESIN LEADERBOARD ---
+        window.getDriveThumbnail = function(link) {
+    if (!link) return '';
+    
+    let fileId = '';
+    
+    if (link.includes('id=')) {
+        fileId = link.split('id=')[1].split('&')[0];
+    } 
+    else if (link.includes('/d/')) {
+        fileId = link.split('/d/')[1].split('/')[0];
+    }
+
+    if (fileId) {
+        return `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+    }
+    
+    return link; 
+};
+    </script>
+</body>
+</html>
