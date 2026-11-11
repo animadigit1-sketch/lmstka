@@ -176,8 +176,9 @@ function gantiMenuSiswa(idMenu, element) {
     document.getElementById(`view-${idMenu}`).classList.add('active');
     element.classList.add('active');
 }
-
-// 5. MUAT KATALOG PAKET UNTUK UJIAN (Dengan Fitur Pengunci Tipe Akun / Tier)
+// ==========================================
+// 5. MUAT KATALOG PAKET UNTUK UJIAN (Dengan Fitur Pengunci Tipe Akun & Master Switch)
+// ==========================================
 function muatKatalogPaketSiswa() {
     const filterDropdown = document.getElementById('filterModePaket');
     const filterValue = filterDropdown ? filterDropdown.value : 'Semua';
@@ -197,8 +198,6 @@ function muatKatalogPaketSiswa() {
         const dataSiswa = JSON.parse(localStorage.getItem("ses_siswa_login") || "{}");
         const paketSelesai = dataSiswa.paketSelesai || []; 
         const targetKKMSiswa = Number(dataSiswa.targetNilai) || 75;
-        
-        // 👇 BACA TIPE AKSES SISWA (Default ke Premium agar akun lama tidak error) 👇
         const tipeAksesSiswa = dataSiswa.tipeAkses || "Premium";
 
         let totalSkor = 0;
@@ -236,27 +235,33 @@ function muatKatalogPaketSiswa() {
             let status = "Belum Dikerjakan";
             const jenis = (p.jenisPaket || "Ujian").toLowerCase();
             
-            // Logika Hierarki Kunci Level Akses: Basic (1) < Pro (2) < Ultimate (3)
             const levelValue = { "basic": 1, "pro": 2, "ultimate": 3, "premium": 3 };
             let isTerkunciAkses = false;
+            let pesanKunciDinamis = ""; // Menyimpan pesan spesifik
+            let labelBadgeTerkunci = "Terkunci (Beda Tipe Akun)";
             
-            // Konversi teks menjadi angka level untuk dibandingkan
             let valSiswa = levelValue[tipeAksesSiswa.toLowerCase()] || 1;
             let valPaket = levelValue[jenis.toLowerCase()] || 1;
 
-            // Jika level siswa lebih rendah dari level paket soal, maka KUNCI!
-            if (valSiswa < valPaket) {
+            // 1. Cek Kunci Tipe Akun (Basic vs Ultimate)
+            if (valSiswa < valPaket || (tipeAksesSiswa === "Basic" && jenis === "ujian")) {
                 isTerkunciAkses = true; 
+                pesanKunciDinamis = `Akun Anda saat ini adalah <b>Level ${tipeAksesSiswa}</b> dan tidak memiliki izin untuk membuka paket soal Ujian TKA ini.<br><br>Silakan hubungi Admin LKP SES untuk <b>Upgrade ke akun PRO atau ULTIMATE</b>.`;
+                labelBadgeTerkunci = "Terkunci (Beda Tipe Akun)";
             }
             
-            // Basic hanya dikunci jika mencoba membuka paket "Ujian"
-            if (tipeAksesSiswa === "Basic" && jenis === "ujian") {
-                isTerkunciAkses = true; 
+            // 2. CEK KUNCI DARURAT DARI ADMIN (MASTER SWITCH)
+            let globalMasterStatus = window.SES_MASTER_SWITCH_STATUS || "NORMAL";
+            if (globalMasterStatus === "TUTUP_PAKSA") {
+                isTerkunciAkses = true;
+                pesanKunciDinamis = `Sesi ujian saat ini sedang <b>DIKUNCI / DITUTUP</b> oleh Pengawas.<br><br>Silakan tunggu instruksi selanjutnya dari Admin LKP SES.`;
+                labelBadgeTerkunci = "Dikunci Oleh Admin";
             }
-            // Catatan: Pro dan Ultimate bisa membuka semuanya (tidak di-set true)
 
             if (isTerkunciAkses) {
                 status = "Terkunci";
+                p.pesanKunciDinamis = pesanKunciDinamis; // Simpan ke dalam object
+                p.labelBadgeTerkunci = labelBadgeTerkunci;
             } else if (paketSelesai.includes(p.namaPaket)) {
                 let batasKKM = (jenis === "latihan") ? targetKKMSiswa : 75;
                 status = (rataRata >= batasKKM) ? "Lulus" : "Belum Lulus";
@@ -314,9 +319,9 @@ function muatKatalogPaketSiswa() {
             
             let badgeStatusHtml = '';
             
-            // 👇 VISUALISASI STATUS BERDASARKAN KUNCI 👇
+            // VISUALISASI STATUS BERDASARKAN KUNCI 
             if (d.statusSiswa === "Terkunci") {
-                badgeStatusHtml = `<span style="color: #64748b; background: #f1f5f9; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #cbd5e1;"><i class="fas fa-lock" style="margin-right: 5px;"></i> Terkunci (Beda Tipe Akun)</span>`;
+                badgeStatusHtml = `<span style="color: #64748b; background: #f1f5f9; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #cbd5e1;"><i class="fas fa-lock" style="margin-right: 5px;"></i> ${d.labelBadgeTerkunci}</span>`;
             } else if (d.statusSiswa === "Lulus") {
                 badgeStatusHtml = `<span style="color: #059669; background: #dcfce7; padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #86efac; box-shadow: 0 4px 10px rgba(16,185,129,0.15);"><i class="fas fa-check-circle" style="margin-right: 5px;"></i> Tuntas (Target Tercapai)</span>`;
             } else if (d.statusSiswa === "Belum Lulus") {
@@ -327,15 +332,12 @@ function muatKatalogPaketSiswa() {
                 badgeStatusHtml = `<span style="color: #64748b; background: rgba(255,255,255,0.9); padding: 5px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; border: 1px solid #cbd5e1;"><i class="fas fa-circle" style="color: #cbd5e1; font-size: 0.5rem; margin-right: 5px; vertical-align: middle;"></i> Belum Dikerjakan</span>`;
             }
 
-            // 👇 CEGAH KLIK JIKA TERKUNCI 👇
-            // 👇 CEGAH KLIK JIKA TERKUNCI 👇
-            let pesanKunci = `Akun Anda saat ini adalah <b>Level ${tipeAksesSiswa}</b> dan tidak memiliki izin untuk membuka paket soal Ujian TKA ini.<br><br>Silakan hubungi Admin LKP SES untuk <b>Upgrade ke akun PRO atau ULTIMATE</b>.`;
-            
+            // CEGAH KLIK JIKA TERKUNCI 
             let aksiKlik = d.statusSiswa === "Terkunci" 
-                ? `sesAlert('Akses Ditolak', '${pesanKunci}', 'fas fa-lock', '#ef4444')` 
+                ? `sesAlert('Akses Ditolak', '${d.pesanKunciDinamis}', 'fas fa-lock', '#ef4444')` 
                 : `bukaDetailPaket('${d.namaPaket}', '${jenis}')`;
 
-            let opacityCard = d.statusSiswa === "Terkunci" ? "0.6" : "1"; // Redupkan sedikit jika terkunci
+            let opacityCard = d.statusSiswa === "Terkunci" ? "0.6" : "1"; 
             let kursorCard = d.statusSiswa === "Terkunci" ? "not-allowed" : "pointer";
 
             html += `
@@ -348,7 +350,6 @@ function muatKatalogPaketSiswa() {
                     
                     <div style="width: 100%; box-sizing: border-box; padding: 22px 20px; display: flex; flex-direction: column; align-items: center; text-align: center; flex: 1; background: ${bgAreaTeks};">
                         
-                        <!-- 👇 TEKS JUDUL DIPERKECIL & DIFORMAT PROFESIONAL 👇 -->
                         <span style="font-size: 0.75rem; font-weight: 800; color: var(--ses-blue); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; display: block;"><i class="fas fa-bookmark"></i> Paket Ujian TKA</span>
                         <h4 style="font-size: 1.2rem; font-weight: 800; color: var(--ses-blue-dark); margin: 0 0 14px 0; line-height: 1.3;">${d.namaPaket}</h4>
                         
@@ -1823,6 +1824,16 @@ document.addEventListener("DOMContentLoaded", () => {
     db.collection("pengaturan").doc("master_switch").onSnapshot(doc => {
         if (doc.exists && doc.data().status) {
             window.SES_MASTER_SWITCH_STATUS = doc.data().status;
+            
+            // 👇 SEGARKAN TAMPILAN SISWA SEKETIKA SAAT ADMIN MENEKAN TOMBOL 👇
+            if (document.getElementById('katalogUjianContainer')) {
+                muatKatalogPaketSiswa(); // Gembok kartu paket dari depan
+            }
+            // Jika siswa sedang berada di dalam paket (memilih mapel), segarkan juga
+            const mapelContainer = document.querySelector('.card-mapel-fun'); 
+            if (mapelContainer && window.PAKET_AKTIF_TERAKHIR) {
+                bukaDetailPaket(window.PAKET_AKTIF_TERAKHIR, window.JENIS_PAKET_TERAKHIR);
+            }
         }
     });
 });
