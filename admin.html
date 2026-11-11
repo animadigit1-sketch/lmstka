@@ -298,6 +298,7 @@
             <li onclick="gantiMenu('rekap', this)"><i class="fas fa-clipboard-list"></i> Rekap Nilai Siswa</li>
             <li onclick="gantiMenu('analisisSoal', this)"><i class="fas fa-chart-bar"></i> Analisis Butir Soal</li>
             <li onclick="gantiMenu('keuangan', this)"><i class="fas fa-wallet"></i> Arus Kas Keuangan</li>
+            <li onclick="gantiMenu('pengaturan', this)"><i class="fas fa-cogs"></i> Pengaturan Sistem</li>
             <li onclick="gantiMenu('gambar', this)"><i class="fas fa-images"></i> Manajemen Gambar</li>
             
             <li class="menu-logout" onclick="window.location.reload()"><i class="fas fa-sign-out-alt"></i> Keluar Sistem</li>
@@ -1156,7 +1157,235 @@
         </table>
     </div>
 </div>
+<!-- ========================================== -->
+            <!-- VIEW: PENGATURAN SISTEM (UI PROFESIONAL SAAS) -->
+            <!-- ========================================== -->
+            <section id="view-pengaturan" class="view-section">
+                
+                <!-- CSS Internal Khusus Layout Pengaturan -->
+                <style>
+                    .settings-layout { display: flex; gap: 25px; align-items: flex-start; margin-top: 20px; }
+                    @media(max-width: 900px) { .settings-layout { flex-direction: column; } }
+                    
+                    .settings-nav { background: var(--white); border-radius: 12px; padding: 15px; width: 260px; flex-shrink: 0; box-shadow: 0 4px 15px rgba(0,55,128,0.04); border: 1px solid #e2e8f0; }
+                    .settings-nav ul { list-style: none; padding: 0; margin: 0; }
+                    .settings-nav li { padding: 12px 15px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; font-weight: 700; color: var(--text-muted); font-size: 0.9rem; transition: 0.2s; display: flex; align-items: center; gap: 10px; border-left: 4px solid transparent; }
+                    .settings-nav li:hover { background: #f8fafc; color: var(--ses-blue); }
+                    .settings-nav li.active-tab { background: #eff6ff; color: var(--ses-blue-dark); border-left: 4px solid var(--ses-blue); }
+                    
+                    .settings-content { flex: 1; background: var(--white); border-radius: 12px; padding: 30px; box-shadow: 0 4px 15px rgba(0,55,128,0.04); border: 1px solid #e2e8f0; min-height: 500px; width: 100%; }
+                    .setting-pane { display: none; animation: fadeIn 0.3s ease; }
+                    .setting-pane.active-pane { display: block; }
+                    
+                    .setting-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #e2e8f0; }
+                    .setting-header h3 { margin: 0 0 5px 0; color: var(--ses-blue-dark); font-size: 1.3rem; font-weight: 800; }
+                    .setting-header p { margin: 0; color: var(--text-muted); font-size: 0.85rem; font-weight: 600; }
 
+                    .link-item-box { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 15px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; gap: 15px; transition: 0.2s; }
+                    .link-item-box:hover { border-color: var(--ses-blue); background: white; box-shadow: 0 4px 10px rgba(0,88,198,0.05); }
+                    .link-info { flex: 1; }
+                    .link-info h4 { margin: 0 0 4px 0; font-size: 0.95rem; font-weight: 800; color: var(--ses-blue-dark); }
+                    .link-info p { margin: 0; font-size: 0.8rem; color: var(--text-muted); font-weight: 600; }
+                    .link-actions { display: flex; gap: 5px; align-items: center; }
+                    .link-actions input { width: 220px; padding: 8px 12px; font-size: 0.8rem; border: 1px solid #cbd5e1; border-radius: 6px; background: white; color: var(--text-main); font-weight: 600; outline: none; }
+                </style>
+
+                <div style="margin-bottom: 15px;">
+                    <h2 style="color: var(--ses-blue-dark); font-weight: 800; margin-bottom: 5px; font-size: 1.8rem;"><i class="fas fa-cogs" style="color: var(--ses-blue); margin-right: 10px;"></i>Pengaturan Sistem</h2>
+                    <p style="color: var(--text-muted); font-weight: 600; font-size: 1rem;">Kontrol penuh konfigurasi, tautan ekosistem, dan keamanan LMS LKP SES.</p>
+                </div>
+
+                <div class="settings-layout">
+                    
+                    <!-- KIRI: SUB-MENU NAVIGASI -->
+                    <div class="settings-nav">
+                        <ul>
+                            <li class="active-tab" onclick="switchSettingTab('tab-links', this)"><i class="fas fa-link"></i> Pusat Link & Tautan</li>
+                            <li onclick="switchSettingTab('tab-finance', this)"><i class="fas fa-wallet"></i> Keuangan & Komisi</li>
+                            <li onclick="switchSettingTab('tab-broadcast', this)"><i class="fas fa-bullhorn"></i> Siaran Pengumuman</li>
+                            <li onclick="switchSettingTab('tab-security', this)"><i class="fas fa-shield-alt"></i> Keamanan & Akses</li>
+                            <li onclick="switchSettingTab('tab-integrasi', this)"><i class="fas fa-plug"></i> Integrasi / Webhook</li>
+                        </ul>
+                    </div>
+
+                    <!-- KANAN: KONTEN PENGATURAN -->
+                    <div class="settings-content">
+                        
+                        <!-- PANE 1: PUSAT TAUTAN -->
+                        <div id="tab-links" class="setting-pane active-pane">
+                            <div class="setting-header">
+                                <h3>Pusat Tautan Ekosistem SES</h3>
+                                <p>Salin dan kelola URL penting sistem untuk dibagikan ke siswa atau mitra.</p>
+                            </div>
+
+                            <div class="link-item-box">
+                                <div class="link-info">
+                                    <h4><i class="fas fa-graduation-cap" style="color: var(--ses-blue);"></i> Portal Siswa (Ujian)</h4>
+                                    <p>Halaman utama siswa untuk login dan mengerjakan CBT.</p>
+                                </div>
+                                <div class="link-actions">
+                                    <input type="text" value="https://lmstka.vercel.app/siswa.html" readonly onclick="this.select()">
+                                    <button class="btn btn-primary" style="padding: 8px 12px;" onclick="navigator.clipboard.writeText('https://lmstka.vercel.app/siswa.html'); tampilkanToast('Link Portal Siswa disalin!')" title="Salin"><i class="fas fa-copy"></i></button>
+                                    <a href="https://lmstka.vercel.app/siswa.html" target="_blank" class="btn btn-outline" style="padding: 8px 12px;" title="Buka"><i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="link-item-box">
+                                <div class="link-info">
+                                    <h4><i class="fas fa-user-shield" style="color: #10b981;"></i> Panel Super Admin</h4>
+                                    <p>Portal khusus Anda (Pengelola Pusat).</p>
+                                </div>
+                                <div class="link-actions">
+                                    <input type="text" value="https://lmstka.vercel.app/adminaffiliate.html" readonly onclick="this.select()">
+                                    <button class="btn btn-success" style="padding: 8px 12px;" onclick="navigator.clipboard.writeText('https://lmstka.vercel.app/adminaffiliate.html'); tampilkanToast('Link Admin disalin!')" title="Salin"><i class="fas fa-copy"></i></button>
+                                    <a href="https://lmstka.vercel.app/adminaffiliate.html" target="_blank" class="btn btn-outline" style="padding: 8px 12px;" title="Buka"><i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="link-item-box">
+                                <div class="link-info">
+                                    <h4><i class="fas fa-users-gear" style="color: var(--ses-gold-dark);"></i> Dasbor Affiliate (Mitra)</h4>
+                                    <p>Halaman login khusus mitra untuk memantau komisi penjualan.</p>
+                                </div>
+                                <div class="link-actions">
+                                    <input type="text" value="https://lmstka.vercel.app/affiliate.html" readonly onclick="this.select()">
+                                    <button class="btn" style="background: var(--ses-gold); color: white; padding: 8px 12px;" onclick="navigator.clipboard.writeText('https://lmstka.vercel.app/affiliate.html'); tampilkanToast('Link Affiliate disalin!')" title="Salin"><i class="fas fa-copy"></i></button>
+                                    <a href="https://lmstka.vercel.app/affiliate.html" target="_blank" class="btn btn-outline" style="padding: 8px 12px;" title="Buka"><i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                            </div>
+
+                            <div class="link-item-box">
+                                <div class="link-info">
+                                    <h4><i class="fas fa-bullhorn" style="color: #ef4444;"></i> Landing Page Pendaftaran</h4>
+                                    <p>Halaman promosi (Sales Page) dan formulir pendaftaran umum.</p>
+                                </div>
+                                <div class="link-actions">
+                                    <input type="text" value="https://lmstka.vercel.app/lptka.html" readonly onclick="this.select()">
+                                    <button class="btn btn-danger" style="padding: 8px 12px;" onclick="navigator.clipboard.writeText('https://lmstka.vercel.app/lptka.html'); tampilkanToast('Link Landing Page disalin!')" title="Salin"><i class="fas fa-copy"></i></button>
+                                    <a href="https://lmstka.vercel.app/lptka.html" target="_blank" class="btn btn-outline" style="padding: 8px 12px;" title="Buka"><i class="fas fa-external-link-alt"></i></a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- PANE 2: KEUANGAN & KOMISI -->
+                        <div id="tab-finance" class="setting-pane">
+                            <div class="setting-header">
+                                <h3>Aturan Keuangan & Komisi</h3>
+                                <p>Tetapkan batas saldo dan kebijakan pencairan (Withdrawal) Mitra Affiliate.</p>
+                            </div>
+                            
+                            <div class="form-group" style="max-width: 400px;">
+                                <label>Batas Minimum Saldo Mengendap (Rp)</label>
+                                <p class="sub-label">Saldo ini wajib disisakan di akun Affiliate sebelum bisa dicairkan.</p>
+                                <input type="number" id="input-min-tarik" class="form-control" placeholder="Contoh: 100000" value="100000">
+                            </div>
+                            
+                            <div class="form-group" style="max-width: 400px; opacity: 0.5;">
+                                <label>Pencairan Otomatis (Akan Datang)</label>
+                                <p class="sub-label">Fitur auto-approve transfer mutasi bank via API.</p>
+                                <input type="text" class="form-control" value="Sedang dalam pengembangan" disabled>
+                            </div>
+
+                            <button class="btn btn-success" style="padding: 12px 25px;" onclick="simpanPengaturanSistem()"><i class="fas fa-save"></i> Simpan Aturan Keuangan</button>
+                        </div>
+
+                        <!-- PANE 3: BROADCAST PENGUMUMAN -->
+                        <div id="tab-broadcast" class="setting-pane">
+                            <div class="setting-header">
+                                <h3>Siaran Pengumuman Real-Time</h3>
+                                <p>Kirim pesan peringatan atau promo ke dashboard seluruh Affiliate.</p>
+                            </div>
+
+                            <div style="background: #fffbeb; border: 1px solid var(--ses-gold); border-radius: 10px; padding: 20px; margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <strong style="color: #b45309; font-size: 1.1rem;"><i class="fas fa-broadcast-tower"></i> Status Penyiaran Banner</strong>
+                                    <!-- Toggle Custom tanpa Bootstrap -->
+                                    <label style="display: flex; align-items: center; cursor: pointer;">
+                                        <input type="checkbox" id="status-banner" style="transform: scale(1.5); margin-right: 10px;" onchange="simpanBannerPengumuman()">
+                                        <span style="font-weight: 800; color: var(--ses-blue-dark);">AKTIFKAN</span>
+                                    </label>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label>Judul Pengumuman</label>
+                                    <input type="text" id="input-banner-judul" class="form-control" style="border-color: var(--ses-gold);" placeholder="Contoh: 🔥 FLASH SALE IDUL ADHA!">
+                                </div>
+                                <div class="form-group">
+                                    <label>Isi Pesan Detail</label>
+                                    <textarea id="input-banner-teks" class="form-control" rows="3" style="border-color: var(--ses-gold); resize: vertical;" placeholder="Ketik instruksi atau promo untuk Affiliate di sini..."></textarea>
+                                </div>
+                                <button class="btn" style="background: var(--ses-gold); color: white; padding: 12px 25px; width: 100%; justify-content: center;" onclick="simpanBannerPengumuman()"><i class="fas fa-paper-plane"></i> Perbarui & Siarkan Sekarang</button>
+                            </div>
+                        </div>
+
+                        <!-- PANE 4: KEAMANAN & AKSES -->
+                        <div id="tab-security" class="setting-pane">
+                            <div class="setting-header">
+                                <h3>Keamanan & Kontrol Akses</h3>
+                                <p>Atur izin akses fitur untuk tim Affiliate dan administrator.</p>
+                            </div>
+
+                            <div class="link-item-box" style="align-items: flex-start;">
+                                <div class="link-info">
+                                    <h4><i class="fab fa-whatsapp" style="color: #10b981;"></i> Wewenang Chat WA Affiliate</h4>
+                                    <p>Jika dimatikan, tombol WA di CRM Affiliate akan dikunci dan nomor pembeli disembunyikan. Wewenang follow-up diambil alih penuh oleh Admin Pusat.</p>
+                                </div>
+                                <div class="link-actions">
+                                    <label style="display: flex; align-items: center; cursor: pointer; background: white; padding: 8px 15px; border-radius: 8px; border: 1px solid #cbd5e1; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
+                                        <input type="checkbox" id="toggle-wa-affiliate" style="transform: scale(1.4); margin-right: 10px;" onchange="ubahAksesWaAffiliate(this.checked)" checked>
+                                        <span style="font-weight: 800; font-size: 0.85rem; color: var(--text-main);">Izinkan Affiliate</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="link-item-box" style="align-items: flex-start; opacity: 0.5;">
+                                <div class="link-info">
+                                    <h4><i class="fas fa-fingerprint" style="color: var(--ses-blue);"></i> Autentikasi 2 Langkah (2FA)</h4>
+                                    <p>Lapisan keamanan tambahan untuk login Super Admin. (Sedang dikembangkan)</p>
+                                </div>
+                                <button class="btn btn-outline" disabled>Segera Hadir</button>
+                            </div>
+                        </div>
+
+                        <!-- PANE 5: INTEGRASI & WEBHOOK -->
+                        <div id="tab-integrasi" class="setting-pane">
+                            <div class="setting-header">
+                                <h3>Integrasi Pihak Ketiga (API)</h3>
+                                <p>Hubungkan LMS SES dengan aplikasi eksternal (Scalev, WABlas, dll).</p>
+                            </div>
+                            
+                            <div class="form-group" style="max-width: 500px;">
+                                <label><i class="fas fa-link" style="color: var(--ses-blue);"></i> Webhook URL Utama</label>
+                                <p class="sub-label">URL untuk menangkap notifikasi transaksi dari platform lain.</p>
+                                <input type="text" id="input-webhook" class="form-control" placeholder="https://endpoint-anda.com/webhook">
+                            </div>
+                            
+                            <div class="form-group" style="max-width: 500px; opacity: 0.5;">
+                                <label><i class="fab fa-whatsapp" style="color: #10b981;"></i> API Key WhatsApp Gateway</label>
+                                <p class="sub-label">Kredensial untuk pengiriman notifikasi WA otomatis.</p>
+                                <input type="password" class="form-control" value="******************" disabled>
+                            </div>
+
+                            <button class="btn btn-primary" style="padding: 12px 25px;" onclick="simpanPengaturanSistem()"><i class="fas fa-save"></i> Simpan API Key</button>
+                        </div>
+
+                    </div>
+                </div>
+                
+                <!-- SCRIPT INTERNAL UNTUK TAB SWITCHING -->
+                <script>
+                    function switchSettingTab(tabId, element) {
+                        // Hilangkan semua kelas active
+                        document.querySelectorAll('.setting-pane').forEach(p => p.classList.remove('active-pane'));
+                        document.querySelectorAll('.settings-nav li').forEach(li => li.classList.remove('active-tab'));
+                        
+                        // Aktifkan yang diklik
+                        document.getElementById(tabId).classList.add('active-pane');
+                        element.classList.add('active-tab');
+                    }
+                </script>
+
+            </section>
         </div> <!-- PENUTUP DARI CONTENT AREA -->
         <!-- FOOTER ADMIN -->
         <footer class="admin-footer">
@@ -1173,7 +1402,7 @@
     <script src="firebase-config.js"></script>
     
     <script src="ses-ui.js"></script>
-    <script src="admin.js"></script>
+    <script src="admin.js?v=20261111"></script>
     <!-- MODAL POP-UP EDIT PESERTA -->
     <div id="modalEditPeserta" style="display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 9999; justify-content: center; align-items: center; padding: 20px;">
         <div style="background: white; width: 100%; max-width: 500px; border-radius: 16px; padding: 30px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); animation: fadeIn 0.3s ease;">

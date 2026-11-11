@@ -485,7 +485,7 @@
                     </a>
                     <span class="text-muted">Butuh bantuan?</span> 
                     <!-- Link langsung ke WhatsApp Admin -->
-                    <a href="https://wa.me/6285855111386?text=Halo%20Admin%20Pusat,%20saya%20butuh%20bantuan%20terkait%20login%20aplikasi%20AnimaSales." target="_blank" class="text-decoration-none fw-semibold text-success ms-1">
+                    <a href="https://wa.me/6285855111386?text=Halo%20Admin%20Pusat,%20saya%20butuh%20bantuan%20terkait%20login%20Portal%20Mitra%20LKP%20SES." target="_blank" class="text-decoration-none fw-semibold text-success ms-1">
                         <i class="fa-brands fa-whatsapp"></i> Hubungi Admin Pusat
                     </a>
                 </div>
@@ -2244,8 +2244,8 @@ window.prosesLogout = function() {
                 title: '', // Kita kosongkan karena kita buat header custom di dalam HTML
                 html: `
                     <div class="text-center mb-4 mt-2">
-                        <h3 class="fw-bold mb-1" style="color: var(--primary-color);">AnimaSales</h3>
-                        <p class="fw-semibold text-muted" style="font-size: 0.85rem; letter-spacing: 1px;">Grow Together, Earn More</p>
+                        <h3 class="fw-bold mb-1" style="color: var(--primary-color);">Mitra LKP SES</h3>
+                        <p class="fw-semibold text-muted" style="font-size: 0.85rem; letter-spacing: 1px;">Sebarkan Link, Dapatkan Komisi</p>
                     </div>
 
                     <div class="alert bg-primary bg-opacity-10 border-0 text-start p-3 mb-4 rounded-3">
@@ -2790,37 +2790,42 @@ let globalTerjualMap = {};
 
 // 1. Fungsi Tambah Produk (Lengkap dengan Kategori & Isian Video)
 // 1. Fungsi Tambah Produk (Lengkap dengan Kategori, Link Demo & Unduh Video)
+// 1. Fungsi Tambah Produk (Lengkap dengan Kategori, Link Demo & Unduh Video)
 window.tambahProduk = function() {
     Swal.fire({
         title: 'Tambah Produk Baru',
         html: `
             <div class="text-start mt-2" style="max-height: 450px; overflow-y: auto; overflow-x: hidden; padding-right: 10px;">
-                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">Nama Produk / Aplikasi</label>
-                <input id="prod-nama" class="form-control mb-3" placeholder="Contoh: Qurban Care System" style="font-size: 0.85rem; padding: 10px;">
+                <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">Nama Produk / Paket</label>
+                <!-- 👇 KITA GANTI PLACEHOLDER-NYA MENJADI TRYOUT 👇 -->
+                <input id="prod-nama" class="form-control mb-3" placeholder="Contoh: Paket Tryout TKA SD" style="font-size: 0.85rem; padding: 10px;">
                 
                 <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">Kategori Produk</label>
                 <select id="prod-kategori" class="form-select mb-3" style="font-size: 0.85rem; padding: 10px;">
-                    <option value="Software">Software / Aplikasi</option>
-                    <option value="E-Course">E-Course / Kelas Online</option>
-                    <option value="Template">Template / Desain</option>
-                    <option value="Jasa">Layanan / Jasa</option>
+                    <!-- 👇 KITA SESUAIKAN OPSI KATEGORI 👇 -->
+                    <option value="Tryout SD">Tryout SD</option>
+                    <option value="Tryout SMP">Tryout SMP</option>
+                    <option value="Bimbel">Paket Bimbel</option>
+                    <option value="E-Course">Video Materi (E-Course)</option>
                 </select>
                 
                 <div class="p-3 bg-light border rounded mb-3">
                     <h6 class="fw-bold mb-3" style="font-size: 0.85rem; color: var(--primary-color);"><i class="fa-solid fa-cube me-1"></i> Paket Basic</h6>
                     <div class="row">
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Coret</label><input id="prod-normal-basic" type="number" class="form-control" placeholder="245000"></div>
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Jual</label><input id="prod-harga-basic" type="number" class="form-control border-primary" placeholder="145000"></div>
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Komisi</label><input id="prod-komisi-basic" type="number" class="form-control text-success" placeholder="50000"></div>
+                        <!-- 👇 PLACEHOLDER HARGA DISESUAIKAN 👇 -->
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Coret</label><input id="prod-normal-basic" type="number" class="form-control" placeholder="50000"></div>
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Jual</label><input id="prod-harga-basic" type="number" class="form-control border-primary" placeholder="25000"></div>
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Komisi</label><input id="prod-komisi-basic" type="number" class="form-control text-success" placeholder="10000"></div>
                     </div>
                 </div>
 
                 <div class="p-3 bg-light border rounded mb-3">
-                    <h6 class="fw-bold mb-3" style="font-size: 0.85rem; color: #8B5CF6;"><i class="fa-solid fa-gem me-1"></i> Paket Premium</h6>
+                    <h6 class="fw-bold mb-3" style="font-size: 0.85rem; color: #8B5CF6;"><i class="fa-solid fa-gem me-1"></i> Paket Premium / Ultimate</h6>
                     <div class="row">
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Coret</label><input id="prod-normal-premium" type="number" class="form-control" placeholder="495000"></div>
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Jual</label><input id="prod-harga-premium" type="number" class="form-control border-primary" placeholder="198000"></div>
-                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Komisi</label><input id="prod-komisi-premium" type="number" class="form-control text-success" placeholder="75000"></div>
+                        <!-- 👇 PLACEHOLDER HARGA DISESUAIKAN 👇 -->
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Coret</label><input id="prod-normal-premium" type="number" class="form-control" placeholder="120000"></div>
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Jual</label><input id="prod-harga-premium" type="number" class="form-control border-primary" placeholder="95000"></div>
+                        <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Komisi</label><input id="prod-komisi-premium" type="number" class="form-control text-success" placeholder="25000"></div>
                     </div>
                 </div>
 
@@ -2828,10 +2833,12 @@ window.tambahProduk = function() {
                     <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.8rem;"><i class="fa-solid fa-link"></i> Tautan Pendukung Promosi</h6>
                     
                     <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">URL Landing Page Produk</label>
-                    <input id="prod-landing-url" class="form-control mb-2" placeholder="https://animasales.vercel.app/lp..." style="font-size: 0.8rem; padding: 8px;">
+                    <!-- 👇 KITA GANTI PLACEHOLDER URL LANDING PAGE 👇 -->
+                    <input id="prod-landing-url" class="form-control mb-2" placeholder="https://domain-lkpses.com/daftar.html" style="font-size: 0.8rem; padding: 8px;">
 
                     <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">Link Demo Aplikasi (Untuk Pembeli)</label>
-                    <input id="prod-link-demo" class="form-control mb-2" placeholder="https://demo-aplikasi.vercel.app/..." style="font-size: 0.8rem; padding: 8px;">
+                    <!-- 👇 KITA GANTI PLACEHOLDER URL DEMO 👇 -->
+                    <input id="prod-link-demo" class="form-control mb-2" placeholder="https://tryout.domain-lkpses.com/..." style="font-size: 0.8rem; padding: 8px;">
 
                     <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem; margin-bottom: 4px;">Link Video Iklan (YouTube/Tonton)</label>
                     <input id="prod-link-iklan" class="form-control mb-2" placeholder="https://youtube.com/..." style="font-size: 0.8rem; padding: 8px;">
@@ -2885,10 +2892,11 @@ window.tambahProduk = function() {
 window.editProduk = function(docId, dataString) {
     const d = JSON.parse(decodeURIComponent(dataString));
     
-    const selS = d.kategori === 'Software' ? 'selected' : '';
+    // 👇 Penyesuaian opsi terpilih saat diedit 👇
+    const selSD = d.kategori === 'Tryout SD' ? 'selected' : '';
+    const selSMP = d.kategori === 'Tryout SMP' ? 'selected' : '';
+    const selBimbel = d.kategori === 'Bimbel' ? 'selected' : '';
     const selE = d.kategori === 'E-Course' ? 'selected' : '';
-    const selT = d.kategori === 'Template' ? 'selected' : '';
-    const selJ = d.kategori === 'Jasa' ? 'selected' : '';
 
     Swal.fire({
         title: 'Edit Produk',
@@ -2899,11 +2907,14 @@ window.editProduk = function(docId, dataString) {
                 
                 <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Kategori Produk</label>
                 <select id="edit-kategori" class="form-select mb-3" style="font-size: 0.85rem;">
-                    <option value="Software" ${selS}>Software / Aplikasi</option>
-                    <option value="E-Course" ${selE}>E-Course / Kelas Online</option>
-                    <option value="Template" ${selT}>Template / Desain</option>
-                    <option value="Jasa" ${selJ}>Layanan / Jasa</option>
+                    <!-- 👇 KITA SESUAIKAN OPSI KATEGORI 👇 -->
+                    <option value="Tryout SD" ${selSD}>Tryout SD</option>
+                    <option value="Tryout SMP" ${selSMP}>Tryout SMP</option>
+                    <option value="Bimbel" ${selBimbel}>Paket Bimbel</option>
+                    <option value="E-Course" ${selE}>Video Materi (E-Course)</option>
                 </select>
+
+                <!-- ... (SISA KODE EDIT TETAP SAMA) ... -->
 
                 <div class="row g-2 mb-3">
                     <div class="col-4"><label class="form-label fw-semibold" style="font-size: 0.7rem;">Basic Coret</label><input id="edit-nb" type="number" class="form-control" value="${d.normalBasic || d.hargaNormalBasic || 0}"></div>
@@ -3303,7 +3314,7 @@ window.eksporPencairan = function() {
     });
     const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-    link.download = `Laporan_Mutasi_AnimaSales_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `Laporan_Mutasi_LKP_SES_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
     Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Laporan diunduh', showConfirmButton: false, timer: 3000 });
 };
@@ -3501,7 +3512,7 @@ window.eksporLaporanPenjualan = function() {
     });
     const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement("a"); link.href = URL.createObjectURL(blob);
-    link.download = `Laporan_Penjualan_AnimaSales_${new Date().toISOString().split('T')[0]}.csv`;
+    link.download = `Laporan_Penjualan_LKP_SES_${new Date().toISOString().split('T')[0]}.csv`;
     document.body.appendChild(link); link.click(); document.body.removeChild(link);
     Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Laporan berhasil diunduh', showConfirmButton: false, timer: 3000 });
 };
@@ -3925,7 +3936,7 @@ window.tambahMateriPromosi = function() {
                 </div>
 
                 <label class="form-label fw-semibold text-secondary" style="font-size: 0.75rem;">Judul Promosi / Angle</label>
-                <input id="mat-judul" class="form-control mb-3" placeholder="Contoh: Promo Diskon Idul Adha" style="font-size: 0.85rem;">
+                <input id="mat-judul" class="form-control mb-3" placeholder="Contoh: Promo Ujian Semester" style="font-size: 0.85rem;">
                 
                 <div class="row mb-3">
                     <div class="col-6">
@@ -3961,7 +3972,7 @@ window.tambahMateriPromosi = function() {
                 <div id="area-teks-modal">
                     <label id="label-teks-materi" class="form-label fw-bold text-primary" style="font-size: 0.75rem;"><i class="fa-solid fa-align-left"></i> Isi Teks Copywriting</label>
                     <textarea id="mat-isi" class="form-control mb-1 shadow-sm border-secondary border-opacity-25 bg-light" style="height: 180px; font-size: 0.85rem; resize: none;" placeholder="Ketik teks iklan / caption di sini..."></textarea>
-                    <div class="text-danger fw-bold" style="font-size: 0.65rem;"><i class="fa-solid fa-circle-info"></i> Gunakan kode <b>[LINK_AFFILIATE_ANDA]</b> agar link otomatis menyusuaikan milik tim.</div>
+                    <div class="text-danger fw-bold" style="font-size: 0.65rem;"><i class="fa-solid fa-circle-info"></i> Gunakan kode <b>[LINK_AFFILIATE_ANDA]</b> agar link otomatis menyesuaikan milik tiap guru/mitra.</div>
                 </div>
             </div>
         `,
@@ -4028,7 +4039,7 @@ window.tambahMateriPromosi = function() {
 
                     case 'tryout_5': 
                         fJudul.value = "Mengatasi Takut Matematika"; fPlatform.value = "Facebook/IG"; 
-                        fTeks.value = "Anak Bunda phobia atau selalu menghindar kalau disuruh belajar Matematika? 🧮😭\n\nItu karena mereka belum terbiasa dan sering salah tanpa tahu letak kesalahannya.\n\nDi *Tryout TKA LKP SES*, setiap paket soal Matematika (Paket 1 - 10) dilengkapi dengan *Pembahasan Komprehensif*. Anak jadi paham rumusnya, bukan cuma menghafal jawabannya.\n\nUbah air mata menjadi senyuman saat ngerjain MTK. Uji coba sekarang:\n👉 [LINK_AFFILIATE_ANDA]"; 
+                        fTeks.value = "Anak Bunda phobia atau selalu menghindar kalau disuruh belajar Matematika? 🧮😭\n\nItu karena mereka belum terbiasa dan sering salah tanpa tahu letak kesalahannya.\n\nDi *Tryout TKA LKP SES*, setiap paket soal Matematika dilengkapi dengan *Pembahasan Komprehensif*. Anak jadi paham rumusnya, bukan cuma menghafal jawabannya.\n\nUbah air mata menjadi senyuman saat ngerjain MTK. Uji coba sekarang:\n👉 [LINK_AFFILIATE_ANDA]"; 
                         break;
 
                     case 'tryout_6': 
@@ -4053,7 +4064,7 @@ window.tambahMateriPromosi = function() {
 
                     case 'tryout_10': 
                         fJudul.value = "Coba Paket 1 Dulu"; fPlatform.value = "Facebook/IG"; 
-                        fTeks.value = "Masih ragu apakah sistem Tryout TKA LKP SES cocok untuk anak Bunda? 🤔\n\nGak usah pusing Bunda, coba saja *Paket 1* nya dulu!\nDi Paket 1, ananda akan dites kemampuan dasarnya untuk Matematika & Bahasa Indonesia. Dari situ, Bunda akan langsung menerima Laporan Analisa Kelemahan Anak.\n\nKalau ananda suka dan Bunda puas dengan laporannya, baru kita lanjut ke Paket 2 dan seterusnya! Super fair kan? 😉\n\nBuktikan sendiri kecanggihan sistem kami. Klik di sini:\n👇 [LINK_AFFILIATE_ANDA]"; 
+                        fTeks.value = "Masih ragu apakah sistem Tryout TKA LKP SES cocok untuk anak Bunda? 🤔\n\nGak usah pusing Bunda, coba saja *Paket Basic* nya dulu!\nDi Paket Basic, ananda akan dites kemampuan dasarnya untuk Matematika & Bahasa Indonesia. Dari situ, Bunda akan langsung menerima Laporan Analisa Kelemahan Anak.\n\nBuktikan sendiri kecanggihan sistem kami. Klik di sini:\n👇 [LINK_AFFILIATE_ANDA]"; 
                         break;
                 }
                 window.toggleFormMateriModal("Copywriting");
@@ -4073,11 +4084,10 @@ window.tambahMateriPromosi = function() {
                 isiTeks = document.getElementById('mat-isi').value.trim();
                 if (!isiTeks) { Swal.showValidationMessage('Isi teks copywriting tidak boleh kosong!'); return false; }
             } else if (tipe === 'Video' || tipe === 'Gambar') {
-                isiTeks = document.getElementById('mat-isi').value.trim(); // Skrip/Caption boleh ada atau kosong
+                isiTeks = document.getElementById('mat-isi').value.trim(); 
                 let rawLink = document.getElementById('mat-link').value.trim();
                 if (!rawLink) { Swal.showValidationMessage(`Link file ${tipe.toLowerCase()} wajib diisi!`); return false; }
                 
-                // SIHIR DIRECT DOWNLOAD GOOGLE DRIVE (Berlaku untuk Gambar dan Video)
                 if (rawLink.includes('drive.google.com/file/d/')) {
                     const fileId = rawLink.split('/d/')[1].split('/')[0];
                     linkFile = `https://drive.google.com/uc?export=download&id=${fileId}`;
@@ -4115,6 +4125,7 @@ window.tambahMateriPromosi = function() {
         }
     });
 };
+// --- FUNGSI EDIT DAN SALIN (SAMA SEPERTI SEBELUMNYA) ---
 
 
 // ====================================================================
@@ -4517,53 +4528,27 @@ setTimeout(() => { muatRadarAktivitas(); }, 3000);
             let formatNomor = nomor.replace(/^0/, '62'); 
             let faqHtml = '';
 
-            // Deteksi cerdas: Jika produknya Qurban Care, munculkan menu FAQ Khusus Qurban
-            if (produk && produk.toLowerCase().includes('qurban')) {
-                faqHtml = `
-                    <div class="mt-4 mb-2 fw-bold text-success" style="font-size: 0.85rem; border-bottom: 2px solid #10b981; padding-bottom: 5px;">
-                        <i class="fa-solid fa-clipboard-question"></i> Jawaban Cepat FAQ Qurban Care
-                    </div>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_benefit')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">1. Benefit/Keuntungan pakai aplikasi ini?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_beda_paket')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">2. Apa beda paket Basic & Premium?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_aman')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">3. Apakah data tabungan warga aman?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_database')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">4. Memakai database apa aplikasinya?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_gmail')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">5. Pakai akun Gmail siapa untuk databasenya?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_install')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">6. Harus di-install lewat PlayStore?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_mandiri')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">7. Cara warga cek saldo secara mandiri?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_langganan')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">8. Ada biaya langganan bulanan/tahunan?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_banyak_panitia')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">9. Bisa diakses banyak panitia bersamaan?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_logo')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">10. Apakah laporan otomatis pakai logo masjid kami?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_wa_broadcast')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">11. Bagaimana cara kerja WA Broadcast kuitansi?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_kelompok_sapi')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">12. Apakah otomatis menyusun kelompok sapi?</div>
-                    </button>
-                    <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_demo')">
-                        <div class="fw-semibold text-dark" style="font-size: 0.8rem;">13. Bisakah mencoba aplikasi/demo dulu?</div>
-                    </button>
-                `;
-            }
+            // FAQ Khusus Tryout TKA / Bimbel SES
+            faqHtml = `
+                <div class="mt-4 mb-2 fw-bold text-success" style="font-size: 0.85rem; border-bottom: 2px solid #10b981; padding-bottom: 5px;">
+                    <i class="fa-solid fa-clipboard-question"></i> Jawaban Cepat FAQ LKP SES
+                </div>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_cara_login')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">1. Bagaimana cara siswa login ke Tryout?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_hp_atau_laptop')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">2. Apakah bisa dikerjakan di HP / Laptop?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_jadwal')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">3. Kapan jadwal Tryout dimulai & ditutup?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_sertifikat')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">4. Bagaimana cara cetak Sertifikat Kelulusan?</div>
+                </button>
+                <button class="btn btn-light border text-start w-100 mb-2 p-2" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'faq_laporan')">
+                    <div class="fw-semibold text-dark" style="font-size: 0.8rem;">5. Apakah orang tua mendapat hasil tryout?</div>
+                </button>
+            `;
 
             Swal.fire({
                 title: '<span style="font-size: 1.1rem; font-weight: 700;">Pilih Pesan Balasan WA</span>',
@@ -4590,16 +4575,10 @@ setTimeout(() => { muatRadarAktivitas(); }, 3000);
                             <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-shield-heart me-2"></i>Jurus Menjawab "Harga Mahal"</div>
                         </button>
 
-                        <!-- TOMBOL CLOSING YANG KEMBALI DITAMBAHKAN -->
                         <button class="btn btn-outline-secondary w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'closing')">
                             <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-check-double me-2"></i>Ucapan Closing (Terima Kasih)</div>
                         </button>
-                        <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'info_database')">
-                            <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-database text-primary me-2"></i>Jawaban "Pakai Database Apa?"</div>
-                        </button>
-                        <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'info_akun_gmail')">
-                            <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-envelope text-danger me-2"></i>Syarat Akun Gmail Pelanggan</div>
-                        </button>
+                        
                         <button class="btn btn-outline-dark w-100 mb-2 text-start p-2 rounded-3" onclick="kirimPesanWA('${formatNomor}', '${nama}', '${produk}', 'cara_beli')">
                             <div class="fw-bold" style="font-size: 0.85rem;"><i class="fa-solid fa-cart-shopping text-warning me-2"></i>Panduan Cara Pemesanan</div>
                         </button>
@@ -4619,92 +4598,35 @@ setTimeout(() => { muatRadarAktivitas(); }, 3000);
         };
 
         window.kirimPesanWA = function(nomor, nama, produk, tipe) {
-            // Karena ini Admin, link mengarah ke website utama Vercel tanpa ID Affiliate
-            const linkUtama = "https://animasales.vercel.app/lpqurbancare.html"; 
+            const baseHref = window.location.href.substring(0, window.location.href.lastIndexOf('/') + 1);
+            const linkUtama = baseHref + "daftar.html"; 
             
-            // Kode Unicode mutlak untuk Emoji (Anti-Error)
-            const c_ceklis = "\u2705"; 
-            const c_silang = "\u274C";
-            const c_kardus = "\uD83D\uDCE6";
-            const c_premium = "\uD83D\uDC8E";
-            const c_lampu = "\uD83D\uDCA1";
-
             let pesan = "";
 
-            // --- 1. SKRIP JUALAN UTAMA ---
             if(tipe === 'sapaan') {
-                pesan = `Halo Kak ${nama}, saya dari tim Pusat AnimaSales. Senang sekali Kakak berminat dengan *${produk || 'produk kami'}*. Ada hal detail yang ingin saya bantu jelaskan?`;
+                pesan = `Halo Ayah/Bunda dari ananda *${nama}*, perkenalkan saya tim Edukasi LKP SES. Kami melihat ada ketertarikan untuk mengikuti program *${produk || 'Tryout TKA Nasional'}*. Ada informasi pendaftaran yang bisa saya bantu jelaskan Bunda? 😊`;
             } else if(tipe === 'followup') {
-                pesan = `Halo Kak ${nama}, saya ingin menindaklanjuti rencana Kakak mengenai *${produk || 'produk kami'}*. Apakah ada pertanyaan atau fitur lain yang ingin saya bantu jelaskan?`;
+                pesan = `Halo Bunda dari *${nama}*, saya ingin menindaklanjuti rencana pendaftaran *${produk || 'Tryout TKA'}*. Apakah ananda sudah siap? Jangan sampai kehabisan kuota diskon pendaftarannya ya Bunda. 🙏`;
             } else if(tipe === 'link') {
-                pesan = `Halo Kak ${nama}, terkait *${produk || 'aplikasi'}*, Kakak bisa melihat detail fitur lengkap, video demo, dan harganya melalui link resmi ini ya: \n\n${linkUtama}`;
+                pesan = `Halo Bunda, terkait pendaftaran *${produk || 'Tryout TKA LKP SES'}*, Bunda bisa melihat detail fitur lengkap (Sertifikat, Papan Peringkat, dll) dan melakukan pendaftaran langsung melalui link resmi kami ini ya: \n\n👉 ${linkUtama}`;
             } else if(tipe === 'mahal') {
-                pesan = `Betul Kak ${nama}, di awal mungkin terasa ada biaya. Tapi dengan menggunakan *${produk || 'sistem ini'}*, Kakak tidak perlu repot rekap manual berjam-jam dan mengurangi kesalahan. Waktu & tenaga yang dihemat nilainya jauh lebih besar lho.`;
+                pesan = `Betul Bunda, di awal mungkin terasa ada biaya. Tapi dengan biaya tersebut, ananda sudah mendapatkan akses ke ratusan soal berstandar AKM Nasional, simulasi CBT mirip ujian asli, dan laporan evaluasi lengkap.\n\nJika ikut bimbel atau beli buku kumpulan soal di luar, biayanya bisa ratusan ribu lho Bunda. Ini investasi yang sangat terjangkau untuk prestasi anak! 🏆`;
             } else if(tipe === 'closing') {
-                pesan = `Halo Kak ${nama}, terima kasih banyak telah mempercayakan *${produk || 'layanan ini'}* kepada kami. Kami sangat senang bisa bekerja sama. Jika ada hal yang perlu dibantu ke depannya, jangan ragu hubungi tim support kami ya. Sukses selalu untuk Kakak!`;
-            } else if(tipe === 'info_database') {
-                pesan = `Halo Kak ${nama}, untuk sistem databasenya kami menggunakan *Cloud Database Real-Time* resmi dari server *Google (Firebase)* ☁️.\n\nKeunggulannya:\n✅ Super cepat & tidak gampang down\n✅ Anti-virus & kebal Ransomware\n✅ Tidak perlu install server fisik/hosting sendiri\n✅ Data aman dan langsung tersinkronisasi jika dibuka dari HP atau Laptop panitia lain.\n\nJadi Kakak tinggal pakai dan terima beres! 🚀`;
-            } else if(tipe === 'info_akun_gmail') {
-            pesan = `Terkait pembuatan database, kami akan menyetel *Database Google (Firebase)* langsung di dalam akun Gmail milik Kakak ya.\n\nTujuannya agar Kak ${nama} memiliki kontrol penuh dan kepemilikan 100% atas data aplikasi tersebut ke depannya. 🔒\n\nOleh karena itu, kami akan membutuhkan *Alamat Email dan Password Gmail* Kakak untuk proses setup database-nya. \n\n💡 *Saran kami:* Kakak bisa membuat akun Gmail baru yang dikhususkan untuk aplikasi ini saja, agar lebih rapi dan aman. 😊`;
+                pesan = `Halo Bunda dari *${nama}*, terima kasih banyak telah mempercayakan pendidikan ananda di *LKP SES*. ID Login dan Password akan segera diproses oleh tim kami. Jika ada hal yang perlu dibantu ke depannya, jangan ragu hubungi tim support kami ya. Sukses selalu untuk ananda! ✨`;
             } else if(tipe === 'cara_beli') {
-            pesan = `Untuk cara pemesanannya sangat mudah, Kak ${nama}!\n\n1️⃣ Kakak cukup konfirmasi ke kami untuk lanjut pemesanan.\n2️⃣ Lakukan pembayaran sesuai paket yang dipilih.\n3️⃣ Siapkan 1 akun Gmail (baru/khusus) beserta passwordnya untuk keperluan setup database.\n4️⃣ Tim kami akan langsung memproses aplikasinya (estimasi setup 1-24 jam).\n\nSetelah selesai, Kakak akan langsung menerima link aplikasi beserta panduan lengkap penggunaannya. Ingin kita proses pesanannya sekarang, Kak? 🚀`;
+                pesan = `Untuk cara pendaftarannya sangat mudah Bunda!\n\n1️⃣ Bunda cukup buka link pendaftaran: ${linkUtama}\n2️⃣ Isi formulir data diri ananda secara lengkap.\n3️⃣ Pilih paket yang diinginkan (Basic/Pro/Ultimate).\n4️⃣ Lakukan pembayaran ke rekening resmi kami dan sertakan bukti transfernya di form.\n\nSetelah klik Kirim, tim kami akan langsung merespons dan membuatkan ID Login ruang ujian untuk ananda. 🚀`;
             } else if(tipe === 'cara_bayar') {
-            pesan = `Baik Kak ${nama}, untuk pembayarannya bisa ditransfer ke rekening resmi kami berikut ini ya:\n\n💳 *BRI* : 618601014043531 a.n PAMBUDI\n📱 *DANA/OVO/GoPay* : 085855111386 a.n PAMBUDI\n\n*(Catatan: Mohon pastikan nama penerima sesuai sebelum mentransfer)*\n\nKhusus untuk pembayaran via *QRIS*, mohon konfirmasi ke kami terlebih dahulu ya Kak. Kami akan buatkan kode QRIS khusus yang berlaku untuk 1x transaksi (aktif selama 24 jam) dan akan kami kirimkan gambarnya ke chat ini.\n\nJika sudah melakukan transfer, mohon berkenan mengirimkan bukti transfernya (screenshot/foto) ke chat ini ya Kak, agar pesanannya bisa langsung kami antrekan ke tim teknis. Terima kasih! 🙏`;
-            }
-            
-            // --- 2. SKRIP FAQ QURBAN CARE ---
-            else if(tipe === 'faq_benefit') {
-                pesan = `Keuntungannya sangat banyak Kak ${nama}! Panitia bebas dari rekap manual yang pusing, meminimalisir salah catat, transparansi dana terjaga, laporan bisa dicetak otomatis, Hemat waktu dan Tenaga, Mudah, Sekali bayar dapat digunakan sampai tahun tauhun berikutnya, dan pastinya kepercayaan jamaah ke masjid Kakak akan meningkat drastis. Kerja panitia jadi jauh lebih ringan.`;
-            } else if(tipe === 'faq_beda_paket' || tipe === 'qurban_beda_paket') {
-                pesan = `Halo Kak ${nama}, untuk perbedaan fiturnya cukup signifikan. Berikut rinciannya ya Kak:
-
-${c_kardus} *PAKET BASIC (Standar)*
-${c_ceklis} Manajemen Shohibul & Hewan
-${c_ceklis} Laporan & Export Excel
-${c_ceklis} Cetak Kuitansi Standar
-${c_ceklis} 1 Akses Admin Utama
-${c_silang} Notifikasi WA Otomatis
-${c_silang} Cetak KTA Barcode
-${c_silang} Portal Warga (Cek Mandiri)
-${c_silang} Pembagian Kelompok Sapi Otomatis
-${c_silang} Multi-User (Hanya 1 Perangkat)
-${c_silang} Kustom Logo Masjid
-
-${c_premium} *PAKET PREMIUM (Rekomendasi)*
-${c_ceklis} Manajemen Shohibul & Hewan
-${c_ceklis} Laporan & Export Excel
-${c_ceklis} Cetak Kuitansi Standar
-${c_ceklis} 1 Akses Admin Utama
-${c_ceklis} Notifikasi WA Otomatis ke Warga
-${c_ceklis} Cetak KTA Jamaah Ber-Barcode
-${c_ceklis} Portal Warga (Cek Saldo Mandiri)
-${c_ceklis} Pembagian Kelompok Sapi Otomatis
-${c_ceklis} Multi-User (Akses banyak panitia)
-${c_ceklis} Kustom Logo Masjid di Dokumen
-
-${c_lampu} *Saran saya:* Sekalian ambil yang *Premium* Kak, selisih harganya tidak seberapa tapi panitia dapat fitur WA Otomatis dan Portal Warga yang dijamin bikin kerjaan 10x lipat lebih ringan!`;
-            } else if(tipe === 'faq_aman') {
-                pesan = `Halo Kak ${nama}, untuk keamanan data sangat terjamin. Sistem kami menggunakan database cloud real-time dengan fitur backup otomatis. Jadi data tabungan jamaah tidak akan hilang meskipun Kakak ganti perangkat. Sangat aman!`;
-            } else if(tipe === 'faq_database') {
-                pesan = `Sistem kami menggunakan database cloud terpusat dan real-time dari Server Google yang sangat aman. Sangat tangguh dan cepat meskipun digunakan untuk menampung ribuan data jamaah sekaligus Kak.`;
-            } else if(tipe === 'faq_gmail') {
-                pesan = `Database utama dikelola secara aman di server pusat dari akun google kakak sendiri ya, kak. Jadi sangat aman, jadi Kakak atau panitia tidak perlu repot setup akun Gmail/Server sendiri sama sekali. Nanti kami bantu setup databasenya di akun gmail kakak, jadi Kakak cukup terima beres, dikasih akses login, dan langsung bisa dipakai! Praktis banget Kak.`;
-            } else if(tipe === 'faq_install') {
-                pesan = `Aplikasinya sangat praktis karena tidak perlu di-install lewat PlayStore Kak ${nama}. Sistem kami berbasis Web-App, jadi panitia cukup buka link khusus dari browser HP/Laptop (seperti Chrome), lalu login. Tidak akan membuat memori HP penuh.`;
-            } else if(tipe === 'faq_mandiri' || tipe === 'qurban_mandiri') {
-                pesan = `Caranya sangat gampang Kak. Panitia cukup membagikan link khusus 'Portal Warga' ke jamaah. Nanti jamaah tinggal memasukkan nomor Anggota dan PIN Akses untuk melihat mutasi tabungan dan kelompok hewan mereka sendiri langsung dari rumah. Sangat transparan!`;
-            } else if(tipe === 'faq_langganan') {
-                pesan = `Kabar baiknya Kak ${nama}, tidak ada biaya langganan bulanan/tahunan sama sekali! Pembelian ini menggunakan skema Sekali Bayar (Lifetime Access). Jadi bebas digunakan untuk Qurban tahun ini, tahun depan, dan seterusnya tanpa tagihan tambahan.`;
-            } else if(tipe === 'faq_banyak_panitia') {
-                pesan = `Bisa banget Kak! Sistem ini dirancang untuk kolaborasi tim. Kakak bisa memberikan akses login terpisah ke bendahara atau tim lapangan. Jadi proses input data bisa dilakukan bersamaan dari beberapa HP/Laptop yang berbeda tanpa bentrok, mudah, cepat, dan pekerjaan Kakak sebagai panitia semakin ringan.`;
-            } else if(tipe === 'faq_logo') {
-                pesan = `Pastinya Kak. Di pengaturan awal aplikasi, Kakak cukup ketik nama masjid dan upload logonya. Setelah itu, semua kuitansi, laporan PDF, dan KTA yang dicetak akan otomatis menggunakan kop surat dan logo masjid Kakak. Terlihat sangat profesional!`;
-            } else if(tipe === 'faq_wa_broadcast') {
-                pesan = `Sangat praktis Kak (Khusus Premium). Setelah panitia input uang setoran, sistem otomatis membuat teks resi tagihan yang rapi. Panitia tinggal klik ikon kirim, dan resi tersebut akan langsung terkirim ke WhatsApp warga bersangkutan secara otomatis.`;
-            } else if(tipe === 'faq_kelompok_sapi') {
-                pesan = `Betul sekali Kak (Khusus Premium). Sistem dibekali logika pintar. Setiap kali ada 7 orang yang status tabungannya sudah 'Lunas', sistem akan otomatis mengelompokkannya menjadi Kelompok Sapi 1, Sapi 2, dst. Selain itu jumlah Anggota kelompok juga bisa disesuaikan sesuai kondisi dilapangan, jadi tidak harus 7 anggota dalam setiap kelompok sapi, bisa desusaikan jumlahnya. Panitia tidak perlu lagi pusing mikir dan coret-coret di kertas!`;
-            } else if(tipe === 'faq_demo') {
-                pesan = `Tentu bisa Kak ${nama}! Kami menyediakan akses demo gratis. Kakak bisa mencoba langsung fitur input data, melihat dashboard, sampai mencetak contoh laporan agar makin yakin sebelum membeli.`;
+                pesan = `Baik Bunda, untuk pembayarannya bisa ditransfer ke rekening resmi Lembaga kami berikut ini ya:\n\n💳 *BRI* : 618601014043531 a.n PAMBUDI\n📱 *DANA/OVO/GoPay* : 085855111386 a.n PAMBUDI\n\nKhusus untuk pembayaran via *QRIS*, mohon konfirmasi ke kami terlebih dahulu ya Bunda.\n\nSetelah transfer, mohon foto/screenshot struknya dikirim ke chat ini agar bisa langsung kami aktifkan akun ujian ananda. Terima kasih! 🙏`;
+            } else if(tipe === 'faq_cara_login') {
+                pesan = `Gampang banget Bunda! Nanti setelah pembayaran terkonfirmasi, ananda akan mendapatkan *ID Peserta* dan *Password*. Bunda cukup buka website LKP SES, masukkan ID tersebut di layar Portal Siswa, dan ananda langsung bisa masuk ke Ruang Ujian CBT. 🚀`;
+            } else if(tipe === 'faq_hp_atau_laptop') {
+                pesan = `Sangat bisa Bunda! Sistem Ujian (CBT) kami sangat ringan dan fleksibel. Ananda bisa mengerjakannya menggunakan HP (Android/iPhone), Tablet, ataupun Laptop/PC kesayangan di rumah. Pastikan koneksi internetnya stabil ya Bunda. 📱💻`;
+            } else if(tipe === 'faq_jadwal') {
+                pesan = `Untuk Paket Latihan, ananda bisa mengerjakannya kapan saja 24 Jam secara mandiri. Namun untuk Paket Ujian Simulasi (Khusus Paket Pro & Ultimate), jadwal pembukaan dan penutupan soalnya akan dikendalikan langsung oleh Admin Pusat LKP SES agar serentak layaknya ujian nasional Bunda. ⏰`;
+            } else if(tipe === 'faq_sertifikat') {
+                pesan = `Sertifikat Kelulusan Resmi (Khusus Akun Ultimate) akan otomatis terbuka dan bisa dicetak (PDF) langsung dari Dashboard Siswa jika nilai rata-rata ujian ananda sudah mencapai batas KKM (di atas 75). Ini sangat bagus untuk memacu semangat ananda meraih nilai terbaik! 🏆`;
+            } else if(tipe === 'faq_laporan') {
+                pesan = `Betul Bunda. Selain nilai yang langsung keluar setelah ujian selesai, sistem LKP SES juga menyusun *Laporan Evaluasi Progres Belajar* berbentuk PDF. Laporan ini bisa Bunda download untuk melihat titik lemah ananda, sehingga belajar ke depannya bisa lebih fokus. 📊`;
             }
 
             Swal.close(); 
