@@ -695,29 +695,43 @@ async function simpanSoalLMS(e) {
                 btn.disabled = false;
                 return;
             }
-            dataSoal.options = [ document.getElementById('multiA').value, document.getElementById('multiB').value, document.getElementById('multiC').value ]; 
             
-            // 👇 TAMBAHAN: Menyimpan link gambar opsi MCMA
+            // PERBAIKAN: Membaca ID yang sudah disinkronkan menjadi angka 0, 1, 2
+            dataSoal.options = [ 
+                document.getElementById('multi0').value, 
+                document.getElementById('multi1').value, 
+                document.getElementById('multi2').value 
+            ]; 
+            
             dataSoal.optionsImg = [ 
-                document.getElementById('multiImgA').value.trim(), 
-                document.getElementById('multiImgB').value.trim(), 
-                document.getElementById('multiImgC').value.trim() 
+                document.getElementById('multiImg0').value.trim(), 
+                document.getElementById('multiImg1').value.trim(), 
+                document.getElementById('multiImg2').value.trim() 
             ];
             
             dataSoal.answer = kunciArray;
         } 
         else if (tipe === 'tf') {
             dataSoal.tfType = document.getElementById('tfTypeSelect').value;
-            dataSoal.statements = [ document.getElementById('tfTeks0').value, document.getElementById('tfTeks1').value, document.getElementById('tfTeks2').value ];
             
-            // 👇 TAMBAHAN: Menyimpan link gambar tabel TF
+            // PERBAIKAN: Memastikan urutan pembacaan elemen tabel konsisten
+            dataSoal.statements = [ 
+                document.getElementById('tfTeks0').value, 
+                document.getElementById('tfTeks1').value, 
+                document.getElementById('tfTeks2').value 
+            ];
+            
             dataSoal.statementsImg = [ 
                 document.getElementById('tfImg0').value.trim(), 
                 document.getElementById('tfImg1').value.trim(), 
                 document.getElementById('tfImg2').value.trim() 
             ];
             
-            dataSoal.answer = [ document.getElementById('tfKunci0').value === "true", document.getElementById('tfKunci1').value === "true", document.getElementById('tfKunci2').value === "true" ];
+            dataSoal.answer = [ 
+                document.getElementById('tfKunci0').value === "true", 
+                document.getElementById('tfKunci1').value === "true", 
+                document.getElementById('tfKunci2').value === "true" 
+            ];
         }
         
         // Mode Update atau Tambah Baru
@@ -787,23 +801,23 @@ async function editBankSoalLMS(idDoc) {
             if (d.answer !== undefined) radios[d.answer].checked = true;
         } 
         else if (d.type === 'multi') {
-            document.getElementById('multiA').value = d.options[0] || "";
-            document.getElementById('multiB').value = d.options[1] || "";
-            document.getElementById('multiC').value = d.options[2] || "";
+            // PERBAIKAN: Melempar data kembali ke ID HTML yang benar (0, 1, 2)
+            document.getElementById('multi0').value = d.options[0] || "";
+            document.getElementById('multi1').value = d.options[1] || "";
+            document.getElementById('multi2').value = d.options[2] || "";
             
-            // 👇 TAMBAHAN: Memuat link gambar opsi MCMA
             if (d.optionsImg) {
-                document.getElementById('multiImgA').value = d.optionsImg[0] || "";
-                document.getElementById('multiImgB').value = d.optionsImg[1] || "";
-                document.getElementById('multiImgC').value = d.optionsImg[2] || "";
+                document.getElementById('multiImg0').value = d.optionsImg[0] || "";
+                document.getElementById('multiImg1').value = d.optionsImg[1] || "";
+                document.getElementById('multiImg2').value = d.optionsImg[2] || "";
             } else {
-                document.getElementById('multiImgA').value = ""; document.getElementById('multiImgB').value = ""; document.getElementById('multiImgC').value = "";
+                document.getElementById('multiImg0').value = ""; document.getElementById('multiImg1').value = ""; document.getElementById('multiImg2').value = "";
             }
 
             for(let i=0; i<3; i++) {
                 document.getElementById(`kunciMulti${i}`).checked = d.answer.includes(i);
             }
-        } 
+        }
         else if (d.type === 'tf') {
             document.getElementById('tfTypeSelect').value = d.tfType || "benar-salah";
             perbaruiLabelTabelTF();
